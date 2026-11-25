@@ -1,0 +1,44 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+
+// Réglages d'apps dont le contenu restait bridé au milieu d'une carte de près de 900 px
+// (largeur maximale posée par l'app) : il prend la largeur de la carte, comme les réglages
+// de Nextcloud. Chaque règle ne vise que la section de son app.
+@mixin largeur-apps {
+	// Intégration Immich (réglages personnels) : formulaire bridé à 600 px.
+	&#{reglage(integration_immich)} {
+		.immich-settings-form {
+			max-width: none;
+		}
+	}
+	// Transfert de propriété (administration) : bloc « Transfert de fichiers » bridé à 450 px.
+	// !important : la règle de l'app passe par l'identifiant #transfer_settings.
+	&#{reglage(ownershiptransfer)} {
+		.dir-picker-box {
+			max-width: none !important;
+		}
+		// Ordinateur : les deux listes (compte source et destinataire, 260 px fixes) se partagent
+		// la largeur de la carte ; la flèche était centrée sur la hauteur des listes avec leur marge
+		// (15 px trop bas), elle l'est sur celle des champs. Téléphone inchangé.
+		@media (min-width: $bp-1024) {
+			.user-selects {
+				align-items: flex-start;
+				column-gap: 15px;
+				> .v-select {
+					flex: 1 1 0;
+					width: auto !important;
+					min-width: 0;
+					max-width: none !important;
+				}
+				> .transfer-arrow {
+					flex: 0 0 auto;
+					align-self: flex-start;
+					margin-block-start: 7px;
+				}
+			}
+		}
+	}
+}

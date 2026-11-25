@@ -7,6 +7,28 @@
 
 Les changements notables de ce projet sont consignés dans ce fichier.
 
+## 1.1.3
+
+### Corrections
+- **Agenda, événement en lecture seule** (agenda auquel on est abonné, par exemple un agenda Google) : l'icône du calendrier flottait seule au-dessus des dates, au milieu de la fenêtre sur ordinateur ; l'Agenda empilait l'icône et les dates. Elle est désormais dans la colonne des icônes, sur la ligne de la première date, et la ligne « Ne se répète pas » est alignée de même. Ordinateur et téléphone.
+- **Agenda, champ Catégories de l'éditeur** : son libellé, posé dans le champ, collait à la bordure (2 px) ; il est aligné sur le texte des listes voisines (Statut, Lors du partage, Afficher comme).
+- **Agenda au téléphone, barre du haut de l'éditeur** : la croix à gauche et *Enregistrer* à droite sur la même ligne, comme dans les applications mobiles, le titre en dessous, aligné sur les champs. Avant : *Enregistrer* seul en haut à gauche, croix et titre sur la ligne suivante.
+- **Paramètres, Intégration GitHub** (administration et personnel) : le contenu occupe toute la largeur de la carte ; le thème lui-même le bridait à 600 px.
+- **Paramètres, Intégration Immich** : le formulaire occupe toute la largeur de la carte (bridé à 600 px par l'app).
+- **Paramètres, Transfert de propriété** : le bloc « Transfert de fichiers » occupe toute la largeur de la carte (bridé à 450 px) ; sur ordinateur, les deux listes de comptes se partagent la largeur et la flèche est centrée sur les champs (elle était 15 px trop basse). Rien ne change au téléphone.
+
+### Présentation du projet
+- **Slogan** : « Nextcloud, upgraded by design » / « Votre Nextcloud, en version augmentée », repris dans le résumé de la fiche de l'app (App Store).
+- **README** en deux fichiers, anglais (`README.md`) et français (`README.fr.md`), avec la mosaïque de l'app en visuel d'accueil (clair ou sombre selon le visiteur), une vitrine des écrans et les vraies captures de chaque langue.
+- **Image de partage** du dépôt renouvelée (1280 × 640) ; **soutien** au projet par Ko-fi et Liberapay (`.github/FUNDING.yml`).
+
+### Non-régression, sécurité et performances
+- **Sécurité** : seules des feuilles de style changent ; aucun code PHP, JavaScript ou gabarit modifié, aucune dépendance ajoutée. Psalm (y compris l'analyse des flux de données) et gitleaks : aucun signalement.
+- **CSS compilé** comparé au paquet 1.1.2 règle par règle : règles ajoutées uniquement dans la feuille de l'Agenda et dans celles des sections Comptes connectés, Immich et Transfert de propriété.
+- **Parcours complet 1.1.2 / 1.1.3 comparé au pixel** (266 paires d'écrans : tableau de bord, Fichiers, Deck, Talk, Agenda dont un agenda Google en abonnement, Tâches, Formulaires, recherche, fenêtres, 46 pages de paramètres ; clair et sombre ; ordinateur et téléphone tactile) : seuls les éléments corrigés changent.
+- **Nextcloud 34 et 35** : mêmes mesures au pixel près.
+- **Performances identiques à la 1.1.2** (6 passes alternées) : éditeur d'Agenda 142,7 → 143,6 ms, page de paramètres GitHub 111,4 → 113,7 ms sur 20 chargements, défilement inchangé.
+
 ## 1.1.2
 
 ### Corrections

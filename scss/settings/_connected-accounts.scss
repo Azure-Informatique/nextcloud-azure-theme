@@ -41,8 +41,10 @@
 						fill: $colour-forground;
 					}
 				}
+				// Bloc de l'app sous le titre : toute la largeur de la carte, comme les autres réglages
+				// (le thème le bridait à 600 px, plus étroit encore que les 800 px de l'app).
 				+ div {
-					max-width: 600px !important;
+					max-width: none !important;
 					margin: 0 !important;
 				}
 			}

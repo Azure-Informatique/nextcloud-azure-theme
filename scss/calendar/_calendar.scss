@@ -1267,9 +1267,66 @@
 		}
 		// Téléphone : le bouton de fermeture passe dans l'en-tête de l'éditeur ; les 64 px réservés
 		// au-dessus pour l'ancien bouton restaient vides.
+		// Événement en lecture seule (agenda auquel on est abonné, par exemple un agenda Google) :
+		// l'Agenda empile l'icône et les dates (flex-direction: column), et l'icône du calendrier
+		// flottait seule, centrée au-dessus des dates. Remise dans la colonne des icônes, sur la
+		// ligne de la première date ; dates et répétition alignées sur le texte des autres lignes.
+		// .modal-container : passe devant l'écart de 8 px du cadre des champs (même poids sinon).
+		.modal-container .app-full .property-title-time-picker--readonly {
+			flex-direction: row;
+			align-items: flex-start;
+			gap: 12px;
+			margin-inline-start: 0;
+			> .property-title-time-picker__icon {
+				flex: 0 0 18px;
+				width: 18px;
+				height: 23px;
+				place-self: start;
+			}
+			> .property-title-time-picker__time-pickers {
+				flex: 1 1 auto;
+				min-width: 0;
+			}
+		}
+		// Catégories (liste à choix multiples, vide) : son étiquette, posée dans le champ, collait à
+		// la bordure (2 px) ; alignée sur le texte des autres listes.
+		.app-full .property-select-multiple .v-select .select__label {
+			inset-inline-start: 14px;
+		}
+		.modal-container .app-full .property-repeat--readonly {
+			margin-inline-start: -32px;
+			.property-repeat__summary {
+				gap: 12px;
+			}
+			.property-repeat__summary__content {
+				margin-inline-start: 0;
+				padding-inline-start: 0;
+			}
+		}
 		@media (max-width: 785px) {
 			.app-full {
 				margin-top: 8px;
+			}
+			// Barre du haut au téléphone : croix à gauche et Enregistrer à droite sur la même ligne
+			// (disposition habituelle des applications), titre en dessous, aligné sur les champs.
+			// Avant : Enregistrer seul en haut à gauche, croix et titre sur la ligne suivante.
+			.app-full__header__top {
+				column-gap: 8px !important;
+			}
+			.app-full__actions {
+				margin-inline-start: auto;
+				.app-full__actions__inner:empty {
+					display: none;
+				}
+			}
+			.app-full__header__top-close-icon {
+				position: absolute;
+				top: 8px;
+				inset-inline-start: 0;
+				height: 44px;
+			}
+			.app-full__header__top__first .property-title {
+				margin-inline-start: 37px;
 			}
 			// Agenda de l'événement (pastille + nom), seul sur sa ligne au téléphone : la pastille
 			// tombait 33 à 38 px à droite de la colonne des icônes (retrait de 32 px du bloc, marges

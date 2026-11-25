@@ -2,17 +2,35 @@
   - SPDX-FileCopyrightText: 2026 Azure Informatique
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# Certification du Thème Azure 1.1.2
+# Certification du Thème Azure 1.1.3
 
-Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.2, et celles des versions 1.1.1 et 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles), puis la version a été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
+Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.3, et celles des versions 1.1.2, 1.1.1 et 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles), puis la version a été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
 
 | Élément | Valeur |
 |---|---|
-| Version certifiée | 1.1.2 — étiquette `v1.1.2` (correctifs de la 1.1.1 et de la 1.1.0, certifiée en totalité ci-dessous) |
+| Version certifiée | 1.1.3 — étiquette `v1.1.3` (correctifs des versions 1.1.0 à 1.1.2, certifiée en totalité ci-dessous) |
 | Nextcloud | **34.0.6 : vérification complète** ; 35.0.3 et 36.0.0 (préversion du 24 novembre 2026) : contrôle des écrans clés |
 | Navigateur | Chromium 156 (ordinateur 1440 × 900, tablette 1024 et 768, téléphone 390 et 360 par émulation) |
 | Outils | Playwright, axe-core 4.14, PHPUnit 13, Psalm 6 (avec `--taint-analysis`), REUSE 3.3, gitleaks 8 |
 | Date | 25 novembre 2026 |
+
+## Version 1.1.3 : correctifs, sécurité et non-régression
+
+La 1.1.3 corrige trois points d'affichage, sans autre changement :
+
+1. **Agenda, événement en lecture seule** (agenda auquel on est abonné, par exemple un agenda Google) : l'icône du calendrier, qui flottait seule au-dessus des dates, est dans la colonne des icônes, sur la ligne de la première date ; la ligne « Ne se répète pas » est alignée de même (ordinateur et téléphone).
+2. **Agenda au téléphone** : croix à gauche et *Enregistrer* à droite sur la barre du haut de l'éditeur, titre en dessous.
+3. **Paramètres sur ordinateur** : Intégration GitHub (administration et personnel), Intégration Immich et Transfert de propriété occupent toute la largeur de leur carte (bridés à 450 ou 600 px ; pour GitHub, par le thème lui-même). Revue des 46 pages de paramètres des apps de la production : les autres largeurs maximales relevées sont voulues par Nextcloud (champs, formulaires courts) et restent inchangées.
+
+| Contrôle | Résultat |
+|---|---|
+| Sécurité | Seuls changent quatre fichiers SCSS, la documentation et `info.xml` (version, adresses des captures) : aucun fichier PHP, JavaScript ou gabarit modifié, aucune dépendance ajoutée, aucune ressource externe ; surface d'attaque inchangée. Psalm (y compris `--taint-analysis`) sans erreur, gitleaks sans fuite |
+| CSS et scripts compilés, comparés au paquet 1.1.2 publié | règles ajoutées uniquement dans la feuille de l'Agenda (éditeur, dont un bloc réservé au téléphone) et dans les feuilles des sections Comptes connectés, Immich et Transfert de propriété (nouvelles feuilles = feuille générique + une règle) ; `azure-has.js` : jetons et code identiques, quatre feuilles ajoutées à sa table |
+| Parcours complet 1.1.2 / 1.1.3 au pixel | 266 paires d'écrans (tableau de bord, Fichiers, Deck, Talk, Agenda dont l'éditeur et un agenda Google en abonnement, Tâches, Formulaires, recherche, fenêtres de confirmation, 46 pages de paramètres en pleine page ; clair et sombre ; 1440 × 900 et téléphone tactile 390 × 844) : seuls les éléments corrigés changent. Écarts sans lien avec le thème, vérifiés à l'image : contenus dynamiques (journal, informations serveur, dernière tâche planifiée, horodatages, météo, fichiers récents, exemple de pronoms tiré au hasard) et panneau « Tâches non planifiées » resté ouvert dans une passe |
+| Nextcloud 35.0.3 | mêmes mesures qu'en 34 au pixel près : icônes de l'événement en lecture seule (279 px ordinateur, 18 px téléphone), barre du haut de l'éditeur, largeur des quatre réglages (862 px) |
+| Performances (passes alternées 1.1.2 / 1.1.3) | 6 passes alternées, médianes du recalcul de style (ms) : éditeur d'Agenda 142,7 → 143,6, événement Google 112,3 → 115,9, défilement 11,3 → 11,3, « Personnaliser » 89,3 → 85,0 ; page de paramètres GitHub mesurée à part sur 20 chargements par version : 111,4 → 113,7 (plages identiques) : aucune baisse |
+| Tests | PHPUnit 113 tests et 217 assertions, tests navigateur `jetons.mjs` (41 relevés) et `variantes.mjs`, REUSE 3.3, `info.xml` validé par le schéma de l'App Store : tout passe |
+| Production (Nextcloud 34.0.6) | déployée et vérifiée le 25 novembre 2026 |
 
 ## Version 1.1.2 : correctifs et non-régression
 
@@ -57,7 +75,7 @@ La 1.1.1 corrige cinq points d'affichage, sans autre changement :
 
 Agenda 6 ouvre les événements dans une fenêtre sans onglets : il n'est pas concerné par le point 1. Dans l'en-tête, le nom de l'app et le bouton du menu sont centrés sur la même ligne (28 px) ; l'encre des points du bouton est 1,5 px plus bas que celle du texte, ce qui tient au dessin de l'icône : rien n'a été modifié. Les sections suivantes restent celles de la certification complète de la 1.1.0, toujours valables pour la 1.1.1.
 
-**Conclusion : le Thème Azure 1.1.2 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
+**Conclusion : le Thème Azure 1.1.3 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
 
 ## 1. Sécurité
 

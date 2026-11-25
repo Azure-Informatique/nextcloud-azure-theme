@@ -36,6 +36,7 @@
 @use './saml' as *;
 @use './help' as *;
 @use './connected-accounts' as *;
+@use './largeur-apps' as *;
 @use './talk' as *;
 @use './share-audit' as *;
 @use '../e2ee/e2ee' as *;
@@ -240,6 +241,7 @@
 			@include teamfolders;
 			@include saml;
 			@include connected-accounts;
+			@include largeur-apps;
 			@include talk-admin;
 		}
 	}

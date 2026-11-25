@@ -8,8 +8,8 @@
       xsi:noNamespaceSchemaLocation="https://apps.nextcloud.com/schema/apps/info.xsd">
     <id>azure_theme</id>
     <name>Azure Theme</name>
-    <summary lang="en">The Azure Informatique look for Nextcloud: light, dark or matching the device.</summary>
-    <summary lang="fr">L'apparence Azure Informatique pour Nextcloud : claire, sombre ou selon l'appareil.</summary>
+    <summary lang="en">Nextcloud, upgraded by design: a light and dark theme that restyles everything, without slowing anything down.</summary>
+    <summary lang="fr">Votre Nextcloud en version augmentée : un thème clair et sombre qui habille tout, sans rien ralentir.</summary>
     <description lang="en"><![CDATA[
 **Azure Theme gives Nextcloud a clean, modern look by Azure Informatique: light, dark, or matching the device's light or dark setting.**
 
@@ -60,7 +60,7 @@ Le thème fonctionne entièrement dans votre Nextcloud et ne charge rien depuis 
 - Nextcloud 34, 35 ou 36.
 - Aucune tâche d'arrière-plan, aucun serveur de messagerie ni aucune application supplémentaire n'est nécessaire.
     ]]></description>
-    <version>1.1.2</version>
+    <version>1.1.3</version>
     <licence>AGPL-3.0-or-later</licence>
     <author>Azure Informatique</author>
     <namespace>AzureTheme</namespace>
@@ -68,10 +68,10 @@ Le thème fonctionne entièrement dans votre Nextcloud et ne charge rien depuis 
     <website>https://github.com/Azure-Informatique/nextcloud-azure-theme</website>
     <bugs>https://github.com/Azure-Informatique/nextcloud-azure-theme/issues</bugs>
     <repository type="git">https://github.com/Azure-Informatique/nextcloud-azure-theme.git</repository>
-    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.2/docs/images/apercu-en-clair.webp</screenshot>
-    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.2/docs/images/apercu-en-sombre.webp</screenshot>
-    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.2/docs/images/tableau-de-bord.webp</screenshot>
-    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.2/docs/images/telephone.webp</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/apercu-en-clair.webp</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/apercu-en-sombre.webp</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/tableau-de-bord.webp</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/telephone.webp</screenshot>
 
     <dependencies>
         <php min-version="8.2" max-version="8.5"/>
