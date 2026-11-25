@@ -60,6 +60,14 @@ $onglet-actif: ':is([aria-selected="true"], .checkbox-radio-switch--checked)';
 			outline: 2px solid $colour-brand;
 			outline-offset: 1px;
 		}
+		// Icône de la case : même couleur que le libellé (blanche sur l'onglet actif). Nextcloud
+		// impose var(--color-main-text) !important à l'icône (0,6,0, feuille chargée après la nôtre) :
+		// en clair, l'icône restait encre sur le bleu de l'onglet actif, sous un libellé blanc.
+		// Classe doublée pour passer devant à coup sûr, sans toucher aux autres cases à cocher.
+		.checkbox-content__icon.checkbox-content__icon,
+		.checkbox-content__icon.checkbox-content__icon > * {
+			color: inherit !important;
+		}
 	}
 	// Bouton @nextcloud/vue 9.
 	.app-sidebar-tabs__tab#{css-module('sidebarTabsButton')} {

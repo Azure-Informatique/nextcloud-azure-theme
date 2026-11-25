@@ -60,7 +60,7 @@ Le thème fonctionne entièrement dans votre Nextcloud et ne charge rien depuis 
 - Nextcloud 34, 35 ou 36.
 - Aucune tâche d'arrière-plan, aucun serveur de messagerie ni aucune application supplémentaire n'est nécessaire.
     ]]></description>
-    <version>1.1.0</version>
+    <version>1.1.1</version>
     <licence>AGPL-3.0-or-later</licence>
     <author>Azure Informatique</author>
     <namespace>AzureTheme</namespace>

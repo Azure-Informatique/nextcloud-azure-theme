@@ -50,6 +50,14 @@
 				padding-inline: 16px;
 			}
 		}
+		// Même cause en haut : le « padding: 1rem 0 » de Nextcloud l'emportait aussi sur l'ordinateur,
+		// et le message d'accueil collait à l'en-tête (15 px). Marge du haut rétablie, seule.
+		@at-root #body-user #app-dashboard > h2 {
+			padding-top: 32px;
+			@media (max-width: $bp-640) {
+				padding-top: 24px;
+			}
+		}
 		// Statut et météo : pilules secondaires du panel (filet line, fond paper, texte ink).
 		.statuses {
 			box-sizing: border-box;
@@ -1030,9 +1038,12 @@
 			border-radius: 0;
 			margin: 0;
 		}
+		// Zone défilante arrondie comme la fenêtre : le bandeau de titre collant (fond plein) en
+		// masquait les coins du haut, restés carrés.
 		.modal-container__content {
 			display: flex;
 			flex-direction: column;
+			border-radius: inherit;
 			@include scrollbar($thumb-colour: $colour-scrollbar-main);
 		}
 		.modal-container__close {

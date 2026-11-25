@@ -7,6 +7,20 @@
 
 Les changements notables de ce projet sont consignés dans ce fichier.
 
+## 1.1.1
+
+### Corrections
+- **Icônes des onglets de barre latérale** (Fichiers : Partage, Activité… ; Deck : Détails, Pièces jointes, Commentaires, Activité) : l'icône prend désormais exactement la couleur de son libellé. En clair, l'icône de l'onglet sélectionné restait noire sur le fond bleu, sous un libellé blanc ; elle est maintenant blanche. Les onglets non sélectionnés ont une icône du même gris que leur libellé, comme dans Talk, Formulaires et Tâches. Nextcloud imposait la couleur du texte principal à ces icônes (ancienne génération d'onglets).
+- **Tableau de bord, fenêtre « Modifier les widgets »** (bouton *Personnaliser*) : les coins du haut sont arrondis comme ceux du bas ; le bandeau de titre, collant et à fond plein, les masquait.
+- **Tableau de bord, message d'accueil** (« Bonjour… ») : 32 px d'espace sous l'en-tête sur ordinateur, 24 px au téléphone, au lieu de 15 px ; une règle de Nextcloud chargée après le thème annulait la marge prévue.
+- **Agenda, « Abandonner les modifications ? »** (fermeture d'un nouvel événement non enregistré) : la fenêtre reçoit le cadre des autres confirmations ; son texte collait au bord gauche.
+- **Transfert de propriété, « Confirmer le transfert »** : même cadre ; le bouton *Annuler* et l'encadré d'avertissement touchaient le bord gauche, et une bande vide restait sous les boutons.
+
+### Non-régression et performances
+- CSS et scripts compilés comparés au paquet 1.1.0 : seules les règles ci-dessus changent (vérifié règle par règle après normalisation des noms de jetons).
+- Parcours complet 1.1.0 / 1.1.1 comparé au pixel, en clair et en sombre, sur ordinateur et téléphone : seuls les éléments corrigés changent.
+- Aucune condition `:has()` coûteuse ajoutée ; performances mesurées identiques à la 1.1.0 (passes alternées, écarts sous 4 % dans les deux sens).
+
 ## 1.1.0
 
 ### Performances

@@ -5030,6 +5030,18 @@
 		}
 	}
 
+	// Transfert de propriété › « Confirmer le transfert » (cadre secondaire) : l'app place ses
+	// boutons dans le contenu ; la barre d'actions de NcDialog, vide, et la marge basse du contenu
+	// ajoutaient une bande de 36 px sous les boutons. Boutons à 21 px du bas, comme les autres.
+	.modal-container#{$fenetre}:has(.transfer-graph){
+		.confirm-modal-content{
+			margin-bottom: 0;
+		}
+		.dialog__actions:empty{
+			display: none;
+		}
+	}
+
 	.modal-container#{$fenetre}:has(.selector__search){
 		.dialog__name{
 			padding: 16px;

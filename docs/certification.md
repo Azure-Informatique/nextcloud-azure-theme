@@ -2,19 +2,44 @@
   - SPDX-FileCopyrightText: 2026 Azure Informatique
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# Certification du Thème Azure 1.1.0
+# Certification du Thème Azure 1.1.1
 
-Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.0. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles), puis la version a été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
+Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.1 et de la 1.1.0 qu'elle corrige. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles), puis la version a été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
 
 | Élément | Valeur |
 |---|---|
-| Version certifiée | 1.1.0 — étiquette `v1.1.0` |
+| Version certifiée | 1.1.1 — étiquette `v1.1.1` (correctif de la 1.1.0, certifiée en totalité ci-dessous) |
 | Nextcloud | **34.0.6 : vérification complète** ; 35.0.3 et 36.0.0 (préversion du 24 novembre 2026) : contrôle des écrans clés |
 | Navigateur | Chromium 156 (ordinateur 1440 × 900, tablette 1024 et 768, téléphone 390 et 360 par émulation) |
 | Outils | Playwright, axe-core 4.14, PHPUnit 13, Psalm 6 (avec `--taint-analysis`), REUSE 3.3, gitleaks 8 |
 | Date | 25 novembre 2026 |
 
-**Conclusion : le Thème Azure 1.1.0 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
+## Version 1.1.1 : correctifs et non-régression
+
+La 1.1.1 corrige cinq points d'affichage, sans autre changement :
+
+1. **Onglets de barre latérale** (ancienne génération : Fichiers, Deck) : l'icône prend la couleur de son libellé ; en clair, celle de l'onglet sélectionné était noire sur le fond bleu, elle est blanche.
+2. **Tableau de bord, « Modifier les widgets »** : coins du haut arrondis.
+3. **Tableau de bord, message d'accueil** : 32 px sous l'en-tête (24 px au téléphone) au lieu de 15 px.
+4. **Agenda, « Abandonner les modifications ? »** : cadre des confirmations (texte collé au bord gauche).
+5. **Transfert de propriété, « Confirmer le transfert »** : cadre des confirmations (bouton et avertissement collés au bord gauche, bande vide sous les boutons).
+
+| Contrôle | Résultat |
+|---|---|
+| CSS et scripts compilés, comparés au paquet 1.1.0 publié | 5 fichiers sur 157 changent ; après normalisation des noms de jetons `:has`, il ne reste que les règles des cinq corrections ; la liste des fenêtres de confirmation est identique à l'ajout de `.transfer-graph` près |
+| Couleur icône / libellé des onglets (Fichiers, Deck, Talk, Formulaires, Tâches ; clair et sombre ; ordinateur et téléphone) | 0 écart sur 112 onglets relevés ; avant correction, toutes les icônes de Fichiers et Deck étaient en écart, aucune ailleurs |
+| Parcours complet 1.1.0 / 1.1.1 au pixel (16 écrans : tableau de bord, Fichiers, Deck, Talk, Agenda, Tâches, Formulaires, paramètres, six fenêtres de confirmation ; clair et sombre ; 1440 × 900 et 390 × 844) | seuls les éléments corrigés changent : icônes d'onglets (Fichiers, Deck, y compris derrière une fenêtre), tableau de bord descendu, fenêtres « Modifier les widgets » et « Confirmer le transfert » ; tout le reste est identique au pixel. Trois écarts sans lien avec le thème, vérifiés : exemple de pronoms tiré au hasard par Nextcloud, panneau « Tâches non planifiées » de l'Agenda resté ouvert (paire refaite : identique), 5 px de lissage sur l'arrondi d'un onglet de Talk |
+| Fenêtres de confirmation (Nextcloud standard dans 8 apps, Contacts, AppAPI) | mesures identiques à la 1.1.0 (texte à 21 px, boutons à 17 ou 21 px des bords) |
+| Performances (recalcul de style et mise en page, passes alternées 1.1.0 / 1.1.1) | médianes de 3 tours (recalcul de style, ms) : barre latérale de Fichiers 792 → 815, changement d'onglet 286 → 296, défilement 26,9 → 21,6, fenêtre de confirmation 69 → 63, « Personnaliser » 52 → 54 ; écarts dans les deux sens, sous 4 % : bruit de mesure, aucune baisse |
+| Tests PHPUnit | 113 tests, 217 assertions : tout passe |
+| Tests navigateur `jetons.mjs` et `variantes.mjs` | tout passe |
+| Psalm, ESLint, Stylelint | aucun nouveau signalement (remarques existantes inchangées) |
+| gitleaks | aucune fuite |
+| Production (Nextcloud 34.0.6) | déployée et vérifiée le 25 novembre 2026 |
+
+Agenda 6 ouvre les événements dans une fenêtre sans onglets : il n'est pas concerné par le point 1. Dans l'en-tête, le nom de l'app et le bouton du menu sont centrés sur la même ligne (28 px) ; l'encre des points du bouton est 1,5 px plus bas que celle du texte, ce qui tient au dessin de l'icône : rien n'a été modifié. Les sections suivantes restent celles de la certification complète de la 1.1.0, toujours valables pour la 1.1.1.
+
+**Conclusion : le Thème Azure 1.1.1 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
 
 ## 1. Sécurité
 
