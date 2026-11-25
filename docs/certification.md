@@ -2,17 +2,35 @@
   - SPDX-FileCopyrightText: 2026 Azure Informatique
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# Certification du Thème Azure 1.1.1
+# Certification du Thème Azure 1.1.2
 
-Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.1 et de la 1.1.0 qu'elle corrige. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles), puis la version a été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
+Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.2, et celles des versions 1.1.1 et 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles), puis la version a été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
 
 | Élément | Valeur |
 |---|---|
-| Version certifiée | 1.1.1 — étiquette `v1.1.1` (correctif de la 1.1.0, certifiée en totalité ci-dessous) |
+| Version certifiée | 1.1.2 — étiquette `v1.1.2` (correctifs de la 1.1.1 et de la 1.1.0, certifiée en totalité ci-dessous) |
 | Nextcloud | **34.0.6 : vérification complète** ; 35.0.3 et 36.0.0 (préversion du 24 novembre 2026) : contrôle des écrans clés |
 | Navigateur | Chromium 156 (ordinateur 1440 × 900, tablette 1024 et 768, téléphone 390 et 360 par émulation) |
 | Outils | Playwright, axe-core 4.14, PHPUnit 13, Psalm 6 (avec `--taint-analysis`), REUSE 3.3, gitleaks 8 |
 | Date | 25 novembre 2026 |
+
+## Version 1.1.2 : correctifs et non-régression
+
+La 1.1.2 corrige cinq points d'affichage, sans autre changement :
+
+1. **Agenda, éditeur complet** (*Plus de détails*, nouvel événement) : sur ordinateur (1024 px et plus), fenêtre centrée aux coins arrondis, à la hauteur du contenu, au lieu du plein écran ; au téléphone, sans les 64 px vides en haut.
+2. **Agenda au téléphone, agenda de l'événement** : pastille centrée sur la colonne des icônes (elle était 33 à 38 px plus à droite), nom aligné sur le bord des champs.
+3. **Tableau de bord au téléphone** : Statut et Météo sur une seule ligne.
+4. **Fenêtres sur écran tactile** : croix de fermeture de 44 px recentrée dans l'en-tête (elle touchait la ligne sous le titre).
+5. **Fiche de l'app** : site du projet et captures pour le Nextcloud App Store (sans effet sur l'affichage).
+
+| Contrôle | Résultat |
+|---|---|
+| CSS et scripts compilés, comparés au paquet 1.1.1 publié | 3 fichiers sur 157 changent, uniquement par les règles des points 1 à 4 ; scripts identiques |
+| Parcours complet 1.1.1 / 1.1.2 au pixel (tableau de bord, Fichiers, Deck, Talk, Agenda dont l'éditeur complet, Tâches, Formulaires, recherche, paramètres, fenêtres de confirmation ; clair et sombre ; 1440 × 900 et téléphone tactile 390 × 844) | seuls les éléments corrigés changent : éditeur d'Agenda (fenêtre centrée sur ordinateur ; haut de l'éditeur et ligne de l'agenda au téléphone), Statut et Météo au téléphone, croix des fenêtres sur écran tactile (zone de 41 × 47 px) ; tout le reste est identique au pixel. Un écart sans lien avec le thème : exemple de pronoms tiré au hasard par Nextcloud. « Nouvel événement » au téléphone vérifié à part (clair et sombre) |
+| Performances (passes alternées 1.1.1 / 1.1.2) | 6 tours alternés, médianes du recalcul de style (ms) : barre latérale de Fichiers 827 → 801, changement d'onglet 295 → 281, éditeur d'Agenda 92 → 90 ; défilement, fenêtre de confirmation et « Personnaliser » : plages de valeurs identiques d'une version à l'autre (bruit de mesure ; sur ordinateur hors Agenda, aucune règle active ne diffère) : aucune baisse |
+| Tests PHPUnit, tests navigateur, REUSE, gitleaks | PHPUnit 113 tests et 217 assertions, Psalm sans erreur, tests navigateur `jetons.mjs` (41 relevés) et `variantes.mjs`, ESLint et Stylelint sans nouveau signalement, REUSE 3.3, `info.xml` validé par le schéma de l'App Store, gitleaks sans fuite : tout passe |
+| Production (Nextcloud 34.0.6) | déployée et vérifiée le 25 novembre 2026 |
 
 ## Version 1.1.1 : correctifs et non-régression
 
@@ -39,7 +57,7 @@ La 1.1.1 corrige cinq points d'affichage, sans autre changement :
 
 Agenda 6 ouvre les événements dans une fenêtre sans onglets : il n'est pas concerné par le point 1. Dans l'en-tête, le nom de l'app et le bouton du menu sont centrés sur la même ligne (28 px) ; l'encre des points du bouton est 1,5 px plus bas que celle du texte, ce qui tient au dessin de l'icône : rien n'a été modifié. Les sections suivantes restent celles de la certification complète de la 1.1.0, toujours valables pour la 1.1.1.
 
-**Conclusion : le Thème Azure 1.1.1 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
+**Conclusion : le Thème Azure 1.1.2 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
 
 ## 1. Sécurité
 

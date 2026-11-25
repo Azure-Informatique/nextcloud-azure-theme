@@ -7,6 +7,22 @@
 
 Les changements notables de ce projet sont consignés dans ce fichier.
 
+## 1.1.2
+
+### Corrections
+- **Agenda, éditeur complet d'un événement** (*Plus de détails*, ou création d'un événement quand l'Agenda ouvre directement l'éditeur complet) : sur ordinateur (1024 px et plus), fenêtre centrée aux coins arrondis, à la hauteur de son contenu (au plus la hauteur de l'écran, contenu défilant), au lieu d'occuper tout l'écran ; la mise en page sur deux colonnes de l'Agenda est conservée. Au téléphone, l'éditeur reste en plein écran, sans les 64 px vides au-dessus des boutons.
+- **Agenda au téléphone, agenda de l'événement** (pastille de couleur et nom, par exemple « Personnel ») : la pastille est alignée sur la colonne des icônes et le nom sur le bord des champs ; elle tombait 33 à 38 px plus à droite. Rien ne change sur ordinateur.
+- **Tableau de bord au téléphone** : Statut et Météo sur une seule ligne ; chaque pilule rétrécit au besoin et son texte se termine par « … ». Rien ne change sur ordinateur.
+- **Fenêtres au téléphone (écran tactile)** : la croix de fermeture, agrandie à 44 px pour le doigt, est recentrée dans l'en-tête ; elle touchait la ligne sous le titre (recherche unifiée et autres fenêtres). Rien ne change à la souris.
+
+### Publication
+- Fiche de l'app (`info.xml`) : site du projet et quatre captures d'écran pour le Nextcloud App Store.
+
+### Non-régression et performances
+- CSS compilé comparé au paquet 1.1.1 : seules les règles ci-dessus changent.
+- Parcours complet 1.1.1 / 1.1.2 comparé au pixel, en clair et en sombre, sur ordinateur et téléphone : seuls les éléments corrigés changent.
+- Performances mesurées identiques à la 1.1.1.
+
 ## 1.1.1
 
 ### Corrections

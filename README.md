@@ -53,8 +53,8 @@
 
 ```bash
 cd /path/to/nextcloud/apps        # or custom_apps
-curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/latest/download/azure_theme-1.1.1.tar.gz
-tar xzf azure_theme-1.1.1.tar.gz && rm azure_theme-1.1.1.tar.gz
+curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/latest/download/azure_theme-1.1.2.tar.gz
+tar xzf azure_theme-1.1.2.tar.gz && rm azure_theme-1.1.2.tar.gz
 chown -R www-data:www-data azure_theme
 sudo -u www-data php ../occ app:enable azure_theme
 ```

@@ -60,13 +60,18 @@ Le thème fonctionne entièrement dans votre Nextcloud et ne charge rien depuis 
 - Nextcloud 34, 35 ou 36.
 - Aucune tâche d'arrière-plan, aucun serveur de messagerie ni aucune application supplémentaire n'est nécessaire.
     ]]></description>
-    <version>1.1.1</version>
+    <version>1.1.2</version>
     <licence>AGPL-3.0-or-later</licence>
     <author>Azure Informatique</author>
     <namespace>AzureTheme</namespace>
     <category>customization</category>
+    <website>https://github.com/Azure-Informatique/nextcloud-azure-theme</website>
     <bugs>https://github.com/Azure-Informatique/nextcloud-azure-theme/issues</bugs>
     <repository type="git">https://github.com/Azure-Informatique/nextcloud-azure-theme.git</repository>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.2/docs/images/apercu-en-clair.webp</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.2/docs/images/apercu-en-sombre.webp</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.2/docs/images/tableau-de-bord.webp</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.2/docs/images/telephone.webp</screenshot>
 
     <dependencies>
         <php min-version="8.2" max-version="8.5"/>

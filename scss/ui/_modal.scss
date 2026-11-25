@@ -894,6 +894,11 @@
 				@media (max-width: $bp-640) {
 					z-index: 2;
 				}
+				// Écran tactile : la croix prend 44 px (cible au doigt) ; placée pour 36 px, elle
+				// touchait le filet sous le titre (11 → 55 px pour un en-tête de 56 px). Recentrée.
+				@media (pointer: coarse) and (max-width: $bp-640) {
+					top: 6px;
+				}
 
 				&:hover {
 					background-color: $colour-primary-50;
