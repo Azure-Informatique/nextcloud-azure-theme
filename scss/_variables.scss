@@ -335,13 +335,15 @@ $fenetre: ':not(:has(.viewer__file-wrapper))';
 
 // Fenêtres reconnues à leur contenu ou à la page qui les ouvre (autrefois des classes posées par
 // script). Les conditions de page sont dans :where() pour garder le poids d'une classe.
-// Agenda : « Abandonner les modifications ? » (classe posée sur le masque de la fenêtre) et
+// Agenda : « Abandonner les modifications ? » (popup : classe posée sur le masque de la fenêtre ;
+// éditeur complet, au téléphone comme sur ordinateur : fenêtre à simple message sans classe, reconnue
+// à son .dialog__text sur une page de l'Agenda) et
 // Transfert de propriété : « Confirmer le transfert » (.transfer-graph) ; sans le cadre secondaire,
 // leur texte et leurs boutons collaient au bord gauche.
 $sur-photos: ':where(:root:has(.app-photos) *)';
 $sur-comptes: ':where(:root:has(.account-management__navigation) *)';
 $dlg-mot-de-passe: #{css-module('passwordDialog')};
-$dlg-secondaire: ':is(:has(.new-node-dialog__form, .custom-reminder-modal, .systemtags-picker__input, .nc-generic-dialog, .office-overview__create-form, .version-label-modal, .reference-picker-modal--content, .collective-members, .modal-collective-wrapper, .modal-collective-members, .file-request-dialog__form, .transfer-graph, #{$dlg-mot-de-passe}), :where(:root:has(.register-daemon-config-body, .daemon-config-modal-details) *, :root:has(#{reglage-lien(groupware, admin)}) *):has(.dialog__name), :where(:root:has(.app-cookbook, .app-news) *:not(:has(.app-settings__navigation, .dialog__navigation))):has(.dialog__actions), :where(.cancel-confirmation-dialog *))';
+$dlg-secondaire: ':is(:has(.new-node-dialog__form, .custom-reminder-modal, .systemtags-picker__input, .nc-generic-dialog, .office-overview__create-form, .version-label-modal, .reference-picker-modal--content, .collective-members, .modal-collective-wrapper, .modal-collective-members, .file-request-dialog__form, .transfer-graph, #{$dlg-mot-de-passe}), :where(:root:has(.register-daemon-config-body, .daemon-config-modal-details) *, :root:has(#{reglage-lien(groupware, admin)}) *):has(.dialog__name), :where(:root:has(.app-cookbook, .app-news) *:not(:has(.app-settings__navigation, .dialog__navigation))):has(.dialog__actions), :where(.cancel-confirmation-dialog *), :where(:root:has(.app-calendar) *):has(.dialog__text))';
 $fenetres: (
 	secondary-popup: $dlg-secondaire,
 	auth-popup: ':has(#{$dlg-mot-de-passe})',

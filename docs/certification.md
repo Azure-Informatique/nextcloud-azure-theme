@@ -16,11 +16,13 @@ Ce document rassemble les vérifications menées avant la publication du Thème 
 
 ## Version 1.1.3 : correctifs, sécurité et non-régression
 
-La 1.1.3 corrige trois points d'affichage, sans autre changement :
+La 1.1.3 corrige cinq points d'affichage, sans autre changement :
 
 1. **Agenda, événement en lecture seule** (agenda auquel on est abonné, par exemple un agenda Google) : l'icône du calendrier, qui flottait seule au-dessus des dates, est dans la colonne des icônes, sur la ligne de la première date ; la ligne « Ne se répète pas » est alignée de même (ordinateur et téléphone).
-2. **Agenda au téléphone** : croix à gauche et *Enregistrer* à droite sur la barre du haut de l'éditeur, titre en dessous.
-3. **Paramètres sur ordinateur** : Intégration GitHub (administration et personnel), Intégration Immich et Transfert de propriété occupent toute la largeur de leur carte (bridés à 450 ou 600 px ; pour GitHub, par le thème lui-même). Revue des 46 pages de paramètres des apps de la production : les autres largeurs maximales relevées sont voulues par Nextcloud (champs, formulaires courts) et restent inchangées.
+2. **Agenda au téléphone** : croix à gauche et *Enregistrer* à droite sur la barre du haut de l'éditeur, titre en dessous ; titre, dates et case « Journée entière » alignés sur le bord des champs (ils étaient 6 à 7 px plus à droite), titre modifiable toujours sur sa propre ligne.
+3. **Agenda, « Abandonner les modifications ? » depuis l'éditeur complet** (téléphone et ordinateur) : cadre des confirmations (texte collé au bord gauche) ; reconnue par une condition de la feuille commune vraie uniquement sur les pages de l'Agenda (jetons `.app-calendar` et `.dialog__text`), sans changement ailleurs : CSS normalisé identique au paquet précédent, jetons existants inchangés, fenêtres de confirmation de Fichiers et popup d'abandon identiques au pixel.
+4. **Agenda, champ Catégories** : libellé aligné sur le texte des listes voisines.
+5. **Paramètres sur ordinateur** : Intégration GitHub (administration et personnel), Intégration Immich et Transfert de propriété occupent toute la largeur de leur carte (bridés à 450 ou 600 px ; pour GitHub, par le thème lui-même). Revue des 46 pages de paramètres des apps de la production : les autres largeurs maximales relevées sont voulues par Nextcloud (champs, formulaires courts) et restent inchangées.
 
 | Contrôle | Résultat |
 |---|---|
@@ -28,7 +30,7 @@ La 1.1.3 corrige trois points d'affichage, sans autre changement :
 | CSS et scripts compilés, comparés au paquet 1.1.2 publié | règles ajoutées uniquement dans la feuille de l'Agenda (éditeur, dont un bloc réservé au téléphone) et dans les feuilles des sections Comptes connectés, Immich et Transfert de propriété (nouvelles feuilles = feuille générique + une règle) ; `azure-has.js` : jetons et code identiques, quatre feuilles ajoutées à sa table |
 | Parcours complet 1.1.2 / 1.1.3 au pixel | 266 paires d'écrans (tableau de bord, Fichiers, Deck, Talk, Agenda dont l'éditeur et un agenda Google en abonnement, Tâches, Formulaires, recherche, fenêtres de confirmation, 46 pages de paramètres en pleine page ; clair et sombre ; 1440 × 900 et téléphone tactile 390 × 844) : seuls les éléments corrigés changent. Écarts sans lien avec le thème, vérifiés à l'image : contenus dynamiques (journal, informations serveur, dernière tâche planifiée, horodatages, météo, fichiers récents, exemple de pronoms tiré au hasard) et panneau « Tâches non planifiées » resté ouvert dans une passe |
 | Nextcloud 35.0.3 | mêmes mesures qu'en 34 au pixel près : icônes de l'événement en lecture seule (279 px ordinateur, 18 px téléphone), barre du haut de l'éditeur, largeur des quatre réglages (862 px) |
-| Performances (passes alternées 1.1.2 / 1.1.3) | 6 passes alternées, médianes du recalcul de style (ms) : éditeur d'Agenda 142,7 → 143,6, événement Google 112,3 → 115,9, défilement 11,3 → 11,3, « Personnaliser » 89,3 → 85,0 ; page de paramètres GitHub mesurée à part sur 20 chargements par version : 111,4 → 113,7 (plages identiques) : aucune baisse |
+| Performances (passes alternées 1.1.2 / 1.1.3, puis 1.1.3 publiée / 1.1.3 corrigée : 20 mesures par version, défilement de Fichiers médiane 0,0 ms des deux côtés, éditeur d'Agenda 84,8 → 86,0 ms) | 6 passes alternées, médianes du recalcul de style (ms) : éditeur d'Agenda 142,7 → 143,6, événement Google 112,3 → 115,9, défilement 11,3 → 11,3, « Personnaliser » 89,3 → 85,0 ; page de paramètres GitHub mesurée à part sur 20 chargements par version : 111,4 → 113,7 (plages identiques) : aucune baisse |
 | Tests | PHPUnit 113 tests et 217 assertions, tests navigateur `jetons.mjs` (41 relevés) et `variantes.mjs`, REUSE 3.3, `info.xml` validé par le schéma de l'App Store : tout passe |
 | Production (Nextcloud 34.0.6) | déployée et vérifiée le 25 novembre 2026 |
 

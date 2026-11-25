@@ -1325,8 +1325,27 @@
 				inset-inline-start: 0;
 				height: 44px;
 			}
+			// Titre, dates (« De », « À », fuseau horaire) et case « Journée entière » : l'Agenda les
+			// décalait de 36 px, 6 à 7 px plus à droite que les champs du dessous (lieu, description…).
+			// Alignés sur le bord des champs (39 px), comme le reste de l'éditeur.
 			.app-full__header__top__first .property-title {
-				margin-inline-start: 37px;
+				margin-inline-start: 30px;
+			}
+			// Titre modifiable : toujours sur sa propre ligne, toute la largeur, sous la croix et le
+			// bouton (sinon il venait à côté du bouton dès que la place le permettait : 390 px et plus
+			// pour un nouvel événement). La lecture seule (titre + « … ») garde sa ligne unique.
+			.app-full__header__top__first .property-title:not(.property-title--readonly) {
+				min-width: calc(100vw - 48px);
+			}
+			.property-title-time-picker__time-pickers-from,
+			.property-title-time-picker__time-pickers-to {
+				padding-inline-start: 30px !important;
+			}
+			.property-title-time-picker__time-pickers__inner > .button-vue {
+				margin-inline-start: 30px !important;
+			}
+			.app-full__header__details-time .checkbox-radio-switch {
+				margin-inline-start: -4px;
 			}
 			// Agenda de l'événement (pastille + nom), seul sur sa ligne au téléphone : la pastille
 			// tombait 33 à 38 px à droite de la colonne des icônes (retrait de 32 px du bloc, marges
