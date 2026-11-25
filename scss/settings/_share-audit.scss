@@ -1,0 +1,186 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Audit des partages (app share_audit_dashboard) : Administration › Share Audit et
+ * Personnel › Audit de mes partages. Tableau de bord large (graphiques, tableau de tous
+ * les partages) monté dans #share-audit-dashboard / #share-audit-personal : ces
+ * identifiants propres à l'app suffisent à délimiter les règles.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use 'mixins' as *;
+
+$sad: ':is(#share-audit-dashboard, #share-audit-personal)';
+
+@mixin share-audit {
+	// Tableau de bord et tableau à neuf colonnes : la colonne de lecture s'élargit (comme le
+	// lecteur de logs), sinon les onglets passent sur deux lignes et le tableau défile.
+	.app-settings #{$contenu-reglages}:has(> #share-audit-dashboard, > #share-audit-personal) {
+		max-width: none;
+	}
+
+	#{$sad} {
+		// L'app pose ses titres sans marge haute ; la règle commune des sous-titres de carte
+		// (20 px au-dessus) les décollait du haut de chaque panneau.
+		h3 {
+			margin-top: 0 !important;
+		}
+		:is(.sad-panel__head, .sad-alerts-breakdown) h3,
+		.sad-section-title {
+			margin-bottom: 0 !important;
+		}
+
+		// Téléphone : le point séparateur restait seul sur sa ligne entre le titre et le sous-titre ;
+		// le bandeau d'alerte serrait son message dans une colonne étroite à côté du bouton.
+		@media (max-width: $bp-640) {
+			.sad-header__sep {
+				display: none;
+			}
+			// Barre d'outils du tableau (jetons, export CSV, taille de page) : sur plusieurs lignes,
+			// elle sortait de la carte de 35 px.
+			:is(.sad-list-toolbar, .sad-list-toolbar__right) {
+				flex-wrap: wrap;
+				min-width: 0;
+			}
+			// Alertes de sécurité : les puces (« Aucun mot de passe »…) restaient sur une ligne,
+			// tronquées et sorties de la rangée ; elles passent à la ligne.
+			.sad-alert__chips {
+				flex: 1 1 100%;
+				flex-wrap: wrap;
+				min-width: 0;
+			}
+			.sad-alert__chip {
+				max-width: 100%;
+			}
+			.sad-alert__actions {
+				flex: 1 1 auto;
+				flex-wrap: wrap;
+				min-width: 0;
+				max-width: 100%;
+			}
+			// « Trier par » et « Par page » : le choix rétrécit avec l'écran (il dépassait à 360 px).
+			.sad-pagesize {
+				max-width: 100%;
+				min-width: 0;
+				// Largeur minimale imposée en style par l'app : seule une déclaration !important la lève.
+				.v-select,
+				.vs__dropdown-toggle {
+					min-width: 0 !important;
+					max-width: 100%;
+				}
+			}
+			.sad-alert-row {
+				flex-wrap: wrap;
+				row-gap: 4px;
+				.sad-alert-row__msg {
+					flex: 1 1 100%;
+				}
+			}
+		}
+
+		// Bandeau « N partages nécessitent votre attention » : rangée grise de 4 px où « Examiner les
+		// alertes » se lisait comme du texte. Bandeau d'état de la charte (fond d'état, liseré gauche de
+		// 3 px, rayon 12) et vrai bouton secondaire (pilule cerclée).
+		.sad-alert-row {
+			border-radius: $rounded-12;
+			&.sad-alert-row--error {
+				background-color: $colour-red-50;
+				box-shadow: inset 3px 0 0 $colour-red-600;
+			}
+			&.sad-alert-row--warning {
+				background-color: $colour-yellow-50;
+				box-shadow: inset 3px 0 0 $colour-yellow;
+			}
+			.button-vue--tertiary {
+				@include outline-button;
+				&:hover {
+					border-color: $colour-blue-600;
+					background-color: $colour-primary-50;
+				}
+			}
+		}
+
+		// Onglets : six onglets ; au téléphone, une rangée qui défilait sans indice n'en montrait que
+		// deux. Ils passent à la ligne (comme le fait l'app) ; le trait sous l'onglet actif, placé
+		// sous la rangée, tomberait sur la rangée suivante : la pilule pleine suffit à le signaler.
+		.sad-tabs {
+			flex-wrap: wrap;
+			row-gap: 8px;
+			padding-bottom: 9px;
+		}
+		.sad-tab-wrap {
+			flex: none;
+			max-width: 100%;
+		}
+		@media (max-width: $bp-640) {
+			.sad-tab-wrap--active::after {
+				display: none;
+			}
+		}
+
+		// Tableaux (Tous les partages, alertes…) au téléphone : rangées sur une ligne comme le veut
+		// l'app (chemins abrégés par des points de suspension, plus de « plan.tx/t »), et le tableau
+		// défile dans sa carte. Une ombre au bord indique qu'il reste des colonnes de ce côté
+		// (fonds « local » qui la masquent une fois le bord atteint). La règle commune des réglages
+		// faisait du tableau lui-même un bloc défilant à cellules repliées : il redevient un tableau.
+		@media (max-width: $bp-640) {
+			.sad-table-wrapper {
+				background:
+					linear-gradient(to right, $colour-background 40%, transparent) left / 32px 100% no-repeat local,
+					linear-gradient(to left, $colour-background 40%, transparent) right / 32px 100% no-repeat local,
+					radial-gradient(farthest-side at 0 50%, color-mix(in srgb, $colour-forground 28%, transparent), transparent) left / 14px 100% no-repeat scroll,
+					radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, $colour-forground 28%, transparent), transparent) right / 14px 100% no-repeat scroll;
+				background-color: $colour-background;
+			}
+			// Classe doublée : l'emporte sur la règle commune (identifiant dans son :not()).
+			.sad-table-wrapper > .sad-table.sad-table {
+				display: table;
+				overflow: visible;
+				max-width: none;
+			}
+			// !important : la règle commune des tableaux replie les cellules (!important).
+			.sad-table-wrapper .sad-table :is(th, td):not(.sad-table__perms) {
+				white-space: nowrap !important;
+			}
+			// Rangées paires et survol : transparents, l'ombre du bord reste visible dessous.
+			.sad-table tbody tr:hover {
+				background-color: transparent;
+			}
+		}
+
+		// Courbe « Partages créés » au téléphone : douze mois sur 300 px, les libellés se chevauchaient
+		// (« déc.janv.févr. ») ; un mois sur deux.
+		@media (max-width: $bp-640) {
+			.sad-trend__xlabels text:nth-child(even) {
+				display: none;
+			}
+		}
+
+		// Tableaux : rangées à filets, survol canvas (liste du panel). Les rangées paires
+		// teintées avaient le fond des pastilles de type, qui y disparaissaient.
+		.sad-table tbody tr:nth-child(even) {
+			background-color: transparent;
+		}
+		.sad-table tbody tr:hover {
+			background-color: $main-page-bg-dashboard;
+		}
+
+		// Identifiant sous le nom et sous-titre des panneaux : 13 px au moins (12 px dans l'app).
+		:is(.sad-table__uid, .sad-panel__sub, .sad-recipient__meta) {
+			font-size: $text-13;
+		}
+		// Identifiant d'une alerte (détail) : texte secondaire plein (gris éclairci de l'app,
+		// 3,82:1 sur le fond toile ; muted : 7:1).
+		.sad-alert__uid {
+			color: $colour-forground-1;
+			opacity: 1;
+		}
+
+		// « Jamais » (lien sans expiration) : orange de l'app à 2:1 sur fond clair ; texte
+		// d'attention du thème (4,5:1 dans les deux thèmes).
+		.sad-expire-warn {
+			color: var(--color-warning-text);
+		}
+	}
+}

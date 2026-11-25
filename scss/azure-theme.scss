@@ -1,0 +1,415 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use 'fonts';
+@use 'variables' as *;
+@use 'themes' as *;
+@use 'settings/mixins' as *;
+@use 'dashboard/dashboard' as dash;
+@use 'account/account' as acc;
+@use 'ui/modal' as mod;
+@use 'ui/sidebar' as side;
+@use 'ui/detail-sidebar' as detside;
+@use 'ui/select' as select;
+@use 'ui/header-menus' as hmenu;
+@use 'files/files' as files;
+@use 'settings/settings' as set;
+@use 'activity/activity' as act;
+@use 'apps/apps' as apps;
+@use 'calendar/calendar' as cal;
+@use 'deck/deck' as deck;
+@use 'notes/notes' as notes;
+@use 'text/text' as text;
+@use 'collectives/collectives' as collectives;
+@use 'tasks/tasks' as tasks;
+@use 'mail/mail' as mail;
+@use 'ui/cadre' as cadre;
+
+@include transitions-racine;
+@include cadre.reduced-motion;
+
+// Liseré de l'élément actif (navigations, listes) : 3 px au bord de DÉBUT de l'entrée. box-shadow
+// n'a pas de forme logique : en droite-à-gauche, le décalage change de signe.
+[dir="rtl"] {
+	--azure-liseret: -3px;
+}
+
+// Cadre net et à plat : ni marge ni coin arrondi autour du contenu (Nextcloud pose 8 px et
+// 16 px par défaut, ce qui laissait un coin parasite en haut à droite). Déclaré sur body,
+// là où Theming déclare ces variables.
+body {
+	--body-container-margin: 0px !important;
+	--body-container-radius: 0px !important;
+}
+
+// Liens d'évitement du clavier, rangés hors de l'écran au repos : à 360 px leur bloc (365 px) élargissait
+// la page de 9 px (défilement horizontal possible). Jamais plus large que l'écran.
+#skip-actions:not(:focus-within) {
+	box-sizing: border-box;
+	max-width: calc(100vw - 6px);
+}
+
+// Cibles de 24 px au moins à la souris (WCAG 2.5.8) : rangées de cases et de boutons radio que des
+// règles de page ramenaient à 20 px, lien d'aide « ? » des sections (icône de 16 px).
+:root :is(#body-user, #body-settings, #body-public) {
+	.checkbox-radio-switch .checkbox-content {
+		min-height: 24px !important;
+	}
+	.settings-section__info {
+		box-sizing: border-box;
+		display: inline-flex !important;
+		align-items: center;
+		justify-content: center;
+		min-width: 24px !important;
+		min-height: 24px !important;
+	}
+}
+
+// Écrans tactiles (aucun survol) : après un toucher, Nextcloud garde la rangée d'une case ou d'un
+// interrupteur teintée (gris, ou bleu une fois cochée) (« survol » ou focus resté actif, ex. « Do not show this warning the next
+// time » dans la fenêtre du chiffrement). Fond d'origine à ces états, sauf focus au clavier
+// (:focus-visible). Les choix en forme de bouton (--button-variant) gardent leur fond d'état.
+@media (hover: none) {
+	:root :is(#body-user, #body-settings, #body-public) .checkbox-radio-switch:not(.checkbox-radio-switch--button-variant):is(:hover, :focus-within) > .checkbox-radio-switch__input:not(:focus-visible) + .checkbox-radio-switch__content {
+		background-color: transparent;
+	}
+}
+
+// Téléphone (pointeur tactile, écran étroit) : cibles de 44 px au doigt (charte). Variable officielle
+// de Nextcloud (34 px par défaut) : boutons, champs, listes déroulantes et cases de @nextcloud/vue
+// suivent sans règle propre. Identifiant : l'emporte sur la palette posée sur [data-theme-…].
+@media (pointer: coarse) and (max-width: $bp-640) {
+	:root :is(#body-user, #body-settings, #body-public) {
+		--default-clickable-area: 44px;
+		// Hauteurs que le thème fixe ailleurs à 34 px ou moins (rangées de cases compactes,
+		// listes déroulantes, champs) : 44 px au doigt. !important : ces règles de page le sont.
+		.checkbox-radio-switch .checkbox-content {
+			min-height: 44px !important;
+			align-items: center !important;
+		}
+		// Liste déroulante à valeur unique : 44 px au moins, plus si son libellé passe sur deux lignes.
+		.v-select.select:not(.vs--multiple) .vs__dropdown-toggle:not(.nc-select.vs--single *) {
+			height: auto !important;
+			min-height: 44px !important;
+		}
+		.input-field__main-wrapper .input-field__input:not(.vs__search *),
+		input:is([type='text'], [type='password'], [type='email'], [type='url'], [type='number'], [type='search'], [type='tel'], [type='date']):not(.vs__search, .vs__search *, .input-field__input) {
+			height: 44px !important;
+			min-height: 44px !important;
+		}
+		// Sélection multiple : champ de 44 px, pastilles à 7 px du contour.
+		.v-select.select.vs--multiple .vs__dropdown-toggle {
+			min-height: 44px !important;
+		}
+		.v-select.select.vs--multiple .vs__selected-options {
+			min-height: 42px !important;
+			padding: 7px 0 7px 7px !important;
+		}
+		// Lien d'aide « ? » des sections : cible de 44 px autour de l'icône, sans décaler le titre.
+		.settings-section__info {
+			min-width: 44px !important;
+			min-height: 44px !important;
+			margin-block: -10px !important;
+			margin-inline: -10px !important;
+		}
+		#header :is(.app-menu__waffle, .header-end .header-menu__trigger, .header-end .header-menu > button, .unified-search-menu .header-menu__trigger) {
+			--button-size: 44px !important;
+		}
+		// Avec ces cibles de 44 px, logo + menu des apps (134 px) et les cinq boutons de droite (220 px)
+		// ne tenaient plus avec la marge droite de 12 px de Nextcloud à 360 px : le menu des apps et
+		// l'Assistant se recouvraient de 6 px. Marge de 6 px (l'avatar reste à 12 px du bord à l'œil).
+		#header .header-end {
+			margin-inline-end: 6px;
+		}
+		// Bouton dans le champ (« œil » des mots de passe, effacer…) : Nextcloud le dessine 4 px plus
+		// petit que la zone cliquable (40 px) ; 44 px, centré dans la hauteur du champ (comme sur la
+		// page de connexion). Le retrait du texte suit déjà la zone cliquable.
+		.input-field__trailing-button.button-vue {
+			--button-size: 44px;
+			inset-block: 0 !important;
+			width: 44px !important;
+			height: 44px !important;
+			margin-block: auto !important;
+			// Le champ fait lui aussi 44 px : le fond de survol (rond de 36 px) et l'anneau de focus
+			// sont tracés 4 px en retrait, à l'intérieur du filet, sans réduire la cible.
+			padding: 4px !important;
+			background-clip: content-box !important;
+			&:focus-visible {
+				outline-offset: -6px !important;
+			}
+		}
+	}
+}
+
+:root {
+	font-family: var(--font-face);
+	letter-spacing: $tracking-05;
+	// Boutons du site : pilules ; boutons d'icône : ronds, donc carrés exacts (largeur = hauteur =
+	// --button-size). Hauteur explicite : un parent flex qui étire ses enfants (rangée de 40 ou 44 px)
+	// ne les rend plus ovales. @nextcloud/vue 8 : classe --icon-only ; 9 : texte vide.
+	.button-vue:not(.button-vue--icon-only) {
+		border-radius: var(--border-radius-pill);
+	}
+	// Bouton dans un champ (« œil » des mots de passe…) : anneau de focus tracé dans le bouton ; à
+	// l'extérieur, il recouvrait le filet du champ (bouton de 30 px dans un champ de 34 px).
+	.input-field__trailing-button.button-vue:focus-visible {
+		outline-offset: -2px;
+	}
+	// !important : Nextcloud fixe en dur certaines hauteurs (bouton du menu des applications à la
+	// hauteur de l'en-tête) ; la hauteur suit ici la largeur, quelle qu'elle soit.
+	.button-vue.button-vue--icon-only,
+	.button-vue:has(.button-vue__text:empty):not(.button-vue--wide) {
+		height: auto !important;
+		min-height: 0 !important;
+		aspect-ratio: 1 !important;
+		align-self: center;
+		border-radius: 50%;
+		// NcActions à action unique (.action-item) : Nextcloud passe le bouton en inline-block,
+		// l'icône n'y est plus centrée (1,5 px trop haut) ; même nature en ligne, mais flexible.
+		&.action-item {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+	}
+	main {
+		&.app-content {
+			border: 0 !important;
+			border-radius: 0 !important;
+			border-inline-start: 1px solid $theme-divider !important;
+			// Téléphone : la navigation se superpose, pas de filet collé au bord de l'écran.
+			@media (max-width: $bp-1023) {
+				border-inline-start: 0 !important;
+			}
+		}
+	}
+	.empty-content{
+		.button-vue--vue-secondary{
+			@include outline-button;
+		}
+	}
+	.app-navigation-toggle-wrapper{
+		margin-top: 2px;
+		// Téléphone : le rond de 44 px est centré dans la bande d'en-tête de 56 px des apps (Fichiers,
+		// magasin, Deck…) au lieu de descendre sur son filet.
+		@media (max-width: $bp-640) {
+			margin-top: calc((56px - var(--default-clickable-area)) / 2 - var(--app-navigation-padding, 8px));
+		}
+		.app-navigation-toggle{
+			background-color: $colour-background;
+			border: 1px solid $theme-divider;
+			border-radius: 50%;
+			&:hover{
+				background-color: $colour-primary-50 !important;
+				border-color: $colour-blue-600;
+				svg{
+					filter: $filter-primry-600;
+				}
+			}
+		}
+	}
+	#content {
+		&.app-dashboard {
+			margin-inline: 0;
+			border-radius: 0;
+			width: 100%;
+			background: $main-page-bg-dashboard;
+			margin-bottom: 0;
+			padding-bottom: 8px;
+			margin-top: $header-height;
+			min-height: calc(100dvh - $header-height);
+		}
+		&.app-activity {
+			margin-inline: 0;
+			border-radius: 0;
+			width: 100%;
+			background: $main-page-bg;
+			margin-bottom: 0;
+			padding-bottom: 8px;
+		}
+		&.app-office,
+		&.app-appstore,
+		&.app-contacts,
+		&.app-spreed,
+		&.app-collectives,
+		&.app-maps,
+		&.app-cookbook,
+		&.app-news,
+		&.app-tables,
+		&.app-forms,
+		&.app-notes,
+		&.app-calendar,
+		&.app-circles,
+		&.app-tasks,
+		&.app-cospend{
+			margin-inline: 0;
+			border-radius: 0;
+			width: 100%;
+			background: $main-page-bg-dashboard;
+			margin-bottom: 0;
+			padding-bottom: 8px;
+			margin-top: $header-height;
+			min-height: calc(100dvh - $header-height);
+		}
+		
+	}
+	.app-calendar{
+		main{
+			border-inline-start: 0 !important;
+		}
+		table{
+			border: 0 !important;
+		}
+	}
+	// Racine des apps Vue (NcContent : div#content-vue.content). :where() garde le poids d'une classe ;
+	// sans lui, la règle attrapait toute classe « content » (cellules et tableau de l'éditeur Text : en-tête
+	// d'un tableau Markdown haut de tout l'écran).
+	.content:where(#content-vue) {
+		margin-inline: 0;
+		border-radius: 0;
+		width: 100%;
+		background: $main-page-bg;
+		margin-bottom: 0;
+		min-height: calc(100dvh - var(--header-height));
+	}
+	
+	.app-mail{
+		.setup__form-content{
+			padding-inline: 16px;
+		}
+		.tabs-component-panels{
+			margin-top: 16px;
+		}
+		
+	}
+	.app-cookbook{
+		.wrapper{
+			align-items: center;
+		}
+	}
+	.app-navigation-toggle{
+		svg{
+			filter: $filter-forground-1
+		}
+	}
+	// Recherche unifiée de l'en-tête (bouton qui ouvre la fenêtre de recherche) : champ du panel, à
+	// plat. Nextcloud le dessine pour un en-tête coloré (voile noir à 15 %, ombre intérieure de 2 px
+	// en haut, flou d'arrière-plan, voile à 28 % et texte clair à l'appui) : sur l'en-tête paper, il
+	// en restait un liseré gris en haut, sans contour, puis un contour qui n'apparaissait qu'au
+	// survol et un double anneau au clavier. Ici, le champ de la charte : 40 px de haut (8 px de
+	// marge dans l'en-tête de 56 px), fond paper, contour ink/50 (≥ 3:1 ; le filet line, à 1,3:1, se
+	// confondait avec le filet de l'en-tête) ; survol contour ink ; focus clavier = contour
+	// azure-text de 2 px (comme les autres champs) ; aucun effet à l'appui.
+	// #header : les règles du composant sont injectées après nos feuilles, à poids égal.
+	#header .unified-search-input__button{
+		box-sizing: border-box;
+		height: 40px;
+		border: 1px solid var(--color-border-maxcontrast);
+		border-radius: $rounded-8;
+		background-color: $colour-background;
+		box-shadow: none;
+		backdrop-filter: none;
+		color: $colour-forground-1;
+		transition: border-color var(--animation-quick) ease-in-out;
+		&:hover{
+			border-color: $colour-forground;
+			background-color: $colour-background;
+		}
+		// !important : le cœur pose sur tout bouton au clavier un contour ink + un halo de 4 px en
+		// !important ; un seul anneau ici.
+		&:focus-visible{
+			outline: 0 !important;
+			border-color: $colour-blue-600;
+			box-shadow: 0 0 0 1px $colour-blue-600 !important;
+			background-color: $colour-background;
+		}
+		// !important : l'appui de Nextcloud est lui-même en !important (voile à 28 %, texte clair).
+		&:active{
+			background-color: $colour-background !important;
+			color: $colour-forground-1 !important;
+		}
+		.unified-search-input__label{
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-forground-1;
+			font-weight: $font-normal;
+		}
+		svg{
+			width: 18px;
+			height: 18px;
+			fill: $colour-forground-1;
+		}
+	}
+	.header-menu,
+	.app-menu__current-app-icon,
+	.app-menu__current-app-cog {
+		--header-menu-icon-mask: none;
+	}
+
+	// Champs de @nextcloud/vue 9 : Nextcloud trace leur contour par une ombre à 35 % d'opacité
+	// (≈ 1,3:1) ; la charte veut le contour ink/50 plein, à 3:1, comme les autres champs.
+	.input-field .input-field__input,
+	.textarea .textarea__input {
+		--input-border-box-shadow-light: 0 0 0 1px var(--input-border-color);
+		--input-border-box-shadow-dark: 0 0 0 1px var(--input-border-color);
+	}
+
+	// « Personnes actives » de l'éditeur Text (icône + pile d'avatars, sans texte) : coins d'élément,
+	// pas une pilule (qui, sans texte, se lisait comme un ovale).
+	.button-vue.avatar-list {
+		border-radius: $rounded-8;
+	}
+
+	// Avatar qui ouvre la carte de profil (Talk, partage…) : Nextcloud retire son contour de focus
+	// sans le remplacer ; anneau azure-text au clavier, comme les autres contrôles.
+	.avatardiv .avatar-profile-popover__trigger:focus-visible {
+		outline: 2px solid $colour-blue-600;
+		outline-offset: 2px;
+		border-radius: 50%;
+	}
+
+	// Icône « étincelle » de l'Assistant (NcAssistantIcon) : un dégradé violet est dessiné dans le
+	// SVG lui-même ; ses arrêts prennent la couleur à plat de la palette.
+	[class*="assistantIcon__svg"] stop {
+		stop-color: var(--color-element-assistant-icon);
+	}
+
+	// Bouton d'icône seule de @nextcloud/vue 9 (Fichiers de Nextcloud 36, apps Vue 3) : il n'a plus
+	// la classe --icon-only et prend --button-radius comme remplissage latéral ; avec le rayon de
+	// 12 px de la charte, l'icône d'un bouton de 34 px était écrasée à 10 px. !important : la règle
+	// du composant est injectée après nos feuilles, à spécificité égale.
+	.button-vue:has(.button-vue__text:empty):not(.button-vue--wide) {
+		--button-padding: 0px !important;
+	}
+
+
+	// Feuille commune : composants partagés et tout ce qu'une app peut afficher hors de ses pages.
+	// Le reste de chaque app est dans scss/azure-app-<app>.scss (css/azure-app-<app>.css), chargé sur
+	// ses seules pages, puis les règles communes finales de scss/azure-cadre.scss, qui l'emportent
+	// sur tout à poids égal (lib/Service/PageAssets.php fixe cet ordre).
+	@include mod.modal;
+	@include side.sidebar;
+	@include detside.detail-sidebar;
+	@include select.select;
+	@include hmenu.header-menus;
+	@include files.files-shared;
+	@include dash.dashboard-shared;
+	@include acc.account;
+	@include act.activity;
+	@include apps.apps;
+	@include set.settings;
+	@include cal.calendar-settings;
+	@include cal.calendar-trashbin;
+	@include collectives.collectives-dialogs;
+	@include collectives.collectives-versions;
+	@include deck.deck-settings;
+	@include deck.deck-filter-popover;
+	@include deck.deck-card-selector;
+	@include notes.notes-dialogs-shared;
+	@include text.text-menubar;
+	@include tasks.tasks-create-dialog;
+	@include mail.mail-dialogs;
+	@include mail.mail-setup;
+}

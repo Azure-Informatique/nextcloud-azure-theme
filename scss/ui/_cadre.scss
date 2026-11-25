@@ -1,0 +1,604 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Cadre commun à toutes les pages connectées, sur le modèle du panel du site :
+ * en-tête paper à plat séparé par un filet, boutons d'icône ronds, menus et popovers
+ * paper + filet + ombre « float », bulles « nuit », notifications toast inversées.
+ */
+@use 'sass:string';
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../settings/mixins' as *;
+
+$nuit: string.unquote($brand-nuit);
+
+@mixin cadre {
+	// ── En-tête ─────────────────────────────────────────────────────────────
+	#header {
+		box-shadow: inset 0 -1px 0 $theme-divider;
+
+		// Nom de l'application courante : ink, 600.
+		.app-menu__current-app .button-vue__text {
+			font-weight: $font-semibold;
+			color: $colour-forground;
+		}
+
+		// Boutons d'icône (menu des apps, recherche au téléphone, assistant, notifications, contacts,
+		// compte) : ronds de 40 px centrés dans l'en-tête, sans contour, survol canvas (bouton d'icône
+		// du panel). En 56 px, le rond de survol touchait le haut de l'en-tête et son filet ; au
+		// téléphone, le bouton de 34 px restait collé en haut de l'en-tête.
+		.app-menu__waffle,
+		.header-end .header-menu__trigger,
+		.header-end .header-menu > button,
+		.unified-search-menu .header-menu__trigger {
+			--button-size: 40px !important;
+			border: 0 !important;
+			border-radius: 50% !important;
+			&:hover,
+			&:focus-visible {
+				background-color: $main-page-bg-dashboard !important;
+			}
+		}
+		.header-end .header-menu {
+			min-width: 40px;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+		}
+		// Très petit écran (320 px) : boutons de 34 px, sinon le menu des apps chevauche la recherche.
+		@media (max-width: 359px) {
+			.app-menu__waffle,
+			.header-end .header-menu__trigger,
+			.header-end .header-menu > button,
+			.unified-search-menu .header-menu__trigger {
+				--button-size: 34px !important;
+			}
+			.header-end .header-menu {
+				min-width: 34px;
+			}
+		}
+		// App courante : pilule de 40 px ; le bouton garde la hauteur de l'en-tête (cible), le fond
+		// est limité à la boîte de contenu.
+		.app-menu__current-app {
+			padding: max(0px, calc((var(--header-height, 56px) - 40px) / 2)) !important;
+			background-clip: content-box !important;
+			border-radius: $rounded-full !important;
+			.button-vue__wrapper {
+				padding-inline: 8px;
+			}
+			&:hover,
+			&:focus-visible {
+				background-color: $main-page-bg-dashboard !important;
+			}
+		}
+		// Focus clavier : un seul langage dans tout l'en-tête — anneau bleu de marque de 2 px, à 2 px de
+		// la forme visible (rond des boutons d'icône et de l'avatar, pilule de l'app courante, coins
+		// du logo). Nextcloud y mêlait un anneau ink, un simple trait sous l'icône (logo,
+		// notifications, contacts, Assistant) et un anneau décollé de la pilule. !important : le cœur
+		// pose ses focus en !important ou avec un identifiant. La recherche garde son contour de champ.
+		.button-vue:focus-visible,
+		#nextcloud:focus-visible,
+		.header-menu button:focus-visible {
+			outline: 2px solid $colour-brand !important;
+			outline-offset: 2px !important;
+			box-shadow: none !important;
+		}
+		// Logo : sa boîte occupe toute la hauteur de l'en-tête ; anneau à l'intérieur, loin du filet.
+		#nextcloud:focus-visible {
+			border-radius: $rounded-8;
+			outline-offset: -4px !important;
+		}
+		#nextcloud:focus-visible::after,
+		.header-menu button:focus-visible::after {
+			display: none !important;
+		}
+		// App courante : le fond (pilule de 40 px) est limité à la boîte de contenu ; l'anneau s'y
+		// cale aussi, au lieu d'entourer toute la hauteur de l'en-tête.
+		.app-menu__current-app:focus-visible {
+			outline-offset: calc(2px - max(0px, calc((var(--header-height, 56px) - 40px) / 2))) !important;
+		}
+	}
+
+	// Recherche unifiée : champ du panel (rayon 12 px, filet line, icône muted).
+	.unified-search-input__button,
+	.unified-search-input__field {
+		border-radius: $rounded-8 !important;
+	}
+
+	// Menus de l'en-tête (notifications, contacts, compte) : flottants.
+	.header-menu__wrapper {
+		border: 1px solid $theme-divider !important;
+		border-radius: $rounded-12 !important;
+		background-color: $colour-background !important;
+		box-shadow: $box-shadow-3 !important;
+	}
+	.header-menu__carret {
+		display: none !important;
+	}
+	.account-menu__list {
+		.list-item {
+			border-radius: $rounded-8;
+			&:hover,
+			&:focus-within {
+				background-color: $main-page-bg-dashboard;
+			}
+		}
+		.list-item__wrapper--active .list-item,
+		.list-item__wrapper.active .list-item {
+			background-color: $colour-primary-50 !important;
+			box-shadow: inset var(--azure-liseret, 3px) 0 0 $colour-brand;
+		}
+	}
+
+	// ── Navigation d'app ────────────────────────────────────────────────────
+	.app-navigation {
+		background-color: $colour-sidebar-bg;
+		border-inline-end: 0;
+
+		.app-navigation-caption {
+			min-height: 0;
+			padding: 18px 12px 6px 14px;
+			&:first-child {
+				padding-top: 12px;
+			}
+			.app-navigation-caption__name {
+				margin: 0;
+				padding: 0;
+				font-size: 13px !important;
+				line-height: $leading-20;
+				font-weight: $font-semibold !important;
+				color: $colour-forground-1 !important;
+				text-transform: none !important;
+				letter-spacing: normal !important;
+			}
+		}
+
+		// Élément actif : azure/10 + liseré de 3 px (plus fort que la teinte à 16 % de Nextcloud).
+		// Le :is() sur --legacy (vrai ou faux) donne le poids de la règle de NcAppNavigationItem,
+		// qui fixe la teinte en dur avec !important.
+		.app-navigation-entry.active:is(.app-navigation-entry--legacy, :not(.app-navigation-entry--legacy)),
+		.app-navigation-entry.active:is(.app-navigation-entry--legacy, :not(.app-navigation-entry--legacy)):hover {
+			background-color: $colour-primary-50 !important;
+			box-shadow: inset var(--azure-liseret, 3px) 0 0 $colour-brand;
+		}
+		.app-navigation-entry:not(.active):hover {
+			background-color: $colour-sidebar-link-bg !important;
+		}
+
+		// Bas de navigation (réglages de l'app, quota, corbeille…) : séparé par un filet, avec de l'air
+		// de part et d'autre (la 1re entrée était à 1 px sous le filet, et le dernier élément d'une
+		// longue liste venait le toucher).
+		.app-navigation__settings,
+		.app-navigation-entry__settings,
+		#app-settings {
+			border-top: 1px solid $theme-divider;
+			background-color: $colour-sidebar-bg;
+			padding-top: 10px !important;
+		}
+		.app-navigation__body {
+			padding-bottom: 10px;
+		}
+		// Entrées épinglées en bas sans bloc de réglages (Favoris : Corbeille, Paramètres de Favoris…) :
+		// même filet et même air que le bloc du bas, au lieu d'être collées à la fin de la liste.
+		.app-navigation__list + .app-navigation-entry-wrapper {
+			margin-top: 10px;
+			padding-top: 10px;
+			border-top: 1px solid $theme-divider;
+		}
+	}
+
+	// Bouton d'ouverture de la navigation : rond, filet line, fond paper.
+	.app-navigation-toggle-wrapper .app-navigation-toggle {
+		border-radius: 50% !important;
+		background-color: $colour-background;
+		border: 1px solid $theme-divider;
+		&:hover,
+		&:focus-visible {
+			background-color: $main-page-bg-dashboard !important;
+			border-color: $colour-brand;
+		}
+	}
+
+	// ── Popovers et menus d'actions : paper, filet, rayon 12 px, ombre float ──
+	.v-popper__popper:not(.v-popper--theme-tooltip) .v-popper__inner {
+		background-color: $colour-background;
+		border: 1px solid $theme-divider;
+		border-radius: $rounded-8;
+		box-shadow: $box-shadow-3;
+		color: $colour-forground;
+	}
+	.v-popper__popper .v-popper__wrapper {
+		box-shadow: none;
+		border-radius: $rounded-8;
+	}
+	.v-popper__arrow-container {
+		display: none;
+	}
+	// Menus d'actions (NcActions) de toutes les apps. Modèle : menu déroulant du panel
+	// (Dossiers.tsx) : entrées ≥ 40 px, 0,875 rem, icône dans une case de 28 px, survol canvas.
+	// Toutes les familles d'icônes (classe icon-*, .icon-vue, .material-design-icon) ont la même
+	// case : les libellés restent alignés d'une entrée à l'autre.
+	// Menu plus haut que la place disponible : il défile au lieu de sortir de l'écran (la dernière
+	// entrée, souvent « Supprimer », restait inaccessible au bas d'une fenêtre basse).
+	// Indice de défilement : une ombre (encre à 30 %, comme les tableaux défilants) apparaît en haut ou en bas tant qu'il reste des
+	// entrées de ce côté (au téléphone, la coupe tombait pile entre deux entrées et « Supprimer le
+	// fichier » restait invisible) ; les deux caches « local » le masquent aux extrémités.
+	.v-popper__popper:not(.v-popper--theme-tooltip) .v-popper__inner ul[role="menu"] {
+		max-height: calc(100dvh - var(--header-height) - 32px);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		background:
+			linear-gradient($colour-background 40%, transparent) center top / 100% 28px no-repeat local,
+			linear-gradient(transparent, $colour-background 60%) center bottom / 100% 28px no-repeat local,
+			radial-gradient(farthest-side at 50% 0, color-mix(in srgb, $colour-forground 30%, transparent), transparent) center top / 100% 16px no-repeat scroll,
+			radial-gradient(farthest-side at 50% 100%, color-mix(in srgb, $colour-forground 30%, transparent), transparent) center bottom / 100% 16px no-repeat scroll;
+	}
+	// Menus de NcActions : Nextcloud borne déjà l'enveloppe (.v-popper__inner) à la place disponible
+	// (hauteur en ligne) et la fait défiler. La liste ne défile donc pas en plus : imbriquées, ses
+	// dernières entrées restaient hors de vue au doigt (son défilement s'arrêtait à elle) et son
+	// indice tombait sous le bord visible. Défilement et indice passent sur l'enveloppe.
+	// (.v-popper__wrapper : Nextcloud redéfinit le fond de l'enveloppe au même poids, après nous.)
+	.v-popper__popper.action-item__popper .v-popper__wrapper .v-popper__inner {
+		overscroll-behavior: contain;
+		background-image:
+			linear-gradient($colour-background 40%, transparent),
+			linear-gradient(transparent, $colour-background 60%),
+			radial-gradient(farthest-side at 50% 0, color-mix(in srgb, $colour-forground 30%, transparent), transparent),
+			radial-gradient(farthest-side at 50% 100%, color-mix(in srgb, $colour-forground 30%, transparent), transparent);
+		background-position: center top, center bottom, center top, center bottom;
+		background-size: 100% 28px, 100% 28px, 100% 16px, 100% 16px;
+		background-repeat: no-repeat;
+		background-attachment: local, local, scroll, scroll;
+		ul[role="menu"] {
+			max-height: none;
+			overflow-y: visible;
+			background: none;
+		}
+	}
+	.v-popper__popper:not(.v-popper--theme-tooltip) .v-popper__inner {
+		li.action {
+			> .action-button,
+			> .action-link,
+			> .action-router,
+			> .action-input,
+			> .action-text {
+				// 36 px à la souris (un menu de 13 entrées tient dans 900 px de haut), 40 px au doigt.
+				min-height: 36px;
+				padding-inline: 6px 14px;
+				gap: 8px;
+				// Icône et libellé centrés sur la même ligne médiane (Nextcloud les cale en haut :
+				// sur une entrée de 40 px, l'icône restait 3,5 px au-dessus du texte).
+				align-items: center;
+				border-radius: $rounded-8;
+				color: $colour-forground;
+				@media (pointer: coarse) {
+					min-height: 40px;
+				}
+			}
+			.action-checkbox,
+			.action-radio {
+				min-height: 40px;
+				border-radius: $rounded-8;
+			}
+			&:hover,
+			&:focus-within {
+				background-color: transparent;
+			}
+			> .action-button:hover:not(:disabled),
+			> .action-button:focus-visible,
+			> .action-link:hover,
+			> .action-link:focus-visible,
+			> .action-router:hover,
+			> .action-router:focus-visible,
+			.action-checkbox:hover,
+			.action-radio:hover {
+				background-color: $main-page-bg-dashboard;
+				.action-button__icon,
+				.icon-vue,
+				.material-design-icon {
+					color: $colour-forground;
+				}
+			}
+			&.active > .action-button,
+			.action-button--active {
+				background-color: $colour-primary-50;
+			}
+			.action-button__icon,
+			.action-link__icon,
+			.action-router__icon,
+			.action-text__icon,
+			> .action-button > .icon-vue,
+			> .action-button > .material-design-icon,
+			> .action-link > .icon-vue,
+			> .action-link > .material-design-icon,
+			> .action-router > .icon-vue,
+			> .action-router > .material-design-icon {
+				flex: 0 0 28px;
+				width: 28px;
+				min-width: 28px;
+				height: 28px;
+				min-height: 28px;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				// Nextcloud cale l'icône en haut (align-self: flex-start) : réduite à 28 px, elle
+				// restait 4,5 px (8,5 au doigt) au-dessus du libellé, et sous le texte d'une entrée
+				// sur deux lignes. Centrée sur la ligne médiane de l'entrée.
+				align-self: center !important;
+				margin-block: 0 !important;
+				color: $colour-forground-1;
+			}
+			.action-button__text,
+			.action-link__text,
+			.action-router__text,
+			.action-text__text,
+			.action-button__longtext,
+			.action-link__longtext {
+				padding: 0;
+				font-size: 0.875rem;
+				line-height: 1.25rem;
+				font-weight: $font-medium;
+				color: $colour-forground;
+			}
+			.action-button__description,
+			.action-link__description {
+				font-size: $text-12;
+				color: $colour-forground-1;
+			}
+			// Action destructrice (supprimer) : rouge de la charte.
+			&.files-list__row-action--destructive > .action-button,
+			> .action-button--error {
+				.action-button__icon,
+				.icon-vue,
+				.material-design-icon,
+				.action-button__text {
+					color: $colour-red-600;
+				}
+			}
+		}
+		// Titre de groupe : casse normale, 0,8125 rem, 600, muted (charte).
+		li.action-caption,
+		li.app-navigation-caption {
+			min-height: 0;
+			height: auto;
+			margin: 0;
+			padding: 10px 12px 4px;
+			font-size: 13px;
+			line-height: 1.25rem;
+			font-weight: $font-semibold;
+			color: $colour-forground-1;
+			opacity: 1;
+			text-transform: none;
+			letter-spacing: normal;
+			.action-caption__name,
+			.app-navigation-caption__name {
+				margin: 0;
+				padding: 0;
+				font: inherit;
+				color: inherit;
+			}
+		}
+		li.action-separator {
+			margin-block: 4px;
+			border-color: $theme-divider;
+		}
+	}
+
+	// ── Boîtes de dialogue : paper, rayon 24 px, ombre float, voile nuit/50 ────
+	// Le voile passe par la variable de NcModal : nuit/50 pour les fenêtres, nuit/92 pour les
+	// voiles opaques (96 pour la visionneuse, files/_viewer) ; le voile clair (--light) reste
+	// celui de Nextcloud.
+	.modal-mask:not(.modal-mask--light) {
+		--backdrop-color: #{string.unquote($brand-nuit-rgb)};
+	}
+	.modal-mask .modal-container {
+		border-radius: $rounded-20;
+		background-color: $colour-background;
+		box-shadow: $box-shadow-3 !important;
+		@media (max-width: $bp-511) {
+			border-radius: $rounded-12;
+		}
+	}
+	// Filet line autour des fenêtres (pas de la visionneuse) : en sombre, la fenêtre et la page
+	// voilée sont presque du même ton.
+	.modal-mask .modal-container#{$fenetre} {
+		border: 1px solid $theme-divider;
+	}
+	.modal-mask .modal-container .modal-container__close {
+		border-radius: 50%;
+	}
+	.dialog__name,
+	.modal-name,
+	.modal-container h2.dialog__name {
+		font-size: 1.0625rem;
+		font-weight: $font-bold;
+		color: $colour-forground;
+		text-transform: none;
+		letter-spacing: normal;
+	}
+	// Titre d'une NcModal posé au-dessus de la fenêtre, sur le voile (hors visionneuse) : bulle « nuit »
+	// à texte blanc, lisible quel que soit le contenu voilé (blanc sur voile clair : 3:1 seulement).
+	.modal-mask:not(#viewer):not(.modal-mask--opaque) .modal-header :is(.modal-name, .modal-header__name) {
+		width: fit-content;
+		max-width: calc(100% - 32px);
+		margin-inline: auto;
+		padding: 2px 12px;
+		border-radius: $rounded-full;
+		background-color: $nuit;
+		color: $colour-white;
+		font-size: 0.875rem;
+		font-weight: $font-semibold;
+	}
+
+	// ── Bulles (tooltips) : « nuit », 13 px, 600, blanc ────────────────────────
+	.v-popper--theme-tooltip .v-popper__inner {
+		background-color: $nuit !important;
+		color: $colour-white !important;
+		border: 0;
+		border-radius: $rounded-6;
+		padding: 4px 10px;
+		font-size: 13px;
+		font-weight: $font-semibold;
+		box-shadow: $box-shadow-3;
+	}
+
+	// ── Champs NcInputField / NcTextArea : contour ink/50, focus azure-text ──
+	.input-field__main-wrapper .input-field__input,
+	.textarea__main-wrapper .textarea__input {
+		border-color: var(--color-border-maxcontrast);
+		border-radius: $rounded-8;
+		background-color: $colour-background;
+		color: $colour-forground;
+		&:focus,
+		&:focus-visible {
+			border-color: $colour-blue-600 !important;
+			box-shadow: 0 0 0 1px $colour-blue-600 !important;
+			outline: 0;
+		}
+	}
+	.input-field__label,
+	.textarea__label {
+		color: $colour-forground-1;
+	}
+
+	// Champs natifs des gabarits PHP (paramètres, magasin d'apps).
+	#content input:is([type='text'], [type='password'], [type='email'], [type='url'], [type='number'], [type='search'], [type='tel'], [type='date'], [type='time']):not(.input-field__input):not(.vs__search),
+	#content select,
+	#content textarea:not(.textarea__input) {
+		border: 1px solid var(--color-border-maxcontrast);
+		border-radius: $rounded-8;
+		background-color: $colour-background;
+		color: $colour-forground;
+		&:focus,
+		&:focus-visible {
+			border-color: $colour-blue-600;
+			outline: 0;
+			box-shadow: 0 0 0 1px $colour-blue-600;
+		}
+	}
+
+	// ── Cases et interrupteurs (NcCheckboxRadioSwitch) ───────────────────────
+	// Éteint : ink/50 (contour de champ, >= 3:1) ; allumé : bleu de marque. L'icône suit
+	// currentColor, quelle que soit la règle d'app qui lui donnait le filet « line ».
+	.checkbox-radio-switch {
+		.checkbox-content__icon,
+		.checkbox-radio-switch__icon {
+			color: var(--color-border-maxcontrast) !important;
+			// Nextcloud colore l'enveloppe de l'icône (.material-design-icon) en dur : tout
+			// le contenu de la case suit l'état porté par la case.
+			* {
+				color: inherit !important;
+			}
+			svg,
+			svg path {
+				fill: currentColor !important;
+			}
+		}
+		&.checkbox-radio-switch--checked .checkbox-content__icon,
+		&.checkbox-radio-switch--checked .checkbox-radio-switch__icon {
+			color: $colour-brand !important;
+		}
+		&.checkbox-radio-switch--disabled .checkbox-content__icon {
+			opacity: 0.6;
+		}
+		// Interrupteur : Nextcloud le décale par une marge haute calculée pour sa hauteur de rangée
+		// (34 px) ; le thème ramène les rangées à la hauteur du libellé, l'interrupteur restait alors
+		// 2,75 px sous l'axe du texte. Sans marge, il est centré sur la ligne.
+		.checkbox-content-switch .checkbox-content__icon {
+			margin-block: 0 !important;
+		}
+		input:focus-visible + .checkbox-content {
+			outline: 2px solid $colour-brand;
+			outline-offset: 2px;
+		}
+	}
+
+	// ── Notifications toast : inversées (ink / paper), rayon 16 px, ombre float ──
+	.toastify.dialogs {
+		min-height: 48px;
+		padding: 12px 16px;
+		border: 0 !important;
+		border-radius: $rounded-12 !important;
+		background-color: $colour-forground !important;
+		color: $colour-background !important;
+		font-size: $text-heading-5;
+		font-weight: $font-medium;
+		box-shadow: $box-shadow-3 !important;
+		// Téléphone : gouttières de 16 px des deux côtés, comme les cartes ; une bulle longue allait
+		// de 0 à 10 px du bord droit, collée au bord gauche.
+		@media (max-width: $bp-640) {
+			box-sizing: border-box;
+			max-width: calc(100vw - 32px);
+			&.toastify-right {
+				inset-inline-end: 16px;
+			}
+		}
+		// Succès, avertissement, erreur : un trait de 3 px à la couleur d'état, à gauche (comme
+		// l'élément actif de la navigation), donne le sens d'un coup d'œil, sans changer la bulle.
+		// Trait arrondi posé à l'intérieur, en retrait des coins : une ombre intérieure suivait
+		// l'arrondi de la bulle et se lisait comme un croissant aux deux bouts.
+		&::before {
+			filter: none;
+		}
+		&.toast-success,
+		&.toast-warning,
+		&.toast-error {
+			&::before {
+				content: "";
+				position: absolute;
+				inset-block: 10px;
+				inset-inline-start: 6px;
+				width: 3px;
+				border-radius: 3px;
+				background-color: $colour-bulle-ok;
+			}
+		}
+		&.toast-warning::before {
+			background-color: $colour-bulle-alerte;
+		}
+		&.toast-error::before {
+			background-color: $colour-bulle-erreur;
+		}
+		.toast-close,
+		.toast-undo-button {
+			color: $colour-background !important;
+			filter: var(--background-invert-if-bright);
+			border-radius: 50%;
+		}
+		// Croix (icône noire en image de fond) : une seule inversion, celle du bouton ci-dessus.
+		// Nextcloud inverse aussi l'icône en sombre ; cumulées, la croix restait blanche sur la bulle
+		// claire (1,1:1). Opacité relevée : contraste ≥ 3:1 dans les deux thèmes.
+		// !important : Nextcloud pose l'opacité (0,4) et le filtre de l'icône par une classe doublée.
+		.toast-close {
+			opacity: 0.7 !important;
+			&::before {
+				filter: none !important;
+			}
+			&:hover,
+			&:focus-visible {
+				opacity: 1 !important;
+			}
+		}
+		.toast-undo-button {
+			filter: none;
+			border-radius: $rounded-full;
+		}
+	}
+}
+
+// Réduction des mouvements : aucune transition dans le cadre, durées des transitions du thème à 0
+// ($duree-douce, $duree-vive). Inclus en tête de azure-theme.scss.
+@mixin reduced-motion {
+	@media (prefers-reduced-motion: reduce) {
+		:root {
+			--azure-duree-transition: 0s;
+			--azure-duree-transition-vive: 0s;
+		}
+		#header *,
+		.app-navigation *,
+		.v-popper__popper * {
+			transition-duration: 0.001ms !important;
+		}
+	}
+}

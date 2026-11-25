@@ -1,0 +1,12 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Pages des réglages, Nextcloud 35 et suivants. Compilé en css/azure-app-settings-nc35.css, chargé après css/azure-theme-nc35.css
+ * sur les pages de l'app quand Nextcloud ≥ 35.
+ */
+@use 'settings/settings-v35' as settings;
+
+:root {
+	@include settings.settings-pages;
+}

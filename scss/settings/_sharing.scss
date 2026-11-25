@@ -1,0 +1,70 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+@mixin sharing {
+	&#{reglage(sharing)}{
+		div{
+			&#files-sharing-personal-settings{
+				padding:20px 0;
+				p{
+					margin-top: 0;
+					@include secondary-checkbox;
+				}
+				.share-folder{
+					margin-top: 20px;
+					form{
+						.input-field{
+							@include input;
+							@media (max-width: $bp-512) {
+								width: 100%;
+								max-width: 100%;
+							}
+						}
+					}
+				}
+			}
+			&#vue-personal-federated{
+				padding:0 0 20px;
+				border-bottom: 1px solid $theme-divider;
+				h2{
+					gap: 6px;
+					.settings-section__info{
+						width: 16px;
+						height: 16px;
+						display: block;
+						margin: 0;
+						svg{
+							width: 16px;
+							height: 16px;
+							fill: $colour-forground;
+						}
+					}
+				}
+				.input-field{
+					@include input(16px);
+				}
+				.social-button{
+					font-size: $text-heading-5;
+					line-height: $leading-20;
+					font-weight: $font-medium;
+					color: $colour-forground;
+					// Boutons en ligne dans un paragraphe : l'écart est porté à droite de chacun (et non
+					// à gauche sauf le premier), pour que chaque ligne repliée commence au même bord
+					// (au téléphone, les lignes suivantes étaient décalées de 7,5 px).
+					.button-vue--secondary{
+						@include outline-button;
+						width: fit-content !important;
+						margin-top: 8px;
+						margin-inline: 0 8px;
+					}
+				}
+			}
+		}
+	}
+}

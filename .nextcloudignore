@@ -1,0 +1,46 @@
+# SPDX-FileCopyrightText: 2026 Nexeno contributors
+# SPDX-FileCopyrightText: 2026 Azure Informatique
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Files left out of the App Store package (used by `make appstore` and krankerl).
+# Shipped: appinfo, lib, templates, l10n, img, css, js (incl. js/page), licences and readmes.
+
+# Version control and package files
+/.git
+/.github
+/.gitignore
+/.nextcloudignore
+/krankerl.toml
+/Makefile
+
+# Sources, compiled into css/ and js/page/ during the build
+/scss
+/src
+/scripts
+/webpack.config.js
+/eslint.config.mjs
+/stylelint.config.mjs
+/package.json
+/package-lock.json
+/node_modules
+
+# PHP tooling
+/composer.json
+/composer.lock
+/vendor
+/psalm.xml
+/.php-cs-fixer.dist.php
+/.php-cs-fixer.cache
+/tests
+/docs
+
+# Licence metadata and translation sources
+/REUSE.toml
+/translationfiles
+
+# Build output and local files
+/build
+.DS_Store
+*.map
+*.log
+._*

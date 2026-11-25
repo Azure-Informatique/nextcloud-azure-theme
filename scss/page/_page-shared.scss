@@ -1,0 +1,524 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../images' as *;
+@use '../themes' as *;
+@use '../settings/mixins' as *;
+
+// Swaps the overview showcase screenshots to their dark versions (see the showcase rules in `shared`).
+@mixin showcase-dark-images {
+	.showcase-img--light {
+		display: none;
+	}
+	.showcase-img--dark {
+		display: block;
+	}
+}
+
+@mixin shared {
+	.app-azure_theme {
+		font-family: var(--font-face);
+
+		// "Apps" caption: line up with the nav items' 12px inner padding and drop the
+		// default top margin Nextcloud adds to captions that are not first in the list.
+		// #content raises specificity above Nextcloud's scoped caption styles.
+		&#content .app-navigation-list .app-navigation-caption {
+			margin: 0;
+			padding: 10px 12px 6px;
+		}
+	}
+
+	.v-popper__inner {
+		.action-link__icon:empty + .action-link__longtext,
+		.action-link__icon:empty + .action-link__text {
+			margin-inline-start: 0;
+		}
+	}
+
+	.azure-content {
+		padding: 55px 24px 0;
+		.badge-pill {
+			display: inline-flex;
+			font-size: $text-12;
+			line-height: $leading-16;
+			font-weight: $font-medium;
+			padding: 3px 10px;
+			border-radius: $rounded-10;
+			&.badge-pill--green {
+				background: $colour-green-50;
+				color: $colour-green-700;
+			}
+
+			&.badge-pill--gray {
+				background: $colour-gray-100;
+				color: $colour-forground;
+			}
+
+			&.secondary{
+				border-radius: $rounded-6;
+				padding: 6px 8px;
+				font-size: $text-12;
+				line-height: $leading-16;
+				font-weight: $font-medium;
+			}
+		}
+
+		.suite-app-wrapper{
+			.hero-section{
+				padding: 24px 0;
+				border-radius: $rounded-6;
+				display: flex;
+				align-items: center;
+				gap: 24px;
+				padding-top: 36px;
+				.hero-section-text,
+				.hero-image-wrapper{
+					width: 50%;
+					@media (max-width:$bp-1199) {
+						width: 100%;
+					}
+				}
+				.hero-section-text{
+					display: flex;
+					flex-direction: column;
+					gap: 24px;
+					.pre-heading{
+						width: fit-content;
+						padding: 4px 8px;
+						display: flex;
+						border-radius: $rounded-full;
+						border: 1px solid $theme-divider;
+						span{
+							display: block;
+							font-size: $text-heading-5;
+							line-height: $leading-20;
+							// Étiquette du site : texte azure-text, sans dégradé.
+							color: $colour-blue-600;
+							font-weight: $font-semibold;
+						}
+					}
+					.title{
+						h1{
+							font-size: $text-heading-1;
+							line-height: $leading-36;
+							color: $colour-forground;
+							font-weight: $font-bold;
+							span{
+								display: block;
+								color: $colour-blue-600;
+							}
+						}
+					}
+					.content-small{
+						p{
+							font-size: $text-heading-5;
+							line-height: $leading-20;
+							font-weight: $font-normal;
+							color: $colour-forground-1;
+						}
+					}
+					.hero-listing-wrapper{
+						display: flex;
+						flex-direction: column;
+						gap: 8px;
+						li{
+							font-size: $text-heading-5;
+							line-height: $leading-20;
+							font-weight: $font-normal;
+							color: $colour-forground-1;
+							position: relative;
+							padding-inline-start: 22px;
+							strong{
+								font-weight: $font-medium;
+								color: $colour-forground;
+							}
+							&::before{
+								content: "";
+								position: absolute;
+								top: 3px;
+								inset-inline-start: 0;
+								width: 16px;
+								height: 16px;
+								background: $icon-badge-check;
+								background-repeat: no-repeat;
+								// The icon is drawn in light-mode blue; this recolours it to the theme's primary.
+								filter: $filter-primry-600;
+							}
+						}
+					}
+				}
+				.hero-image-wrapper{
+					// The images have square corners; the wrapper rounds and clips them, so no
+					// background shows through at the corners in either theme.
+					.img-wrapper{
+						border-radius: $rounded-6;
+						overflow: hidden;
+						img{
+							// Not display: block, which would override the light/dark image swap.
+							vertical-align: top;
+							width: 100%;
+							height: 100%;
+							object-fit: cover;
+						}
+					}
+				}
+				@media (max-width:$bp-1366) {
+					padding-inline: 0;
+				}
+				// Empilé : 12 px sous l'illustration, plus les 12 px de la section suivante = 24 px, le
+				// rythme du reste de la page (l'illustration touchait presque la carte « Thème Azure »).
+				@media (max-width:$bp-1199) {
+					flex-direction: column;
+					align-items: start;
+					padding-bottom: 12px;
+				}
+			}
+			.apps-system-section {
+				padding: 12px 0;
+				.system-apps-wrapper{
+					width: 100%;
+					.app-card{
+						padding: 24px;
+						border: 1px solid $theme-divider;
+						border-radius: $rounded-6;
+						box-shadow: none;
+						display: flex;
+						flex-direction: column;
+						gap: 24px;
+						.app-card__header{
+							display: flex;
+							align-items: center;
+							justify-content: space-between;
+							gap: 16px;
+							flex-wrap: wrap;
+						}
+						.icon-name-wrapper{
+							display: flex;
+							align-items: center;
+							gap: 8px;
+							.icon{
+								color: $colour-blue-600;
+								width: 36px;
+								height: 36px;
+								flex-shrink: 0;
+								border: 1px solid $theme-divider;
+								border-radius: $rounded-8;
+								display: flex;
+								justify-content: center;
+								align-items: center;
+								svg{
+									width: 16px;
+									height: 16px;
+								}
+							}
+							.app-name{
+								display: flex;
+								flex-direction: column;
+								gap: 2px;
+								.name-wrapper{
+									display: flex;
+									align-items: center;
+									gap: 8px;
+									h3{
+										margin: 0;
+										font-size: $text-heading-3;
+										line-height: $leading-28;
+										color: $colour-forground;
+										font-weight: $font-semibold;
+									}
+								}
+								.version-wrapper{
+									display: flex;
+									span{
+										font-size: $text-heading-5;
+										line-height: $leading-20;
+										color: $colour-forground-1;
+										font-weight: $font-normal;
+									}
+								}
+							}
+						}
+						.app-desc{
+							p{
+								margin: 0;
+								font-size: $text-heading-5;
+								line-height: $leading-20;
+								text-align: start;
+								color: $colour-forground-1;
+								font-weight: $font-normal;
+							}
+						}
+						.app-action{
+							.checkbox-radio-switch{
+								@include checkbox-radio-switch;
+							}
+						}
+						// Three variant cards; spare width stays empty on the right, as in the design.
+						.variant-grid{
+							display: grid;
+							grid-template-columns: repeat(3, minmax(0, 266px));
+							gap: 24px;
+							&.variant-grid--disabled .variant-card__preview{
+								opacity: 0.5;
+								cursor: default;
+							}
+							&.variant-grid--disabled .variant-card__preview img,
+							&.variant-grid--disabled .variant-card__text h4{
+								cursor: default;
+							}
+							@media (max-width: $bp-1023) {
+								grid-template-columns: repeat(2, minmax(0, 266px));
+							}
+							@media (max-width: $bp-640) {
+								grid-template-columns: minmax(0, 1fr);
+							}
+						}
+						.variant-card{
+							display: flex;
+							flex-direction: column;
+							gap: 14px;
+							min-width: 0;
+							// The preview peeks out from the top-left padding and is cut off at the right and bottom.
+							.variant-card__preview{
+								padding: 16px 0 0 16px;
+								border: 1px solid transparent;
+								border-radius: $rounded-6;
+								background-color: $colour-primary-100;
+								overflow: hidden;
+								cursor: pointer;
+								img{
+									display: block;
+									width: 100%;
+									aspect-ratio: 250 / 150;
+									object-fit: cover;
+									object-position: left top;
+									border-start-start-radius: $rounded-6;
+									// Nextcloud core sets cursor: default on img directly, so it must be set here too.
+									cursor: pointer;
+								}
+							}
+							&.variant-card--selected .variant-card__preview{
+								border-color: $colour-blue-600;
+							}
+							.variant-card__text{
+								display: flex;
+								flex-direction: column;
+								gap: 8px;
+								h4{
+									margin: 0;
+									font-size: $text-heading-3;
+									line-height: normal;
+									cursor: pointer;
+									color: $colour-forground;
+									font-weight: $font-bold;
+								}
+								p{
+									margin: 0;
+									font-size: $text-heading-5;
+									line-height: $leading-20;
+									color: $colour-forground-1;
+									font-weight: $font-normal;
+								}
+							}
+							.checkbox-radio-switch{
+								@include checkbox-radio-switch;
+								@include checkbox-radio-switch-icon;
+								// Grid rows stretch the cards to equal height; pushing the radio to the bottom
+								// keeps all three radios on one line when a description wraps to more lines.
+								margin-top: auto;
+							}
+						}
+						@media (max-width: $bp-1366) {
+							padding: 16px;
+						}
+					}
+				}
+			}
+			.showcase-section{
+				padding-block: 24px;
+				.title{
+					h2{
+						font-size: $text-heading-1;
+						line-height: $leading-36;
+						color: $colour-forground;
+						font-weight: $font-bold;
+						margin-top: 0;
+						margin-bottom: 16px;
+						span{
+							color: $colour-blue-600;
+						}
+					}
+				}
+				.content-small{
+					margin-bottom: 24px;
+					p{
+						font-size: $text-heading-5;
+						line-height: $leading-20;
+						font-weight: $font-normal;
+						color: $colour-forground-1;
+					}
+				}
+				.showcase-grid{
+					display: grid;
+					gap: 16px;
+					margin-bottom: 16px;
+					.showcase-card{
+						border-radius: $rounded-6;
+						background-color: $secondary-card-bg;
+						padding: 24px 24px 0;
+						@media (max-width:$bp-1199) {
+							padding: 16px 16px 0;
+						}
+						.title{
+							h3{
+								margin: 0;
+								font-size: $text-heading-3;
+								line-height: $leading-28;
+								// Titre de carte de la charte : 700.
+								font-weight: $font-bold;
+								color: $colour-forground;
+								@media (max-width:$bp-1199) {
+									font-size: $text-heading-4;
+									line-height: $leading-22;
+								}
+							}
+						}
+						.content-small{
+							margin-bottom: 62px;
+							margin-top: 4px;
+							@media (max-width: $bp-1199) {
+								margin-bottom: 14px;
+							}
+							p{
+								// 14/20, as in Figma (Text-sm/Regular).
+								font-size: $text-heading-5;
+								line-height: $leading-20;
+								font-weight: $font-normal;
+								color: $colour-forground-1;
+							}
+						}
+						.showcase-card-img{
+							display: flex;
+							padding-inline: 12px;
+							@media (max-width: $bp-1199) {
+								padding-inline: 0;
+							}
+							img{
+								width: 100%;
+								border-radius: $rounded-6;
+								border: 2px solid $theme-divider;
+								border-bottom: 0;
+								border-bottom-left-radius: 0;
+								border-bottom-right-radius: 0;
+								box-shadow: none;
+							}
+						}
+					}
+					&.two-column{
+						grid-template-columns: repeat(2, minmax(0, 1fr));
+						// As in Figma, the screenshot starts 46px from the card edge and runs off the
+						// right side; the images are cropped to the part the design shows.
+						.showcase-card{
+							overflow: hidden;
+							.showcase-card-img{
+								padding-inline: 22px 0;
+								margin-inline-end: -24px;
+								@media (max-width: $bp-1199) {
+									padding-inline: 0;
+									margin-inline-end: -16px;
+								}
+								img{
+									border-inline-end: 0;
+									border-top-right-radius: 0;
+								}
+							}
+						}
+						@media (max-width: $bp-768) {
+							grid-template-columns: repeat(1, minmax(0, 1fr));
+						}
+					}
+					&.three-column{
+						grid-template-columns: repeat(3, minmax(0, 1fr));
+						margin-bottom: 0;
+						@media (max-width: $bp-1366) {
+							grid-template-columns: repeat(2, minmax(0, 1fr));
+						}
+						@media (max-width: $bp-768) {
+							grid-template-columns: repeat(1, minmax(0, 1fr));
+						}
+						.showcase-card{
+							padding-inline-end: 0;
+							display: flex;
+							flex-direction: column;
+							overflow: hidden;
+							.content-small{
+								margin-bottom: 40px;
+								@media (max-width: $bp-1199) {
+									margin-bottom: 14px;
+								}
+							}
+							.showcase-card-img{
+								// 46px from the card edge, as in Figma; it already runs off the right side.
+								padding-inline: 22px 0;
+								flex: 1;
+								@media (max-width: $bp-1199) {
+									padding-inline: 0;
+								}
+								img{
+									border-inline-end: 0;
+									border-top-right-radius: 0;
+								}
+							}
+							&.multiple-view{
+								.showcase-card-img{
+									padding-inline-start: 22px;
+									position: relative;
+									display: flex;
+									flex-direction: column;
+									@media (max-width: $bp-1199) {
+										padding-inline-start: 0;
+									}
+									img{
+										&.secondary-img{
+											position: absolute;
+											bottom: -8%;
+											inset-inline-start: -18.5%;
+											border: 2px solid $theme-divider;
+											border-radius: $rounded-6;
+											max-width: 85%;
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	// Overview hero and showcase screenshots come in a light and a dark version (Figma: Azure Suite,
+	// hero light 3122:12440 / dark 3211:8272, showcase light 3122:13458 / dark 3211:9478). The dark one shows whenever the page itself is dark: Azure dark,
+	// or with the Azure theme off, Nextcloud's dark theme or a dark device setting. Azure light
+	// always keeps the light screenshots.
+	.showcase-img--dark {
+		display: none;
+	}
+	:root[data-azure-dark] {
+		@include showcase-dark-images;
+	}
+	:root:not([data-azure-light]) {
+		body[data-theme-dark],
+		body[data-theme-dark-highcontrast] {
+			@include showcase-dark-images;
+		}
+		@media (prefers-color-scheme: dark) {
+			body:not([data-theme-light]):not([data-theme-light-highcontrast]):not([data-theme-dark]):not([data-theme-dark-highcontrast]) {
+				@include showcase-dark-images;
+			}
+		}
+	}
+}

@@ -1,0 +1,115 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+*/
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../settings/mixins' as *;
+
+@mixin waffle-menu {
+    // Déclencheur du menu des applications (35+) : Nextcloud peint au survol et à l'ouverture une
+    // pilule rgba(0,0,0,.1) derrière le bouton et le nom de l'app, qui s'ajoutait au fond de survol
+    // propre à chacun ; ouvert, c'est le bouton du menu qui prend le fond canvas.
+    .app-menu__trigger::before {
+        background-color: transparent !important;
+    }
+    .app-menu__trigger--open .app-menu__waffle {
+        background-color: $main-page-bg-dashboard !important;
+    }
+    // Anneau de focus clavier (pseudo-élément de Nextcloud, calé sur sa hauteur de bouton) : il
+    // épouse le rond de 40 px du bouton et la pilule de 40 px de l'app courante.
+    #header .app-menu__waffle.button-vue:focus-visible::before {
+        inset: 0;
+        border-radius: 50%;
+    }
+    #header .app-menu__current-app.button-vue:focus-visible::before {
+        inset: max(0px, calc((var(--header-height, 56px) - 40px) / 2));
+        border-radius: $rounded-full;
+    }
+    .app-menu__popover{
+        &:has(.app-menu__grid){
+            border-radius: $rounded-6;
+        }
+        .app-menu-actions{
+            // Icône d'app (blanche, faite pour l'en-tête sombre de Nextcloud) : invisible sur la fenêtre
+            // claire, recolorée en azure-text comme les icônes de la grille. Les icônes de type de
+            // fichier (data:) gardent leurs couleurs.
+            .app-action-icon__img:not([style*="data:"]){
+                --app-action-icon-glyph-size: 20px;
+                filter: $filter-primry-600;
+            }
+            // Raccourcis de création (Événement, Document texte, Tableau blanc…) : même tuile que les
+            // applications de la grille (44 px, pastille azure, angles 12 px) au lieu d'une grande icône
+            // nue ; les icônes de type de fichier gardent leurs couleurs, à la taille d'un glyphe de tuile.
+            .app-action-icon{
+                --app-action-icon-size: 44px;
+                --app-action-icon-glyph-size: 26px;
+                border-radius: $rounded-6;
+                background-color: $colour-primary-50;
+                .material-design-icon{
+                    --app-action-icon-glyph-size: 20px;
+                    color: $colour-blue-600;
+                }
+            }
+            // Un raccourci à sous-menu (Événement) est un <button> : sans la marge de 3 px que Nextcloud
+            // donne à tous les boutons, il part de la même ligne que les liens voisins.
+            .app-item{
+                gap: 4px;
+                margin: 0;
+                padding-block: 0;
+            }
+            a{
+                padding-block: 0;
+                --app-icon-scale:1;
+                .app-item__label{
+                    font-size: $text-12;
+                    line-height: $leading-16;
+                    color: $colour-forground;
+                    font-weight: $font-medium;
+                    padding: 0;
+                }
+            }
+        }
+    }
+    .app-menu__grid{
+        padding: 12px 6px;
+        // Rows size to their content instead of Nextcloud's fixed minimum height, so the gap below a
+        // one-line name is the same as below a two-line name (e.g. "Azure Project").
+        grid-auto-rows: max-content;
+        gap: 12px 6px;
+        .app-item{    
+            padding: 0 !important;
+            .app-item__label{
+                padding: 0;
+            }
+            &.app-item--outlined{
+                .app-icon{
+                    background-color: $colour-background;
+                    box-shadow: none;
+                    border: 1px solid $theme-divider;
+                    .app-icon__img{
+                        background-color: $colour-brand;
+                    }
+                }
+            }
+        }
+        .app-icon{
+            border-radius: $rounded-6;
+            width: 44px;
+            height: 44px;
+            min-height: unset;
+            background-image: none;
+            background-color: $colour-primary-50;
+            --app-icon-bevel:none;
+            // Glyphe en azure-text, à plat : Nextcloud le peint au bleu primaire avec un dégradé,
+            // 2,9:1 seulement sur la pastille azure/10 en sombre.
+            .app-icon__img{
+                width: 20px;
+                height: 20px;
+                background-color: $colour-blue-600;
+                background-image: none;
+            }
+        }
+    }
+}

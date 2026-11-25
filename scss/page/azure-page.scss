@@ -1,0 +1,19 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+
+@use 'page-shared' as shared;
+@use 'page-themed' as themed;
+@use 'page-core' as core;
+
+@include shared.shared;
+
+:root[data-azure] {
+	@include themed.themed;
+}
+
+:root:not([data-azure-light]):not([data-azure-dark]) {
+	@include core.core;
+}

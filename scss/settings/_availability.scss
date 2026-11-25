@@ -1,0 +1,289 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+@mixin availability {
+	&#{reglage(availability)}{
+		.week-day-container{
+			margin-bottom: 0;
+			@media (max-width: $bp-512) {
+				width: 100%;
+				max-width: 100%;
+			}
+			li{
+				align-items: center;
+				margin: 0;
+				padding-block: 12px;
+				min-height: 60px;
+				position: relative;
+				.label-weekday{
+					padding-top: 0;
+					> span{
+						height: auto;
+						font-size: $text-heading-5;
+						line-height: $leading-20;
+						color: $colour-forground;
+						font-weight: $font-medium;
+					}
+					@media (max-width: $bp-512) {
+						width: 100%;
+					}
+				}
+				.empty-content{
+					padding-block: 0;
+					margin-top: 0;
+					font-size: $text-13;
+					line-height: $leading-20;
+					color: $colour-forground-1;
+					font-weight: $font-normal;
+					min-height: unset;
+				}
+				button{
+					&.add-another {
+						margin-bottom: 0;
+						background-color: transparent;
+						border: 1px solid $theme-divider;
+						border-radius: $rounded-6;
+						padding: 6px;
+						width: auto !important;
+						height: auto;
+						min-width: unset;
+						min-height: unset;
+						.button-vue__wrapper,
+						.button-vue__icon{
+							width: 16px;
+							height: 16px;
+							min-width: unset;
+							min-height: unset;
+							.material-design-icon{
+								width: 16px;
+								height: 16px;
+								svg{
+									width: 16px;
+									height: 16px;
+									fill: $colour-forground;
+								}
+							}
+						}
+						&:hover{
+							background-color: $colour-primary-50;
+							border-color: $colour-blue-600;
+							.button-vue__icon{
+								.material-design-icon{
+									svg{
+										fill: $colour-blue-600;
+									}
+								}
+							}
+						}
+					}
+					@media (max-width: $bp-512) {
+						opacity: 100%;
+					}
+				}
+				.availability-slot{
+					column-gap: 10px;
+					row-gap: 4px;
+					@media (max-width: $bp-512) {
+						column-gap: 8px;
+					}
+					.start-date,
+					.to-text,
+					.end-date{
+						padding: 0;
+						input{
+							height: 100% !important;
+							min-height: unset;
+							padding: 4px 12px;
+							border: 1px solid var(--color-border-maxcontrast);
+							border-radius: $rounded-6;
+							font-size: $text-heading-5;
+							line-height: $leading-20;
+							color: $colour-forground;
+							@media (max-width: $bp-512) {
+								font-size: $text-13;
+								line-height: $leading-20;
+								color: $colour-forground;
+							}
+						}
+					}
+					.to-text{
+						font-size: $text-13;
+					}
+					button{
+						margin: 0;
+						background-color: transparent;
+						border: 1px solid $theme-divider;
+						border-radius: $rounded-6;
+						padding: 6px;
+						width: 32px !important;
+						height: 32px;
+						min-width: unset;
+						min-height: unset;
+						// Téléphone : cible tactile de 44 px, comme le bouton « + ».
+						@media (max-width: $bp-512) {
+							width: 44px !important;
+							height: 44px;
+						}
+						.button-vue__wrapper,
+						.button-vue__icon{
+							width: 16px;
+							height: 16px;
+							min-width: unset;
+							min-height: unset;
+							.material-design-icon{
+								width: 16px;
+								height: 16px;
+								svg{
+									width: 16px;
+									height: 16px;
+									fill: $colour-forground;
+								}
+							}
+						}
+						&:hover{
+							background-color: transparent;
+							border-color: $colour-red-600;
+							.button-vue__icon{
+								.material-design-icon{
+									svg{
+										fill: $colour-red-600;
+									}
+								}
+							}
+						}
+					}
+				}
+				// Téléphone : grille à deux colonnes (jour | bouton « + »), créneaux sur toute la
+				// largeur en dessous. Placement par la structure (classes), jamais par le libellé
+				// traduit des boutons : rien ne peut se poser sur le texte, quelle que soit la langue.
+				@media (max-width: $bp-512) {
+					display: grid;
+					grid-template-columns: minmax(0, 1fr) auto;
+					align-items: center;
+					gap: 8px 12px;
+					max-width: 100%;
+					text-align: start;
+					.label-weekday{
+						grid-column: 1;
+						grid-row: 1;
+						min-width: 0;
+					}
+					.availability-slots{
+						grid-column: 1 / -1;
+						grid-row: 2;
+						min-width: 0;
+						width: 100%;
+					}
+					> button.add-another{
+						grid-column: 2;
+						grid-row: 1;
+						position: static;
+					}
+				}
+			}
+		}
+		.checkbox-radio-switch{
+			.checkbox-content{
+				padding: 0;
+				min-height: unset;
+				align-items: center;
+				&:hover{
+					background-color: transparent;
+				}
+				.checkbox-content__icon{
+					margin-block: 0;
+					.material-design-icon{
+						svg{
+							fill: $theme-divider;
+						}
+					}
+					&.checkbox-content__icon--checked{
+						.material-design-icon{
+							svg{
+								fill: $colour-blue-600;
+							}
+						}
+					}
+				}
+				.checkbox-content__wrapper{
+					flex: auto;
+					.checkbox-content__text{
+						font-size: $text-heading-5;
+						line-height: $leading-20;
+						color: $colour-forground;
+					}
+				}
+			}
+		}
+		button{
+			&.button-vue--primary{
+				margin-top: 16px;
+				@include primary-button;
+			}
+		}
+		#{css-module('absenceForm')}{
+			gap: 0px;
+			max-width: 600px;
+			label{
+				font-size: $text-13;
+				line-height: $leading-20;
+				color: $colour-forground-1;
+				font-weight: $font-medium;
+				margin-bottom: 8px;
+			}
+			// Premier et dernier jour : côte à côte s'ils tiennent, sinon l'un sous l'autre (à 360 px,
+			// deux champs de date d'au moins 151 px débordaient de la carte de 16 px).
+			#{css-module('absenceForm__pickerContainer')}{
+				flex-wrap: wrap;
+				gap: 16px;
+				margin-bottom: 12px;
+				> .input-field{
+					flex: 1 1 160px;
+					min-width: 0;
+				}
+				.native-datetime-picker{
+					input{
+						@include datepicker;
+					}
+				}
+			}
+			.v-select{
+				@include select-field;
+				@include select-box;
+			}
+			.input-field{
+				@include input(16px);
+			}
+			// Le conteneur du message complet a une hauteur fixe chez Nextcloud (125 px) : il suit la zone
+			// qui grandit, sinon « Enregistrer » et « Désactiver » se peignent sur les dernières lignes.
+			#{css-module('absenceForm__longMessageContainer')}{
+				height: auto !important;
+			}
+			.textarea{
+				@include textarea-field;
+				// Message d'absence : la zone suit son contenu, de 4 à 10 lignes entières (unités lh).
+				.textarea__main-wrapper .textarea__input{
+					height: auto !important;
+					min-height: calc(4lh + 22px);
+					max-height: calc(10lh + 22px);
+					field-sizing: content;
+				}
+			}
+			#{css-module('absenceForm__actions')}{
+				margin-top: 24px;
+				button{
+					margin-top: 0;
+					&.button-vue--error{
+						@include error-button;
+					}
+				}
+			}
+		}
+	}
+}

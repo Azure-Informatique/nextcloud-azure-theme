@@ -1,0 +1,167 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+@mixin assistant{
+    &#{reglage(ai)}{
+        // Croix « Vider la sélection » des listes (langue…) : 20 px, cible trop petite. 24 px au
+        // bureau, 44 px de large au téléphone (la liste fait 44 px de haut), icône centrée.
+        .vs__actions .vs__clear{
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 24px;
+            min-height: 24px;
+            @media (pointer: coarse) and (max-width: $bp-640) {
+                min-width: 44px;
+                min-height: 44px;
+            }
+        }
+        // Champ de recherche de la liste, réduit à 0 px à côté de la valeur choisie par la règle
+        // commune des listes fermées (width: 0 !important) : cible sous 24 px (axe target-size).
+        // 24 px minimum ici (la valeur tient largement), invisible au repos.
+        .vs__selected-options .vs__search{
+            min-width: 24px !important;
+        }
+        // Tableau de quota OpenAI : gris de Nextcloud à 3,58:1 ; texte atténué de la charte (≥ 4,5:1).
+        .quota-table :is(th, td){
+            color: $colour-forground-1;
+        }
+        .checkbox-radio-switch{
+            @include checkbox-radio-switch
+        }
+        .ai-settings{
+            .settings-section{
+                h3{
+                    font-size: $text-heading-3;
+                    line-height: $leading-22;
+                    font-weight: $font-semibold;
+                    color: $colour-forground;
+                    margin-top: 16px;
+                    padding-top: 16px;
+                    border-top: 1px solid $theme-divider;
+                    width: 100%;
+                    max-width: 100%;
+                }
+                &:nth-of-type(2){
+                    p{
+                        margin-bottom: 0;
+                    }
+                }
+            }
+        }
+        // Consommation du quota (OpenAI) : cadre épais de l'app retiré, cellules aérées ;
+        // les filets des rangées viennent de la règle commune des tableaux.
+        #openai_prefs .quota-table{
+            border: 0;
+            display: block;
+            max-width: 100%;
+            overflow-x: auto;
+            th,
+            td{
+                padding: 8px 24px 8px 0;
+                text-align: start;
+            }
+            // En-têtes sur plusieurs lignes plutôt que coupés net au bord de la carte
+            // (« Utilisation/période actuelle est »).
+            th{
+                white-space: normal;
+                min-width: 96px;
+                vertical-align: bottom;
+            }
+        }
+        // Context Chat : tableau des sources plus large que la carte, même à 1440 px. En-têtes sur
+        // plusieurs lignes (ils étaient coupés net au bord) ; le reste défile dans la carte.
+        #context_chat table{
+            display: block;
+            max-width: 100%;
+            overflow-x: auto;
+            th{
+                white-space: normal;
+                min-width: 96px;
+                vertical-align: bottom;
+            }
+        }
+        // Téléphone : nom de la tâche et interrupteur sur une ligne, choix du fournisseur dessous
+        // sur toute la largeur (il gardait 350 px et sortait de la carte).
+        @media (max-width: $bp-640) {
+            .tasktype-item{
+                flex-wrap: wrap;
+                row-gap: 8px;
+                .provider-select{
+                    flex: 1 1 100%;
+                    width: 100% !important;
+                    min-width: 0 !important;
+                }
+            }
+            // Assistant et OpenAI : retrait de 40 px supprimé (la carte a déjà sa marge) ; rangées
+            // (champ + aide, choix de voix) qui passent à la ligne.
+            #assistant_prefs #assistant-content{
+                margin-inline-start: 0;
+            }
+            #openai_prefs #openai-content{
+                margin-inline-start: 0;
+                .line{
+                    flex-wrap: wrap;
+                    > label{
+                        min-width: 0;
+                        max-width: 100%;
+                        flex-wrap: wrap;
+                    }
+                }
+                // Largeur minimale gardée tant que la carte la permet : à 0, « Type de quota »
+                // (vide) s'écrasait à 97 px.
+                .v-select{
+                    min-width: min(260px, 100%) !important;
+                }
+            }
+        }
+        // Export de la consommation (dates, type, bouton) : la rangée passe à la ligne au lieu
+        // de pousser le bouton hors de la carte (1024 px).
+        #openai_prefs .line-gap{
+            flex-wrap: wrap;
+            row-gap: 8px;
+        }
+        // Libellés du quota estompés à 50 % par l'app (3,6:1) : texte secondaire du thème.
+        #openai_prefs .quota-table .text-cell{
+            opacity: 1;
+            color: $colour-forground-1;
+        }
+        // Context Chat : tableau d'état de l'indexation plus large que la carte ; il défile dans
+        // la carte au lieu d'en sortir.
+        #context_chat table{
+            display: block;
+            max-width: 100%;
+            overflow-x: auto;
+        }
+        // Tableaux défilants (quota, Context Chat) : une ombre au bord indique qu'il reste des colonnes
+        // de ce côté (l'en-tête semblait coupé net) ; les fonds « local » la masquent une fois le bord
+        // atteint. Même indice que les tableaux de Share Audit.
+        #openai_prefs .quota-table,
+        #context_chat table{
+            background:
+                linear-gradient(to right, $colour-background 40%, transparent) left / 32px 100% no-repeat local,
+                linear-gradient(to left, $colour-background 40%, transparent) right / 32px 100% no-repeat local,
+                radial-gradient(farthest-side at 0 50%, color-mix(in srgb, $colour-forground 28%, transparent), transparent) left / 14px 100% no-repeat scroll,
+                radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, $colour-forground 28%, transparent), transparent) right / 14px 100% no-repeat scroll;
+            background-color: $colour-background;
+        }
+        .notecard{
+            margin-bottom: 0 !important;
+            width: fit-content;
+            max-width: unset;
+        }
+        // « Services avec une API compatible OpenAI » : rangée de liens (OpenAI, IONOS, Groqcloud…)
+        // qui ne passait pas à la ligne ; la note sortait de la carte au téléphone (ou, liens coupés
+        // n'importe où, « Op/enAI »). Les liens passent à la ligne, entiers.
+        #openai_prefs .notecard .services{
+            flex-wrap: wrap;
+            column-gap: 12px;
+        }
+    }
+}

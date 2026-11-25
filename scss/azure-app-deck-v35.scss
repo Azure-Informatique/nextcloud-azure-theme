@@ -1,0 +1,12 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Deck, Nextcloud 35 et suivants. Compilé en css/azure-app-deck-nc35.css, chargé après css/azure-theme-nc35.css
+ * sur les pages de l'app quand Nextcloud ≥ 35.
+ */
+@use 'deck/deck-v35' as deck;
+
+:root {
+	@include deck.deck;
+}

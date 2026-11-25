@@ -1,0 +1,25 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Agenda.
+ * Compilé en css/azure-app-calendar.css et chargé, après css/azure-theme.css, sur les seules pages de l'app
+ * (lib/Service/PageAssets.php). Rien ici ne doit pouvoir s'afficher ailleurs : ce qu'une app montre
+ * hors de ses pages (fenêtres ouvertes depuis d'autres apps, widgets…) reste dans azure-theme.scss.
+ */
+@use 'ui/sidebar' as side;
+@use 'calendar/calendar' as cal;
+
+:root {
+	@include side.sidebar-calendar;
+	@include cal.calendar-edit-modal;
+	@include cal.calendar-proposal-editor;
+	@include cal.calendar-navigation;
+	@include cal.calendar-main;
+	@include cal.calendar-event-popover;
+	@include cal.calendar-edit-full;
+	@include cal.calendar-unscheduled-tasks;
+	@include cal.calendar-more-popover;
+	@include cal.calendar-repeat-modal;
+	@include cal.calendar-talk-modal;
+}

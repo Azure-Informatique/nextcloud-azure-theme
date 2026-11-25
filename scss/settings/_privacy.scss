@@ -1,0 +1,294 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+@mixin privacy{
+    &#{reglage(privacy)}{
+        .button-vue--vue-tertiary,
+        .button-vue--secondary{
+            @include outline-button;
+        }
+        .button-vue--vue-primary{
+            @include primary-button;
+        }
+        #{$contenu-reglages}{
+            p{
+                font-size: $text-heading-5;
+                line-height: $leading-20;
+                font-weight: $font-medium;
+                color: $colour-forground-1;
+            }
+        }
+        .checkbox-radio-switch{
+            input{
+                margin: 0;
+            }
+            .checkbox-content{
+                gap: 8px;
+                padding: 0;
+                align-items: center;
+                svg{
+                    fill: $theme-divider;
+                }
+                .checkbox-content__icon{
+                    margin: 0;
+                    &.checkbox-content__icon--checked{
+                        svg{
+                            fill: $colour-blue-600;
+                        }
+                    }
+                }
+                
+                .checkbox-content__wrapper{
+                    flex: auto;
+                    .checkbox-content__text{
+                        font-size: $text-heading-5;
+                        line-height: $leading-20;
+                        color: $colour-forground;
+                        font-weight: $font-medium;
+                    }
+                }
+                &:hover{
+                    background-color: transparent;
+                }
+            }
+        }
+        .settings-section{
+            &.manifesto{
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid $theme-divider;
+                .manifesto__container{
+                    margin-top: 16px;
+                    padding-top: 16px;
+                    border-top: 1px solid $theme-divider;
+                    .manifesto__section{
+                        display: flex;
+                        flex-direction: column;
+                        gap: 16px;
+                        h3{
+                            font-size: $text-heading-3;
+                            line-height: $leading-22;
+                            color: $colour-forground;
+                            font-weight: $font-semibold;
+                            margin: 0;
+                            text-align: start;
+                            strong{
+                                font-weight: $font-semibold;
+                            }
+                        }
+                        p{
+                            font-weight: $font-normal;
+                        }
+                    }
+                }
+                // Lien seul sur sa ligne : 24 px de haut au bureau (cible minimale), texte à la même place.
+                .manifesto__link{
+                    margin-top: 14px;
+                    margin-bottom: -2px;
+                    padding-block: 2px;
+                    display: block;
+                    font-size: $text-heading-5;
+                    line-height: $leading-20;
+                    color: $colour-forground-1;
+                    font-weight: $font-medium;
+                    width: fit-content;
+                    &:hover{
+                        color: $colour-blue-600;
+                    }
+                    // Téléphone : zone tactile de 44 px de haut, texte à la même place.
+                    @media (pointer: coarse) and (max-width: $bp-640) {
+                        margin-top: 4px;
+                        margin-bottom: -12px;
+                        padding-block: 12px;
+                    }
+                }
+            }
+            &.access{
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid $theme-divider;
+                h3{
+                    font-size: $text-heading-3;
+                    line-height: $leading-22;
+                    color: $colour-forground;
+                    font-weight: $font-medium;
+                    margin: 0;
+                }
+                .access__section{
+                    display: flex;
+                    flex-direction: column;
+                    gap: 10px;
+                    margin: 0;
+                    h3{
+                        font-size: $text-heading-5;
+                        line-height: $leading-20;
+                        color: $colour-forground;
+                        font-weight: $font-medium;
+                    }
+                    p{
+                        margin-bottom: 0;
+                        max-width: 700px;
+                    }
+                }
+                .admin__controls{
+                    .admin__add{
+                        margin-top: 16px;
+                        gap: 16px;
+                        .input-field{
+                            @include input;
+                        }
+                    }
+                }
+                .admin__list,
+                .shared__list{
+                    margin-top: 16px;
+                    li{
+                        padding: 8px;
+                        border: 1px solid $theme-divider;
+                        border-radius: $rounded-6;
+                        .admin__user,
+                        .shared__user{
+                            gap: 10px;
+                            .avatardiv{
+                                --avatar-size: 28px !important;
+                                line-height: 29px !important;
+                                font-size: $text-heading-5 !important;
+                                // Téléphone : le bouton invisible posé sur l'avatar (menu du compte)
+                                // déborde de 8 px de chaque côté pour une cible de 44 px, avatar inchangé.
+                                @media (pointer: coarse) and (max-width: $bp-640) {
+                                    .action-item{
+                                        inset-block-start: -8px;
+                                        inset-inline-start: -8px;
+                                    }
+                                    .action-item__menutoggle{
+                                        width: 44px !important;
+                                        min-width: 44px !important;
+                                        height: 44px !important;
+                                        min-height: 44px !important;
+                                    }
+                                }
+                            }
+                            .admin__displayname,
+                            .shared__displayname{
+                                font-size: $text-heading-5 !important;
+                                line-height: $leading-20;
+                                color: $colour-forground;
+                                font-weight: $font-medium;
+                            }
+                        }
+                        button{
+                            svg{
+                                width: 16px;
+                                height: 16px;
+                                fill: $colour-forground-1;
+                            }
+                            &:hover{
+                                background-color: transparent;
+                            }
+                        }
+                    }
+                }
+                .access__section{
+                    margin: 0;
+                    &.shared{
+                        padding-block: 16px;
+                        margin-block: 16px;
+                        border-top: 1px solid $theme-divider;
+                        border-bottom: 1px solid $theme-divider;
+                    }
+                    &.encryption{
+                        .encryption__list{
+                            margin-block: 0;
+                            li{
+                                font-size: $text-13;
+                                line-height: $leading-20;
+                                color: $colour-forground-1;
+                            }
+                        }
+                    }
+                }
+            }
+            &.location{
+                margin-top: 16px;
+                padding-top: 16px;
+                border-top: 1px solid $theme-divider;
+                width: 100%;
+                max-width: 100%;
+                .location__select{
+                    gap: 4px;
+                    margin-top: 10px;
+                    label{
+                        font-size: $text-heading-5;
+                        line-height: $leading-20;
+                        color: $colour-forground-1;
+                        font-weight: $font-medium;
+                    }
+                    .v-select{
+                        @include select-field;
+                        @include select-box;
+                        max-width: 392px;
+                        .vs__selected{
+                            border: 0 !important;
+                        }
+                        .vs__actions{
+                            svg{
+                                path{
+                                    fill: $colour-forground;
+                                    stroke: none;
+                                }
+                            }
+                        }
+                    }
+                }
+                svg{
+                    &.location__map{
+                        max-width: 600px;
+                        path{
+                            fill: $colour-sidebar-link-bg;
+                            stroke: $colour-background;
+                        }
+                    }
+                }
+                .location__description{
+                    span{
+                        font-size: $text-heading-5;
+                        line-height: $leading-20;
+                        color: $colour-forground;
+                        font-weight: $font-medium;
+                    }
+                    button{
+                        @include outline-button;
+                        // « Modifier l'emplacement des données » : petit rond de Nextcloud (29 px), cible
+                        // tactile de 44 px au téléphone comme les autres boutons d'icône des réglages.
+                        @media (max-width: $bp-512) {
+                            --button-size: 44px;
+                            flex-shrink: 0;
+                            width: 44px;
+                            min-width: 44px;
+                            height: 44px;
+                        }
+                        svg{
+                            path{
+                                fill: $colour-forground;
+                                stroke: none;
+                            }
+                        }
+                        &:hover{
+                            svg{
+                                path{
+                                    fill: $colour-blue-600;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

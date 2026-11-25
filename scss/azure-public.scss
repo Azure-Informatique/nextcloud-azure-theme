@@ -1,0 +1,182 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Pages publiques (partages par lien, formulaires, rendez-vous, invités Talk…) : <body id="body-public">.
+ * La palette vient de azure-palette-system (ou de la variante de l'utilisateur connecté).
+ */
+@use 'fonts';
+@use 'variables' as *;
+@use 'themes' as *;
+@use 'files/files' as files;
+@use 'files/files-v35' as files-v35;
+
+// Liseré actif au bord de début, aussi en droite-à-gauche (voir azure-theme.scss).
+[dir="rtl"] {
+	--azure-liseret: -3px;
+}
+
+#body-public {
+	font-family: var(--font-face);
+
+	// Boutons d'icône seule : carré exact, donc ronds (même règle que azure-theme.scss, dont les
+	// pages publiques ne chargent pas la feuille). Sauf « Précédent / Suivant » de la visionneuse :
+	// leur zone tactile est une bande haute de 300 px, qui ne doit pas tomber à 34 × 34.
+	.button-vue.button-vue--icon-only:not(.prev, .next),
+	.button-vue:has(.button-vue__text:empty):not(.button-vue--wide, .prev, .next) {
+		height: auto !important;
+		min-height: 0 !important;
+		aspect-ratio: 1 !important;
+		align-self: center;
+		border-radius: 50%;
+	}
+
+	// Boutons à texte pleins ou cerclés : pilule (charte), comme dans les pages connectées ; les
+	// boutons tertiaires (entrées de menu) et alignés au début (rangées) gardent leurs coins.
+	.button-vue:is(.button-vue--vue-primary, .button-vue--vue-secondary, .button-vue--vue-error, .button-vue--vue-success, .button-vue--vue-warning, .button-vue--primary, .button-vue--secondary, .button-vue--error, .button-vue--success, .button-vue--warning):not(.button-vue--icon-only, .button-vue--start, :has(.button-vue__text:empty)) {
+		border-radius: $rounded-full;
+	}
+
+	// En-tête à plat, comme celui du site.
+	#header {
+		background: var(--color-main-background) none !important;
+		color: var(--color-main-text);
+		border-bottom: 1px solid var(--color-border);
+	}
+
+	// Pied de page : une seule ligne très discrète, qui suit le clair ou le sombre ;
+	// sans l'incitation à créer un compte sur nextcloud.com.
+	footer .footer__simple-sign-up {
+		display: none !important;
+	}
+	footer.guest-box {
+		width: auto !important;
+		max-width: calc(100vw - 32px) !important;
+		bottom: calc(var(--body-container-margin) + 4px) !important;
+		padding: 1px 8px !important;
+		background: var(--color-main-background) !important;
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+		box-shadow: none !important;
+		border-radius: 4px !important;
+		color: var(--color-text-maxcontrast) !important;
+		font-size: 13px !important; // plancher de la charte pour un texte secondaire
+		line-height: 1.6 !important;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+
+		.info {
+			overflow: hidden;
+			text-overflow: ellipsis;
+		}
+		.info .entity-name {
+			color: inherit !important;
+			font-weight: 600 !important;
+		}
+		a {
+			color: inherit !important;
+			text-decoration: none;
+			&:hover,
+			&:focus-visible {
+				text-decoration: underline;
+			}
+		}
+	}
+
+	// Liste des fichiers d'un dossier partagé : même rendu que dans l'app Fichiers
+	// (la feuille principale n'est pas chargée pour un visiteur).
+	@include files.files-all;
+	@include files-v35.files;
+
+	// En-tête de la page : titre du partage en ink 700, « partagé par » en muted.
+	#header {
+		.header-title {
+			font-weight: $font-bold;
+			color: $colour-forground;
+		}
+		.header-shared-by {
+			color: $colour-forground-1;
+		}
+		// Focus clavier : anneau bleu de marque de 2 px, comme l'en-tête des pages connectées (le
+		// cœur n'y laissait qu'un trait de 12 px sous l'icône, invisible en sombre). Dessiné à
+		// l'intérieur du rond : au bureau, les boutons occupent toute la hauteur de l'en-tête.
+		.button-vue:focus-visible,
+		.header-menu button:focus-visible {
+			outline: 2px solid $colour-brand !important;
+			outline-offset: -2px !important;
+			box-shadow: none !important;
+			&::after {
+				display: none !important;
+			}
+		}
+		// Téléphone : boutons de l'en-tête (« Plus d'actions », menu, panneau Talk) ronds de 44 px,
+		// centrés dans la hauteur de l'en-tête (le carré exact les réduisait à 34 × 34, collés en
+		// haut). Le titre gagne une seconde ligne au lieu d'être abrégé plus tôt.
+		@media (max-width: $bp-640) {
+			.header-end {
+				align-items: center;
+				margin-inline-end: 4px;
+				> * {
+					align-self: center;
+				}
+			}
+			// Conteneurs de menu : largeur fixée à 34 px par Nextcloud au téléphone, ils suivent le bouton.
+			.header-end .header-menu,
+			.public-page-menu__wrapper {
+				display: flex;
+				align-items: center;
+				width: auto !important;
+				height: 100%;
+			}
+			.header-end .header-menu__trigger {
+				width: 44px !important;
+				min-width: 44px !important;
+				height: 44px !important;
+				padding: 0 !important;
+				aspect-ratio: auto !important;
+			}
+			.header-info {
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				height: 100%;
+				min-width: 0;
+			}
+			.header-title {
+				display: -webkit-box;
+				-webkit-box-orient: vertical;
+				-webkit-line-clamp: 2;
+				overflow: hidden;
+				white-space: normal;
+				line-height: 1.2;
+			}
+		}
+	}
+
+	// Dépôt de fichiers et dossier vide : état vide du panel, bouton principal plein.
+	.files-list__empty-view-wrapper .empty-content,
+	#app-content-vue .empty-content {
+		.button-vue--vue-secondary,
+		.button-vue--vue-primary {
+			min-height: 40px;
+			padding-inline: 14px 18px;
+			border: 0;
+			border-radius: $rounded-full;
+			background-color: $colour-brand;
+			color: $colour-white;
+			.button-vue__text {
+				font-weight: $font-semibold;
+				color: inherit;
+			}
+			&:hover:not(:disabled) {
+				background-color: $colour-brand-hover;
+			}
+		}
+	}
+
+	// Bouton flottant « Nouveau » (téléphone) : au-dessus de la ligne du pied de page.
+	.files-list__header-upload-button--narrow {
+		bottom: calc(var(--body-container-margin, 8px) + 28px);
+	}
+}

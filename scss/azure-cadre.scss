@@ -1,0 +1,41 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Règles communes finales : cadre (en-tête, navigation, menus, notifications) et colonne des
+ * réglages. Compilé en css/azure-cadre.css et chargé sur toutes les pages connectées APRÈS
+ * css/azure-theme.css et la feuille de l'app (css/azure-app-<app>.css) : à poids égal, ces règles
+ * l'emportent sur celles des apps, comme lorsque tout était dans une seule feuille.
+ */
+@use 'variables' as *;
+@use 'themes' as *;
+@use 'ui/cadre' as cadre;
+@use 'settings/reglages' as reglages;
+
+:root {
+	@include cadre.cadre;
+	@include reglages.reglages;
+
+	// En-tête à plat, couleur « paper » de la variante (comme l'en-tête du site).
+	// Seulement dans l'application : les pages invité (#body-login) gardent leur fond nuit.
+	// Charte : bouton à texte en pilule. Garde finale (cette feuille est chargée en dernier) contre
+	// les rayons d'élément de règles par app héritées ; seulement les variantes pleines ou cerclées,
+	// les boutons « tertiaires » et ceux alignés au début (.button-vue--start) servant de rangées de
+	// liste et d'entrées de navigation (Accueil de Talk, côté du sélecteur de fichiers : coins de 12 px).
+	.button-vue:is(.button-vue--vue-primary, .button-vue--vue-secondary, .button-vue--vue-error, .button-vue--vue-success, .button-vue--vue-warning, .button-vue--primary, .button-vue--secondary, .button-vue--error, .button-vue--success, .button-vue--warning):not(.button-vue--icon-only, .button-vue--start, :has(.button-vue__text:empty), .file-picker__side *) {
+		border-radius: $rounded-full !important;
+	}
+
+	// Bouton d'icône seule : rond (charte, « pas de bouton ovale ») ; même garde finale contre les
+	// coins d'élément des règles par app. Hors groupe de boutons accolés (navigation de l'Agenda).
+	.button-vue:is(.button-vue--icon-only, :has(.button-vue__text:empty)):not(.button-vue--wide, .avatar-list, .datepicker-button-section *) {
+		border-radius: 50% !important;
+	}
+
+	#body-user #header,
+	#body-settings #header,
+	#body-public #header {
+		background-color: $main-page-bg;
+		background-image: none;
+	}
+}

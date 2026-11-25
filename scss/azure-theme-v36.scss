@@ -1,0 +1,12 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Écarts propres à Nextcloud 36 et suivants. Compilé en css/azure-theme-nc36.css et chargé
+ * après azure-theme-nc35.css par lib/Service/VersionedStyles.php quand Nextcloud ≥ 36.
+ */
+@use 'files/files-v36' as files;
+
+:root {
+	@include files.files;
+}

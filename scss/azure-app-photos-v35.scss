@@ -1,0 +1,12 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Photos, Nextcloud 35 et suivants. Compilé en css/azure-app-photos-nc35.css, chargé après css/azure-theme-nc35.css
+ * sur les pages de l'app quand Nextcloud ≥ 35.
+ */
+@use 'photos/photos-v35' as photos;
+
+:root {
+	@include photos.photos;
+}

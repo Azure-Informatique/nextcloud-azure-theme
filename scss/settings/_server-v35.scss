@@ -1,0 +1,27 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+*/
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../settings/mixins' as *;
+
+@mixin server {
+    &#{reglage(server)}{
+        .system-tag-form{
+            .v-select.select{
+                @include single-select($dropdown: false);
+                .vs__dropdown-toggle{
+                    height: 34px;
+                }
+            }
+        }
+    }
+}
+
+@mixin server-dropdown {
+    body:has(#{reglage-lien(server)}) .vs__dropdown-menu{
+        @include select-dropdown-menu;
+    }
+}

@@ -1,0 +1,22 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Palette Azure, variante « système » : claire ou sombre selon le réglage de l'appareil,
+ * sans script, dès le premier affichage. Quand l'appareil demande un contraste renforcé
+ * (prefers-contrast: more), la palette s'efface et Nextcloud applique son propre contraste élevé.
+ */
+@use 'palette' as *;
+
+@media (prefers-color-scheme: light) and (not (prefers-contrast: more)) {
+	@include page-palette(light);
+}
+
+@media (prefers-color-scheme: dark) and (not (prefers-contrast: more)) {
+	@include page-palette(dark);
+}
+
+@media not (prefers-contrast: more) {
+	@include forced-subtrees;
+	@include font-face-var;
+}

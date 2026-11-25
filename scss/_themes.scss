@@ -1,0 +1,242 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use 'sass:map';
+
+// Palette Azure Informatique — dérivée de la charte du site azure-informatique.fr
+// (app/globals.css). Les mélanges reproduisent les opacités du site (ex. azure/10 sur paper)
+// en sRGB ; contrastes WCAG relevés par tools/couleurs.py.
+// Règle de la charte : le bleu de marque #0078D4 reste FIXE dans les deux thèmes pour les
+// fonds, bordures et boutons (blanc dessus 4,53:1) ; le TEXTE bleu passe par azure-text
+// (#0062AD en clair 6,27:1, #3D9FF0 en sombre 6,75:1). Aucune ombre au repos, ombre « float »
+// seulement pour ce qui flotte (menus, fenêtres, bulles).
+
+$brand-azure:        '#0078D4';
+$brand-azure-hover:  '#005CAA'; // --btn-survol du site
+$brand-profond:      '#004687';
+$brand-nuit:         '#0B1A30';
+$brand-nuit-rgb:     '11, 26, 48'; // voile des fenêtres (--backdrop-color de NcModal)
+$brand-ciel:         '#66AEE5';
+$brand-ruban:        '#0067B5';
+$brand-filter:       'brightness(0) saturate(100%) invert(30%) sepia(93%) saturate(3403%) hue-rotate(190deg) brightness(95%) contrast(100%)';
+
+$themes: (
+	light: (
+		colour-brand:            '#0078D4', // bleu de marque, fixe (boutons, fonds)
+		colour-brand-hover:      '#005CAA', // --btn-survol du site
+		colour-danger:           '#B91C1C', // bouton de danger plein (panel)
+		colour-danger-hover:     '#991B1B',
+		main-page-bg:            '#FFFFFF', // paper
+		main-page-bg-dashboard:  '#EEF2F7', // canvas
+		theme-divider:           '#D9E1EB', // line
+		colour-filet-bouton:     '#D9E1EB', // contour des boutons secondaires (line)
+		theme-divider-2:         '#EEF2F7', // canvas
+		colour-forground:        '#0B0F1C', // ink
+		colour-forground-1:      '#485268', // muted
+		colour-forground-2:      '#3C3F49', // ink/80
+		colour-scrollbar-track:  '#D9E1EB',
+		colour-scrollbar-main:   '#85878E', // ink/50
+		colour-background:       '#FFFFFF',
+		colour-primary-100:      '#D1E7F7', // azure/18 (sélection du site)
+		colour-blue-400:         '#BFDDF4', // azure/25
+		colour-primary-50:       '#E6F2FB', // azure/10 (élément actif du panel)
+		colour-gray-100:         '#EEF2F7',
+		secondary-card-bg:       '#EEF2F7',
+		colour-sidebar-bg:       '#EEF2F7', // navigation d'app = canvas, contenu = paper
+		colour-green-50:         '#E6F2EE', // ok/10
+		colour-green-700:        '#047857', // ok
+		colour-blue-600:         '#0062AD', // azure-text (texte et icônes bleus)
+		colour-red-50:           '#F8E8E8', // err/10
+		colour-red-600:          '#B91C1C', // err
+		colour-semilight:        '#EEF2F7',
+		colour-dark-colour:      '#0B0F1C',
+		colour-yellow:           '#92400E', // amber
+		colour-yellow-50:        '#F4ECE7', // amber/10
+		colour-forground-white:  '#FFFFFF',
+		colour-on-status:        '#FFFFFF', // texte posé sur le rouge / l'ambre d'état (clairs en sombre : encre)
+		colour-bulle-ok:         '#34D399', // liseré des bulles (fond encre) : tons sombres de la charte, ≥ 6:1
+		colour-bulle-alerte:     '#F0A857',
+		colour-bulle-erreur:     '#F87171',
+		colour-call-surface:     '#0B0F1C', // écran d'appel Talk : toujours sombre (« paper » sombre)
+		colour-call-line:        '#24304A', // filet de l'écran d'appel (« line » sombre)
+		colour-white:            '#FFFFFF',
+		colour-white-20:         '#FFFFFF33',
+		colour-sidebar-link-bg:  '#E4EAF2', // canvas-alt (survol)
+		colour-cheveron-seprator:'#485268',
+		gradient-brand-vertical: 'linear-gradient(180deg, #0078D4 0%, #00B4FF 100%)', // azure-gradient
+		gradient-brand-diagonal: 'linear-gradient(111deg, #66AEE5 0%, #519BDF 17%, #2F85D8 33%, #0077D3 50%, #0067B5 67%, #004A8D 83%, #004687 100%)', // ruban du logo
+		box-shadow-1:            '0 0 #0000', // aucune ombre au repos
+		box-shadow-2:            '0 0 #0000',
+		box-shadow-3:            '0 2px 6px rgba(11, 15, 28, 0.08), 0 28px 56px -20px rgba(11, 15, 28, 0.32)', // ombre float
+		box-shadow-4:            '0 2px 6px rgba(11, 15, 28, 0.08), 0 28px 56px -20px rgba(11, 15, 28, 0.32)',
+		filter-primry-600:       'brightness(0) saturate(100%) invert(22%) sepia(95%) saturate(1649%) hue-rotate(188deg) brightness(100%) contrast(100%)', // #0062AD
+		filter-forground:        'brightness(0) saturate(100%) invert(8%) sepia(14%) saturate(1358%) hue-rotate(182deg) brightness(96%) contrast(103%)', // ink
+		filter-forground-1:      'brightness(0) saturate(100%) invert(30%) sepia(6%) saturate(1881%) hue-rotate(183deg) brightness(99%) contrast(91%)', // muted
+		filter-red:              'brightness(0) saturate(100%) invert(14%) sepia(67%) saturate(3984%) hue-rotate(349deg) brightness(101%) contrast(97%)',
+		filter-green:            'brightness(0) saturate(100%) invert(29%) sepia(20%) saturate(6443%) hue-rotate(144deg) brightness(90%) contrast(97%)',
+		filter-light-bg:         'brightness(0) saturate(100%) invert(100%)',
+	),
+	dark: (
+		colour-brand:            '#0078D4',
+		colour-brand-hover:      '#005CAA',
+		colour-danger:           '#B91C1C',
+		colour-danger-hover:     '#991B1B',
+		main-page-bg:            '#0B0F1C', // paper sombre
+		main-page-bg-dashboard:  '#0F1626', // canvas
+		theme-divider:           '#24304A', // line
+		colour-filet-bouton:     '#3A4866', // contour des boutons secondaires : line à 1,4:1 sur nuit, presque invisible ; ≈ 2:1
+		theme-divider-2:         '#141D30', // canvas-alt
+		colour-forground:        '#EDF2F9', // ink
+		colour-forground-1:      '#AAB4CA', // muted
+		colour-forground-2:      '#C0C5CD', // ink/80
+		colour-scrollbar-track:  '#141D30',
+		colour-scrollbar-main:   '#7C808A', // ink/50
+		colour-background:       '#0B0F1C',
+		colour-primary-100:      '#0C2845', // azure/18 sur canvas
+		colour-blue-400:         '#3D9FF0',
+		colour-primary-50:       '#08294A', // azure/25 (actif, sombre)
+		colour-gray-100:         '#141D30',
+		secondary-card-bg:       '#0F1626',
+		colour-sidebar-bg:       '#0F1626',
+		colour-green-50:         '#0F2328',
+		colour-green-700:        '#34D399',
+		colour-blue-600:         '#3D9FF0', // azure-text sombre
+		colour-red-50:           '#231924',
+		colour-red-600:          '#F87171',
+		colour-semilight:        '#141D30',
+		colour-dark-colour:      '#EDF2F9',
+		colour-yellow:           '#F0A857',
+		colour-yellow-50:        '#221E22',
+		colour-forground-white:  '#FFFFFF', // texte et icônes posés sur le bleu de marque (fixe) : blanc dans les deux thèmes
+		colour-on-status:        '#0B0F1C', // texte posé sur le rouge / l'ambre d'état (clairs en sombre : encre)
+		colour-bulle-ok:         '#047857', // liseré des bulles (fond papier clair) : tons clairs de la charte, ≥ 5:1
+		colour-bulle-alerte:     '#92400E',
+		colour-bulle-erreur:     '#B91C1C',
+		colour-call-surface:     '#0B0F1C', // écran d'appel Talk : toujours sombre (« paper » sombre)
+		colour-call-line:        '#24304A', // filet de l'écran d'appel (« line » sombre)
+		colour-white:            '#FFFFFF',
+		colour-white-20:         '#00000033',
+		colour-sidebar-link-bg:  '#141D30',
+		colour-cheveron-seprator:'#AAB4CA',
+		gradient-brand-vertical: 'linear-gradient(180deg, #0078D4 0%, #00B4FF 100%)',
+		gradient-brand-diagonal: 'linear-gradient(111deg, #66AEE5 0%, #519BDF 17%, #2F85D8 33%, #0077D3 50%, #0067B5 67%, #004A8D 83%, #004687 100%)',
+		box-shadow-1:            '0 0 #0000',
+		box-shadow-2:            '0 0 #0000',
+		box-shadow-3:            '0 2px 8px rgba(0, 0, 0, 0.5), 0 32px 64px -20px rgba(0, 0, 0, 0.7)',
+		box-shadow-4:            '0 2px 8px rgba(0, 0, 0, 0.5), 0 32px 64px -20px rgba(0, 0, 0, 0.7)',
+		filter-primry-600:       'brightness(0) saturate(100%) invert(60%) sepia(60%) saturate(2704%) hue-rotate(182deg) brightness(96%) contrast(96%)', // #3D9FF0
+		filter-forground:        'brightness(0) saturate(100%) invert(100%) sepia(74%) saturate(1402%) hue-rotate(178deg) brightness(105%) contrast(97%)',
+		filter-forground-1:      'brightness(0) saturate(100%) invert(79%) sepia(13%) saturate(370%) hue-rotate(183deg) brightness(89%) contrast(93%)',
+		filter-red:              'brightness(0) saturate(100%) invert(61%) sepia(27%) saturate(3327%) hue-rotate(316deg) brightness(101%) contrast(94%)',
+		filter-green:            'brightness(0) saturate(100%) invert(75%) sepia(11%) saturate(2312%) hue-rotate(106deg) brightness(91%) contrast(96%)',
+		filter-light-bg:         'brightness(0) saturate(100%) invert(100%)',
+	),
+);
+
+// Couleurs Nextcloud : le bouton reste le bleu de marque dans les deux thèmes (charte).
+$nextcloud-primary: (
+	light: (
+		primary:                    '#0078D4',
+		primary-text:               '#FFFFFF',
+		primary-hover:              '#005CAA',
+		primary-element:            '#0078D4',
+		primary-element-hover:      '#005CAA',
+		primary-element-text:       '#FFFFFF',
+		primary-element-text-dark:  '#EDF2F9',
+		primary-light:              '#E6F2FB',
+		primary-light-hover:        '#D1E7F7',
+		primary-light-text:         '#00509E',
+		primary-element-light:      '#E6F2FB',
+		primary-element-light-hover:'#D1E7F7',
+		primary-element-light-text: '#00509E',
+	),
+	dark: (
+		primary:                    '#0078D4',
+		primary-text:               '#FFFFFF',
+		primary-hover:              '#005CAA',
+		primary-element:            '#0078D4',
+		primary-element-hover:      '#005CAA',
+		primary-element-text:       '#FFFFFF',
+		primary-element-text-dark:  '#EDF2F9',
+		primary-light:              '#08294A',
+		primary-light-hover:        '#0B2E52',
+		primary-light-text:         '#8CC8F8',
+		primary-element-light:      '#08294A',
+		primary-element-light-hover:'#0B2E52',
+		primary-element-light-text: '#8CC8F8',
+	),
+);
+
+@mixin nextcloud-primary-vars($theme) {
+	@each $name, $value in map.get($nextcloud-primary, $theme) {
+		--color-#{$name}: #{$value} !important;
+	}
+}
+
+@mixin theme-vars($theme) {
+	@each $name, $value in map.get($themes, $theme) {
+		--#{$name}: #{$value};
+	}
+}
+
+// Jetons Azure (variables --main-page-bg, --colour-*…) selon la variante de la page.
+// Les variables de Nextcloud sont fixées par _palette.scss (fichiers azure-palette-*).
+
+$colour-brand:           var(--colour-brand);
+$colour-brand-hover:     var(--colour-brand-hover);
+$colour-danger:          var(--colour-danger);
+$colour-danger-hover:    var(--colour-danger-hover);
+$main-page-bg:           var(--main-page-bg);
+$main-page-bg-dashboard: var(--main-page-bg-dashboard);
+$theme-divider:          var(--theme-divider);
+$theme-divider-2:        var(--theme-divider-2);
+$colour-forground:       var(--colour-forground);
+$colour-forground-1:     var(--colour-forground-1);
+$colour-forground-2:     var(--colour-forground-2);
+$colour-scrollbar-track: var(--colour-scrollbar-track);
+$colour-scrollbar-main:  var(--colour-scrollbar-main);
+$colour-background:      var(--colour-background);
+$colour-primary-100:     var(--colour-primary-100);
+$colour-blue-400:        var(--colour-blue-400);
+$colour-primary-50:      var(--colour-primary-50);
+$colour-gray-100:        var(--colour-gray-100);
+$secondary-card-bg:      var(--secondary-card-bg);
+$colour-sidebar-bg:      var(--colour-sidebar-bg);
+$colour-green-50:        var(--colour-green-50);
+$colour-green-700:       var(--colour-green-700);
+$colour-blue-600:        var(--colour-blue-600);
+$colour-red-50:          var(--colour-red-50);
+$colour-red-600:         var(--colour-red-600);
+$colour-semilight:       var(--colour-semilight);
+$colour-sidebar-link-bg: var(--colour-sidebar-link-bg);
+$colour-dark-colour:     var(--colour-dark-colour);
+$colour-yellow:          var(--colour-yellow);
+$colour-yellow-50:       var(--colour-yellow-50);
+$colour-forground-white: var(--colour-forground-white);
+$colour-on-status:       var(--colour-on-status);
+$colour-filet-bouton:    var(--colour-filet-bouton);
+$colour-bulle-ok:        var(--colour-bulle-ok);
+$colour-bulle-alerte:    var(--colour-bulle-alerte);
+$colour-bulle-erreur:    var(--colour-bulle-erreur);
+$colour-call-surface:    var(--colour-call-surface);
+$colour-call-line:       var(--colour-call-line);
+$colour-white:           var(--colour-white);
+$colour-white-20:        var(--colour-white-20);
+$colour-cheveron-seprator: var(--colour-cheveron-seprator);
+$gradient-brand-vertical: var(--gradient-brand-vertical);
+$gradient-brand-diagonal: var(--gradient-brand-diagonal);
+$box-shadow-1:           var(--box-shadow-1);
+$box-shadow-2:           var(--box-shadow-2);
+$box-shadow-3:           var(--box-shadow-3);
+$box-shadow-4:           var(--box-shadow-4);
+$filter-primry-600:      var(--filter-primry-600);
+$filter-forground:       var(--filter-forground);
+$filter-forground-1:     var(--filter-forground-1);
+$filter-red:             var(--filter-red);
+$filter-green:           var(--filter-green);
+$filter-light-bg:        var(--filter-light-bg);
+
+
+$header-height:          var(--header-height);

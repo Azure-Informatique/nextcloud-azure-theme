@@ -1,0 +1,75 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../settings/mixins' as *;
+
+@mixin bookmarks-main {
+	#content-vue.app-bookmarks {
+		// Carte de favori en grille : à plat (Favoris pose un halo intérieur gris en dur).
+		.item--gridview {
+			border: 1px solid $theme-divider;
+			border-radius: $rounded-12;
+			box-shadow: none;
+			background-color: $colour-background;
+			&:hover,
+			&:focus-within {
+				background-color: $colour-gray-100;
+			}
+		}
+		// « Nouvelle étiquette » : entrée de navigation comme les autres, pas un élément actif.
+		.app-navigation-entry-button {
+			padding-inline-start: 14px;
+			background-color: transparent;
+			&:hover {
+				background-color: $colour-sidebar-link-bg;
+			}
+		}
+		// Barre du haut au téléphone : les boutons de 44 px (flux RSS, tri, vue) gardent leur largeur et
+		// le champ de recherche prend la place restante ; Favoris les laissait se tasser à 30 px, leurs
+		// boutons débordaient de 14 px et faisaient défiler la page de côté.
+		.controls__right {
+			> :not(.inline-search) {
+				flex-shrink: 0;
+			}
+			> .inline-search {
+				min-width: 0;
+			}
+		}
+		// Barre du haut : bouton de navigation, « + », recherche et boutons sur un même axe, 10 px sous
+		// l'en-tête (celui du bouton de navigation) ; Favoris décale le champ (6 px, −4 px) et les boutons
+		// (5 px) autrement. Barre absolue de 46 px chez Favoris : hauteur et décalage de la liste suivent
+		// la taille de cible (34 px, 44 px au doigt), le champ ne mord plus sur la première carte.
+		.controls {
+			align-items: flex-start;
+			height: calc(var(--default-clickable-area) + 18px);
+			padding-top: 10px;
+			> * {
+				align-items: flex-start;
+			}
+			.inline-search {
+				top: 0;
+				margin-block-start: 0;
+			}
+		}
+		.controls + * {
+			margin-top: calc(var(--default-clickable-area) + 22px);
+		}
+		// Au doigt, le thème donne 44 px à l'<input>, posé 2 px sous le haut de son cadre : −2 px le
+		// centre sur l'axe commun.
+		@media (pointer: coarse) and (max-width: $bp-640) {
+			.controls .inline-search {
+				top: -2px;
+			}
+		}
+		// Corbeille et Paramètres, posés hors de la liste : même retrait que les autres entrées.
+		.app-navigation__content > .app-navigation-entry-wrapper {
+			padding-inline: 8px;
+			.app-navigation-entry-link {
+				padding-inline-start: 13px;
+			}
+		}
+	}
+}

@@ -1,0 +1,129 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Photos : couche Azure posée par-dessus les feuilles héritées (base et v35), même grammaire que
+ * Fichiers : barre d'état paper + filet, titre 1,0625 rem 700, boutons pilules secondaires,
+ * titres de mois en titre de section, curseur de dates discret (filet line, pastille bleue).
+ * Incluse en dernier dans la feuille de base ET dans la feuille v35 (chargée après) pour
+ * passer devant les règles héritées.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../files/files' as files;
+
+@mixin photos-azure {
+	.content.app-photos main {
+		.photos-navigation {
+			min-height: 56px;
+			margin: 0;
+			padding-block: 8px;
+			padding-inline: calc(var(--default-clickable-area) + 16px) 12px;
+			gap: 8px;
+			border-bottom: 1px solid $theme-divider;
+			background-color: $main-page-bg;
+			.photos-navigation__title,
+			.photos-navigation__title h1,
+			.photos-navigation__title__main {
+				margin: 0;
+				font-size: 1.0625rem;
+				line-height: 1.5rem;
+				font-weight: $font-bold;
+				color: $colour-forground;
+			}
+			.photos-navigation__title__sub {
+				font-size: 13px;
+				color: $colour-forground-1;
+			}
+			.photos-navigation__content,
+			.photos-navigation__content__left,
+			.photos-navigation__content__right,
+			.timeline__header__left {
+				gap: 6px;
+			}
+			.photos-navigation__content__left,
+			.photos-navigation__content__right,
+			.timeline__header__left {
+				> button.button-vue:not(.button-vue--icon-only),
+				> .action-item > .v-popper > button.button-vue:not(.button-vue--icon-only),
+				.action-item button.button-vue:not(.button-vue--icon-only) {
+					@include files.bouton-secondaire;
+				}
+				> button.button-vue--icon-only,
+				> .action-item > .v-popper > button.button-vue--icon-only,
+				.action-item button.button-vue--icon-only {
+					@include files.bouton-icone;
+				}
+			}
+			.photos-navigation__back {
+				@include files.bouton-icone;
+			}
+		}
+
+		// Titres de mois de la chronologie : titre de section (0,9375 rem, 700, ink).
+		.section-header,
+		.files-list-viewer .vs-rows-container > div h2 {
+			margin-block: 8px 12px;
+			font-size: 0.9375rem;
+			line-height: 1.5rem;
+			font-weight: $font-bold;
+			color: $colour-forground;
+		}
+
+		// Tuiles : coins 12 px, sélection = contour 2 px du bleu de marque.
+		.file-container {
+			border-radius: $rounded-8;
+			&.selected::after,
+			&:focus-within::after {
+				outline: 2px solid $colour-brand;
+				outline-offset: -2px;
+				border-radius: $rounded-8;
+			}
+		}
+
+		// États vides : icône et texte muted, titre ink (charte).
+		.empty-content {
+			.empty-content__icon {
+				color: $colour-forground-1;
+				opacity: 1;
+			}
+			.empty-content__name {
+				color: $colour-forground;
+				font-weight: $font-bold;
+			}
+			.empty-content__description {
+				color: $colour-forground-1;
+			}
+		}
+	}
+
+	// Curseur de dates : filet discret, pastille pleine bleu de marque (texte blanc 4,53:1).
+	.content.app-photos .date-scrubber {
+		.date-scrubber__track {
+			background-color: transparent;
+		}
+		.date-scrubber__tick {
+			background-color: $theme-divider;
+		}
+		.date-scrubber__thumb__pill {
+			border-radius: $rounded-full;
+			background-color: $colour-brand;
+			box-shadow: $box-shadow-3;
+			.date-scrubber__thumb__date {
+				margin: 0;
+				font-size: $text-12;
+				line-height: 1.25rem;
+				font-weight: $font-semibold;
+				color: $colour-white;
+			}
+		}
+		.date-scrubber__year-label {
+			font-size: $text-12;
+			font-weight: $font-semibold;
+			color: $colour-forground-1;
+		}
+		.date-scrubber__year-label--active {
+			color: $colour-forground;
+		}
+	}
+}

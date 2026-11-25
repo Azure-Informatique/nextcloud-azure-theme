@@ -1,0 +1,21 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Fichiers, Nextcloud 36 et suivants : la barre de détail passe à @nextcloud/vue 9.
+ * Ses onglets (_sidebarTabsButton_) reçoivent le contrôle segmenté du module commun
+ * ui/_detail-sidebar, qui couvre déjà les apps Vue 3 des versions précédentes ; seul le champ
+ * de recherche du partage demande un écart propre à cette version.
+ */
+
+@mixin files {
+	// NcSelect de @nextcloud/vue 9 : le champ intérieur garde 2 px autour de lui pour l'anneau de
+	// focus. 48 px de zone cliquable donnent le champ visible de 44 px voulu par la charte.
+	// Son contour est une ombre à 35 % sur trois côtés : contour plein ink/50 de la charte.
+	.app-sidebar .sharing-search .nc-select {
+		--default-clickable-area: 48px;
+		.input-field__input:not(:focus) {
+			box-shadow: 0 0 0 1px var(--color-border-maxcontrast);
+		}
+	}
+}

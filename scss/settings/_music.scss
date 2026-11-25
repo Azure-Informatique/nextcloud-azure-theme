@@ -1,0 +1,39 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Administration › Musique (app music). Le bloc mêle un texte d'introduction hors section et
+ * une section Last.fm : seule cette dernière devenait une carte, l'introduction et le titre
+ * « Scrobbler Configuration » restaient posés sur le fond. Le bloc entier devient la carte.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+@mixin music-admin {
+	.app-settings #{$contenu-reglages} > #admin-music {
+		@include carte;
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		padding: 20px 16px !important;
+		border: 1px solid $theme-divider !important;
+		background-color: $colour-background !important;
+
+		@media (min-width: $bp-640) {
+			padding: 24px !important;
+		}
+
+		.scrobbler-intro h2 {
+			@include titre-carte;
+		}
+
+		// La section Last.fm n'est plus qu'un bloc de la carte.
+		.settings-section {
+			margin: 0 !important;
+			padding: 0 !important;
+			border: 0 !important;
+			background: transparent !important;
+		}
+	}
+}

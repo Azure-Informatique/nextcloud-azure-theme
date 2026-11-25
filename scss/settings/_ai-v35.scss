@@ -1,0 +1,18 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+*/
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../settings/mixins' as *;
+
+@mixin ai {
+    &#{reglage(ai)}{
+        .ai-settings{
+            .button-vue--tertiary{
+                @include outline-button;
+            }
+        }
+    }
+}

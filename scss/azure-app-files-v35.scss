@@ -1,0 +1,12 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Fichiers, Nextcloud 35 et suivants. Compilé en css/azure-app-files-nc35.css, chargé après css/azure-theme-nc35.css
+ * sur les pages de l'app quand Nextcloud ≥ 35.
+ */
+@use 'files/files-v35' as files;
+
+:root {
+	@include files.files;
+}

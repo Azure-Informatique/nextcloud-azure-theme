@@ -1,0 +1,191 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Fournisseur OpenID Connect (app oidc) : Administration et Personnel. L'app impose un titre
+ * de section à 20 px (!important, par identifiant) : il redevient un titre de carte.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+@mixin oidc {
+	.app-settings :is(#oidc, #oidc-personal) .settings-section h2.settings-section__name {
+		font-size: 0.9375rem !important;
+		line-height: 1.35 !important;
+		font-weight: $font-bold !important;
+	}
+
+	// Onglets (Clients, Paramètres, Clé publique) : l'app trace sous eux une barre de 4 px au
+	// bleu de marque (style en ligne) pensée pour des onglets à coins carrés ; sous les pilules du
+	// thème, elle devenait une épaisse barre bleue. Filet « line » comme les autres rangées
+	// d'onglets. Trop larges pour l'écran (téléphone), ils passent à la ligne : une rangée qui
+	// défilait sans indice cachait « Clé publique » et coupait « Paramètres ».
+	.app-settings #oidc .settings-section > div:has(> .button-vue) {
+		width: auto !important;
+		padding-bottom: 8px;
+		border-bottom: 1px solid $theme-divider !important;
+		flex-wrap: wrap;
+		row-gap: 8px;
+
+		> .button-vue {
+			flex: none;
+			max-width: 100%;
+		}
+	}
+
+	// Blocs de l'app limités à « 100 % − 24 px » : une marge vide à droite, sensible au téléphone.
+	.app-settings #oidc .container {
+		max-width: 100%;
+	}
+
+	// Champ d'URI et bouton « Ajouter » (fiche d'un client, Paramètres) : l'app les range en
+	// « 7fr 1fr », colonne trop étroite pour le bouton (« Ajoute/r » à l'ordinateur, lettre par
+	// lettre au téléphone). Le bouton prend sa largeur, le champ le reste, centrés l'un sur l'autre.
+	.app-settings #oidc .grid-inner-2 {
+		grid-template-columns: minmax(0, 1fr) auto;
+		column-gap: 8px;
+		align-items: center;
+	}
+
+	// Paramètres › Restrictions des portées par groupe : groupe, portées et « Enregistrer » sur une
+	// rangée qui ne se repliait pas ; au téléphone, le champ des portées était écrasé à 0 px (seuls
+	// son filet et son chevron restaient visibles). La rangée passe à la ligne, champs alignés.
+	.app-settings #oidc .container-inner > div:not([class]):has(> #groupScopesGroup) {
+		flex-wrap: wrap;
+		align-items: center;
+		row-gap: 8px;
+	}
+	// Enfants visés par leur voisin #groupScopesGroup (jamais par un :has() sur la rangée parente).
+	.app-settings #oidc #groupScopesGroup {
+		flex: 0 1 auto;
+		max-width: 100%;
+
+		@media (max-width: $bp-640) {
+			flex: 1 1 100%;
+		}
+	}
+	// !important : l'app pose « flex: 1 1 auto » en style en ligne.
+	.app-settings #oidc #groupScopesGroup ~ .v-select {
+		flex: 1 1 240px !important;
+		min-width: 0;
+		margin: 0;
+	}
+	.app-settings #oidc #groupScopesGroup ~ .button-vue {
+		flex: none;
+	}
+
+	// Fiche d'un client : groupes (URI de redirection, Flux…) espacés, titres alignés sur les
+	// champs (ils étaient décalés de 10 px), puces d'algorithme et de type dans la marge de la liste.
+	.app-settings #oidc_edit_client {
+		#{css-module('formGroup')} {
+			margin-top: 20px;
+		}
+		#{css-module('formGroup__label')} {
+			padding-inline: 0;
+		}
+		#{css-module('ncFormBox')} > div:not([class]) {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 8px;
+			padding: 8px 12px;
+		}
+
+		// Annuler, Enregistrer, Supprimer : sur une ligne qui ne pouvait pas se replier, chacun se
+		// coupait en pleine lettre au téléphone ; ils passent à la ligne s'il le faut.
+		.container > div:not([class]):has(> .button-vue) {
+			flex-wrap: wrap;
+		}
+	}
+
+	// « Ajouter un client » : dernière rangée de la liste des clients, à plat comme les autres
+	// (un bouton pilule encadré, collé au cadre de la liste, s'y emboîtait mal).
+	.app-settings #oidc_clients #{css-module('ncFormBox')} > .button-vue {
+		min-height: 48px;
+		border: 0 !important;
+		border-top: 1px solid $theme-divider !important;
+		border-radius: 0 !important;
+		background-color: transparent !important;
+		color: $colour-blue-600 !important;
+
+		&:hover,
+		&:focus-visible {
+			background-color: $main-page-bg-dashboard !important;
+		}
+	}
+
+	// Personnel › Applications autorisées : l'app range infos et boutons en deux colonnes
+	// (infos « flex: 1 », boutons de 130 px empilés). Au téléphone les infos tombaient à ~150 px
+	// (identifiant en tranches de 12 caractères, date sur 3 lignes) et, à 1024 px, les boutons
+	// sortaient de la carte. Les boutons passent sous les infos dès que la place manque, en
+	// rangée qui se replie ; carte, pastilles et boutons aux formes de la charte.
+	.app-settings #oidc-personal {
+		.consent-item {
+			flex-wrap: wrap;
+			align-items: flex-start;
+			gap: 16px;
+			padding: 16px;
+			border: 1px solid $theme-divider;
+			border-radius: $rounded-12;
+			background: $colour-background;
+		}
+		.consent-info {
+			flex: 1 1 320px;
+			min-width: 0;
+			h4 {
+				margin: 0 0 8px;
+				overflow-wrap: anywhere;
+			}
+			p {
+				overflow-wrap: anywhere;
+			}
+			// Identifiant de 64 caractères sans espace : coupé n'importe où, sur toute la largeur.
+			code {
+				word-break: break-all;
+			}
+		}
+		.scope-badges {
+			gap: 6px;
+		}
+		.scope-badge {
+			border-radius: $rounded-full;
+		}
+		.consent-actions {
+			flex: 0 1 auto;
+			flex-direction: row;
+			flex-wrap: wrap;
+			align-items: center;
+			gap: 8px;
+			max-width: 100%;
+			> button {
+				@include outline-button;
+				width: auto;
+				max-width: 100%;
+				margin: 0;
+				color: $colour-forground;
+				font-weight: $font-semibold;
+				&:hover {
+					color: $colour-blue-600;
+				}
+			}
+			// « Révoquer l'accès » (classe « secondary » de l'app) : bouton de danger cerclé.
+			> button.secondary {
+				border-color: $colour-red-600;
+				color: $colour-red-600;
+				&:hover {
+					border-color: $colour-red-600;
+					background-color: $colour-red-50;
+					color: $colour-red-600;
+				}
+			}
+			// Téléphone : rangée pleine largeur sous les infos, boutons qui se partagent la ligne.
+			@media (max-width: $bp-640) {
+				flex: 1 1 100%;
+				> button {
+					flex: 1 1 auto;
+					justify-content: center;
+				}
+			}
+		}
+	}
+}

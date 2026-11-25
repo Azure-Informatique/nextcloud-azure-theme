@@ -1,0 +1,348 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+@mixin adminworkflow {
+	&#{reglage(workflow, admin)}{
+		.settings-section{
+			h2{
+                gap: 6px;
+                .settings-section__info{
+                    width: 16px;
+                    height: 16px;
+                    display: block;
+                    margin: 0;
+                    svg{
+                        width: 16px;
+                        height: 16px;
+                        fill: $colour-forground;
+                    }
+                }
+            }
+			p{
+				margin: 0;
+				display: flex;
+				a{
+					font-size: $text-heading-5;
+					line-height: $leading-20;
+					color: $colour-forground;
+					font-weight: $font-medium;
+					text-decoration: underline;
+					transition: transition-douce();
+					&:hover{
+						color: $colour-blue-600;
+					}
+				}
+			}
+			.actions{
+				margin-top: 16px;
+				gap: 16px;
+				@media (max-width: $bp-576) {
+					flex-direction: column;
+				}
+				.actions__item{
+					padding: 12px;
+					margin: 0;
+					gap: 12px;
+					justify-content: center;
+					@media (max-width: $bp-576) {
+						width: 100%;
+						max-width: 100%;
+					}
+					.icon{
+						margin: 0;
+						background-size: 32px;
+						height: 32px;
+					}
+					.icon-vue{
+						height: 32px;
+						min-height: unset;
+					}
+					&.colored{
+						background-color: transparent;
+						border: 1px solid $theme-divider;
+						border-radius: $rounded-6;
+					}
+					.actions__item_options{
+						&:empty{
+							display: none;
+						}
+					}
+					.actions__item__description{
+						display: flex;
+						flex-direction: column;
+						gap: 12px;
+						flex-grow: 0;
+						h3{
+							font-size: $text-heading-3;
+							line-height: $leading-22;
+							color: $colour-forground;
+							font-weight: $font-semibold;
+						}
+						small{
+							font-size: $text-13;
+							line-height: $leading-20;
+							color: $colour-forground-1;
+							padding: 0;
+							flex-grow: 0;
+						}
+						.button-vue--vue-secondary{
+							@include primary-button;
+						}
+					}
+				}
+			}
+			h2{
+				+span{
+					padding: 16px;
+					border: 1px solid $theme-divider;
+					border-radius: $rounded-6;
+					display: block;
+					max-width: 900px;
+					.section{
+						border-inline-start: 0;
+						padding: 0;
+						flex-direction: column;
+						margin-bottom: 16px;
+						padding-bottom: 16px;
+						&:last-of-type{
+							margin-bottom: 0;
+							padding-bottom: 0;
+						}
+						p{
+							&:has(span:empty){
+								display: none;
+							}
+						}
+						.icon-confirm{
+							&:empty{
+								display: none;
+							}
+						}
+						.trigger{
+							display: flex;
+							flex-direction: column;
+							gap: 12px;
+							flex-grow: 0;
+							min-height: unset;
+							p{
+								align-items: center;
+								gap: 6px;
+								min-height: unset;
+								height: auto;
+								// « Quand » / « et » : un mot qui ne se coupe jamais (« Quan/d » au téléphone).
+								> span:first-child{
+									flex: none;
+									white-space: nowrap;
+								}
+								// Téléphone : libellé au-dessus, champs de la condition sur toute la largeur
+								// (côte à côte, ils sortaient de la carte de 48 px à 360 px).
+								@media (max-width: $bp-640) {
+									flex-wrap: wrap;
+									.check{
+										flex: 1 1 100%;
+										min-width: 0;
+										> .v-select,
+										> input{
+											width: 100%;
+											min-width: 0;
+										}
+									}
+								}
+								span{
+									padding: 0;
+									display: flex;
+									font-size: $text-heading-5;
+									line-height: $leading-20;
+									font-weight: $font-normal;
+									color: $colour-forground-1;
+								}
+								.event{
+									margin-bottom: 0;
+									.isComplex{
+										display: flex;
+										align-items: center;
+										gap: 4px;
+										.option__title{
+											margin-inline-start: 0;
+											color: $colour-forground;
+										}
+									}
+								}
+								.check{
+									gap: 6px;
+									padding-inline-end: 0;
+									.v-select{
+										@include select-field;
+										@include select-box;
+										width: 100%;
+										.vs__selected{
+											border: 0 !important;
+										}
+										margin: 0;
+									}
+									input{
+										height: auto;
+										min-height: unset;
+										border: 1px solid var(--color-border-maxcontrast);
+										border-radius: $rounded-6;
+										padding: 6px 12px;
+										margin: 0;
+									}
+									.button-vue--vue-tertiary{
+										@include error-button;
+										margin: 0;
+									}
+									.option{
+										.timeslot{
+											max-width: 100%;
+											position: relative;
+											gap: 4px;
+											input{
+												&:first-child{
+													margin-inline-end: 6px;
+												}
+											}
+											.invalid-hint{
+												position: absolute;
+												bottom: -20px;
+												inset-inline-start: 0;
+												font-size: $text-13;
+												line-height: $leading-20;
+												color: $colour-red-600;
+											}
+										}
+										>div{
+											display: flex;
+											flex-direction: column;
+											gap: 4px;
+										}
+									}
+									&:has(.timeslot){
+										flex-direction: column;
+										.invalid-hint{
+											position: static !important;
+										}
+									}
+								}
+								&:has(.timeslot){
+									.option{
+										width: 100%;
+										max-width: 350px;
+										.timeslot{
+											width: 100%;
+											input{
+												width: 100%;
+												margin-inline-end: 0 !important;
+											}
+										}
+									}
+									align-items: start;
+									.check{
+										max-width: 350px;
+										.v-select{
+											width: 100%;
+										}
+									}
+								}
+							}
+						}
+						.flow-icon{
+							&.icon-confirm{
+								display: none;
+							}
+						}
+						.action{
+							max-width: 100%;
+							margin-top: 16px;
+							flex-grow: 0;
+							min-height: unset;
+							display: flex;
+							flex-direction: column;
+							.actions__item{
+								flex-direction: column;
+								align-items: start;
+								margin: 0;
+								gap: 6px;
+								padding: 0;
+								.icon{
+									margin: 0;
+									height: 32px;
+									width: 32px !important;
+									background-size: 32px;
+								}
+								.actions__item__description{
+									padding-top: 0;
+									align-items: start;
+									h3{
+										font-size: $text-heading-3;
+										line-height: $leading-22;
+										color: $colour-forground;
+										margin-bottom: 6px;
+										font-weight: $font-semibold;
+									}
+									small{
+										flex-grow: 0;
+										font-size: $text-13;
+										line-height: $leading-20;
+										color: $colour-forground-1;
+									}
+								}
+								
+							}
+							.actions__item_options{
+								&:empty{
+									display: none;
+								}
+							}
+							.buttons{
+								justify-content: start;
+								margin-top: 16px;
+								.button-vue--vue-secondary{
+									@include outline-button;
+								}
+								.button-vue--vue-primary,
+								.button-vue--vue-success{
+									@include primary-button;
+								}
+								.button-vue--vue-warning{
+									@include warning-button;
+								}
+							}
+						}
+					}
+				}
+			}
+			.empty-content{
+				width: 100%;
+				max-width: 100%;
+			}
+		}
+	}
+
+	// Fiches de Flux « colorées » par l'app (fond rouge, vert, orange… et texte noir ou blanc assorti) :
+	// à plat comme toutes les cartes du thème, texte et icône aux couleurs du thème — lisibles dans les deux
+	// variantes, quel que soit le fond prévu par l'app.
+	.actions__item.colored {
+		background-color: transparent !important;
+		border: 1px solid $theme-divider;
+		.actions__item__description {
+			h3 {
+				color: $colour-forground !important;
+			}
+			small {
+				color: $colour-forground-1 !important;
+			}
+		}
+		.icon,
+		.icon-vue {
+			filter: $filter-forground !important;
+		}
+	}
+
+}

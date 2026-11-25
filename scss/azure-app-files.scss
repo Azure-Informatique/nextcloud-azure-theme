@@ -1,0 +1,17 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * App Fichiers (liste, barre latérale de détail) ; aussi sur les pages de partage public.
+ * Compilé en css/azure-app-files.css et chargé, après css/azure-theme.css, sur les seules pages de l'app
+ * (lib/Service/PageAssets.php). Rien ici ne doit pouvoir s'afficher ailleurs : ce qu'une app montre
+ * hors de ses pages (fenêtres ouvertes depuis d'autres apps, widgets…) reste dans azure-theme.scss.
+ */
+@use 'files/files' as files;
+@use 'e2ee/e2ee' as e2ee;
+
+:root {
+	@include files.files;
+	@include files.files-sidebar;
+	@include e2ee.e2ee-fichiers;
+}

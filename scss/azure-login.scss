@@ -1,0 +1,17 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Pages « invité » (connexion, 2FA, erreurs, rendez-vous) aux couleurs d'Azure.
+ */
+@use 'fonts';
+@use 'login/login' as login;
+
+// Contraste renforcé demandé par l'appareil : Nextcloud applique son propre contraste élevé, l'habillage s'efface.
+@media not (prefers-contrast: more) {
+	#body-login {
+		@include login.login;
+	}
+
+	@include login.login-scrollbar;
+}

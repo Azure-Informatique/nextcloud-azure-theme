@@ -1,0 +1,14 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Pages des réglages, Nextcloud 36 et suivants. Compilé en css/azure-app-settings-nc36.css, chargé après
+ * css/azure-app-settings-nc35.css sur les pages de l'app quand Nextcloud ≥ 36.
+ */
+@use 'settings/workflow-v36' as workflow;
+@use 'settings/settings-v36' as settings;
+
+:root {
+	@include workflow.workflow-v36;
+	@include settings.settings-v36;
+}

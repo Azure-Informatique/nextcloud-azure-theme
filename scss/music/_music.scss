@@ -1,0 +1,33 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../settings/mixins' as *;
+
+@mixin music-main {
+	// Musique (AngularJS) : navigation comme les autres apps — fond canvas, filet à droite,
+	// élément actif azure/10 + liseré bleu de marque, survol canvas-alt.
+	#content.app-music,
+	#app.app-music,
+	.app-music {
+		#app-navigation {
+			background-color: $colour-sidebar-bg;
+			border-inline-end: 1px solid $theme-divider;
+			li.music-navigation-item {
+				border-radius: $rounded-8;
+				&:hover {
+					background-color: $colour-sidebar-link-bg;
+				}
+				&.active {
+					background-color: $colour-primary-50;
+					box-shadow: inset var(--azure-liseret, 3px) 0 0 $colour-brand;
+					a {
+						color: $colour-forground;
+					}
+				}
+			}
+		}
+	}
+}

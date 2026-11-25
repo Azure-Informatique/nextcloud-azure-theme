@@ -1,0 +1,368 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use 'sass:list';
+@use 'sass:map';
+@use 'themes' as *;
+
+$rounded-4: 4px;
+$rounded-6: 10px; // Azure : coins plus doux, comme le site (rounded-xl / 2xl)
+$rounded-8: 12px;
+$rounded-10: 12px;
+$rounded-12: 16px;
+$rounded-20: 24px;
+$rounded-full: 999px;
+
+$text-heading-1: 30px;
+$text-heading-2: 20px;
+$text-heading-3: 18px;
+$text-heading-4: 16px;
+$text-heading-5: 14px;
+// Texte secondaire, aides, étiquettes : 13 px au moins (charte ; taille « small » de Nextcloud).
+$text-12: 13px;
+$text-13: 13px; // plancher des textes d'aide des réglages (lisibilité)
+$text-10: 10px;
+
+$leading-36: 36px;
+$leading-28: 28px;
+$leading-24: 24px;
+$leading-22: 22px;
+$leading-20: 20px;
+$leading-16: 16px;
+
+$tracking-05: 0.005em;
+
+// Transitions : couleurs, fond, bordure, opacité et transformation seulement, durées courtes ;
+// jamais d'ombre ni de filtre (repeinture à chaque image), jamais « all » (qui animait aussi tailles et
+// marges, donc la mise en page, et obligeait le navigateur à comparer toutes les propriétés à chaque
+// recalcul de style). La liste est définie une fois sur :root (azure-theme.scss, transitions-racine)
+// et ses durées passent à 0 quand le système demande moins d'animations (ui/_cadre.scss).
+$duree-douce: var(--azure-duree-transition, 200ms);
+$duree-vive: var(--azure-duree-transition-vive, 100ms);
+@function liste-transition($duree) {
+	$out: ();
+	@each $prop in color, background-color, border-color, outline-color, fill, opacity, transform, scale {
+		$out: list.append($out, $prop $duree ease-in-out, $separator: comma);
+	}
+	@return $out;
+}
+@function transition-douce($duree: $duree-douce) {
+	@return if($duree == $duree-vive, var(--azure-transition-vive), var(--azure-transition));
+}
+@mixin transitions-racine {
+	:root {
+		--azure-transition: #{liste-transition($duree-douce)};
+		--azure-transition-vive: #{liste-transition($duree-vive)};
+	}
+}
+
+$font-normal: 400;
+$font-medium: 500;
+$font-semibold: 600;
+$font-bold: 700;
+
+$bp-1699: 1699px;
+$bp-1600: 1600px;
+$bp-1512: 1512px;
+$bp-1440: 1440px;
+$bp-1366: 1366px;
+$bp-1324: 1324px;
+$bp-1280: 1280px;
+$bp-1199: 1199px;
+$bp-1024: 1024px;
+$bp-1023: 1023px;
+$bp-992: 992px;
+$bp-768: 768px;
+$bp-640: 640px;
+$bp-576: 576px;
+$bp-512: 512px;
+$bp-511: 511px;
+
+@function css-module($local) {
+	@return '[class*="_#{$local}_"]:not(:where([class*="_#{$local}__"]))';
+}
+
+// Colonne des réglages : .settings-content jusqu'à Nextcloud 35, classe de module générée
+// (_settingsContent_…) à partir de la 36. Même spécificité qu'une classe : la cascade de 34/35
+// ne change pas.
+$contenu-reglages: ':is(.settings-content, #{css-module('settingsContent')})';
+
+@mixin scrollbar($width: 4px, $thumb-colour: $colour-scrollbar-track) {
+	scrollbar-width: auto;
+	scrollbar-color: auto;
+	&::-webkit-scrollbar {
+		width: $width;
+		border-radius: $rounded-full;
+	}
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: $thumb-colour;
+		border-radius: $rounded-full;
+		cursor: pointer;
+	}
+}
+
+@mixin module-scrollbar($width: 12px, $thumb-colour: $colour-scrollbar-main) {
+	scrollbar-width: auto;
+	scrollbar-color: auto;
+	&::-webkit-scrollbar {
+		width: $width;
+		height: $width;
+	}
+	&::-webkit-scrollbar-track {
+		background: transparent;
+	}
+	&::-webkit-scrollbar-thumb {
+		background: $thumb-colour;
+		background-clip: padding-box;
+		border-inline-end: 4px solid transparent;
+		border-radius: $rounded-full;
+		cursor: pointer;
+	}
+	@media (max-width: $bp-640) {
+		scrollbar-width: thin;
+		&::-webkit-scrollbar {
+			width: 0;
+			height: 0;
+			background: transparent;
+		}
+	}
+}
+
+@mixin breadcrumb-crumbs($crumb: a) {
+	gap: 6px;
+	li{
+		#{$crumb}{
+			padding: 0 6px;
+			border: 0;
+			margin: 0;
+			background-color: transparent;
+			.button-vue__wrapper{
+				gap: 6px;
+				.button-vue__icon,
+				.icon-vue{
+					width: 16px;
+					height: 16px;
+					min-height: unset;
+					min-width: unset;
+					svg{
+						width: 16px;
+						height: 16px;
+						flex-shrink: 0;
+						filter: $filter-forground;
+					}
+				}
+				.button-vue__text{
+					font-size: $text-heading-5;
+					line-height: $leading-20;
+					padding: 0;
+					margin: 0;
+					color: $colour-forground;
+					font-weight: $font-medium;
+				}
+			}
+			&:hover,
+			&:focus,
+			&:focus-visible,
+			&:focus-within{
+				background-color: transparent;
+			}
+			&:hover{
+				.button-vue__wrapper{
+					.button-vue__icon,
+					.icon-vue{
+						svg{
+							filter: $filter-primry-600;
+						}
+					}
+					.button-vue__text{
+						color: $colour-blue-600;
+					}
+				}
+			}
+		}
+		.material-design-icon{
+			svg{
+				filter: $filter-forground-1;
+			}
+		}
+	}
+}
+
+@mixin noscrollbar {
+	scrollbar-width: none;
+	-ms-overflow-style: none;
+	&::-webkit-scrollbar {
+		display: none;
+	}
+}
+
+@mixin select-field($dropdown: true) {
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	.select__label{
+		font-size: $text-heading-5;
+		line-height: $leading-20;
+		color: $colour-forground-1;
+		font-weight: $font-medium;
+		margin: 0;
+	}
+	.vs__dropdown-toggle:not(.nc-select.vs--single *){
+		border: 1px solid var(--color-border-maxcontrast);
+		border-radius: $rounded-6;
+		box-shadow: none;
+		min-height: 44px;
+		outline: 0 !important;
+		.vs__selected-options:not(.vs--multiple *){
+			padding-inline-start: 16px;
+			flex-wrap: wrap;
+			gap: 6px;
+		}
+		// Valeur d'une sélection à choix unique : texte simple sur toute la largeur.
+		.vs__selected:not(.vs--multiple *){
+			flex: 1 1 auto;
+			min-width: 0;
+			margin: 0;
+			padding: 0 !important;
+			border: 0 !important;
+			background-color: transparent !important;
+			font-size: $text-heading-5;
+			color: $colour-forground;
+		}
+		// Valeurs d'une sélection multiple (pastilles) : règle unique dans ui/_select.scss.
+		input:not(.vs--multiple *){
+			height: 100% !important;
+			display: flex;
+			padding: 0;
+			width: 100%;
+			border: 0;
+			&::placeholder{
+				font-size: $text-heading-5;
+				line-height: $leading-20;
+				color: $colour-forground-1;
+				font-weight: $font-medium;
+			}
+		}
+		// Chevron à 8 px du contour, dans le flux : un décalage « sticky » le faisait chevaucher la
+		// fin d'une valeur longue (« Déduit de vos paramètres régionaux (Lundi) » au téléphone).
+		.vs__actions{
+			padding-inline: 0 8px;
+			svg{
+				width: 16px;
+				height: 16px;
+			}
+		}
+	}
+	@if $dropdown {
+		@at-root body:has(.modal-container) .vs__dropdown-menu{
+			border: 1px solid $theme-divider !important;
+			box-shadow: none !important;
+			box-sizing: border-box !important;
+			margin-top: 5px;
+			border-radius: $rounded-6;
+			padding: 8px !important;
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			max-height: 260px !important;
+			overflow-y: auto;
+			@include scrollbar($thumb-colour: $colour-scrollbar-main);
+			li{
+				padding: 6px 10px;
+				font-size: $text-heading-5;
+				line-height: $leading-20;
+				color: $colour-forground;
+				span.option{
+					height: auto;
+					gap: 6px;
+					.avatardiv{
+						margin:0;
+						--avatar-size: 30px !important;
+						line-height: 30px !important;
+						font-size: $text-12 !important;
+					}
+					.option__lineone{
+						font-size: $text-12;
+						line-height: $leading-16;
+						font-weight: $font-medium;
+						color: $colour-forground;
+					}
+				}
+				&:hover,
+				&.vs__dropdown-option--highlight{
+					background-color: $colour-gray-100;
+				}
+				&.vs__no-options{
+					font-size: $text-12;
+					line-height: $leading-16;
+					font-weight: $font-medium;
+					color: $colour-forground;
+					&:hover{
+						background-color: transparent;
+					}
+				}
+			}
+		}
+	}
+}
+
+// Toute fenêtre (NcModal / NcDialog) sauf la visionneuse : remplace la classe « general-popup »
+// que posait autrefois un script. Même poids qu'une classe.
+$fenetre: ':not(:has(.viewer__file-wrapper))';
+
+// Section de réglages affichée, déduite de l'entrée active de la navigation des réglages : son
+// lien finit par /user/<id> ou /admin/<id> dans toutes les versions. Remplace la classe que
+// posait autrefois un script sur <main>. $scope : 'user', 'admin' ou null (les deux).
+@function reglage-lien($id, $scope: null) {
+	$hrefs: '[href$="/user/#{$id}"], [href$="/admin/#{$id}"]';
+	@if $scope {
+		$hrefs: '[href$="/#{$scope}/#{$id}"]';
+	}
+	@return '.app-navigation-entry.active a:is(#{$hrefs})';
+}
+
+// À accoler à <main> : main#{reglage(sharing)}, &#{reglage(sharing, admin)}. La condition est dans
+// :where() et .app-content (présente sur <main> dans toutes les versions) redonne le poids d'une
+// classe, comme l'ancienne classe de section.
+@function reglage($id, $scope: null) {
+	@return ':where(.app-settings:has(#{reglage-lien($id, $scope)}) *).app-content';
+}
+
+// Fenêtres reconnues à leur contenu ou à la page qui les ouvre (autrefois des classes posées par
+// script). Les conditions de page sont dans :where() pour garder le poids d'une classe.
+$sur-photos: ':where(:root:has(.app-photos) *)';
+$sur-comptes: ':where(:root:has(.account-management__navigation) *)';
+$dlg-mot-de-passe: #{css-module('passwordDialog')};
+$dlg-secondaire: ':is(:has(.new-node-dialog__form, .custom-reminder-modal, .systemtags-picker__input, .nc-generic-dialog, .office-overview__create-form, .version-label-modal, .reference-picker-modal--content, .collective-members, .modal-collective-wrapper, .modal-collective-members, .file-request-dialog__form, #{$dlg-mot-de-passe}), :where(:root:has(.register-daemon-config-body, .daemon-config-modal-details) *, :root:has(#{reglage-lien(groupware, admin)}) *):has(.dialog__name), :where(:root:has(.app-cookbook, .app-news) *:not(:has(.app-settings__navigation, .dialog__navigation))):has(.dialog__actions))';
+$fenetres: (
+	secondary-popup: $dlg-secondaire,
+	auth-popup: ':has(#{$dlg-mot-de-passe})',
+	photos-setting-modal: '#{$sur-photos}:has(.app-settings__content)',
+	album-popup: ':has(.album-form, .manage-collaborators)',
+	custom-date-popup: ':has(.date-range-picker-dialog)',
+	add-photos-popup: ':has(.photos-picker)',
+	photos-setting-inner: '#{$sur-photos}:has(.file-picker)',
+	account-popup: '#{$sur-comptes}:not(:has(.app-settings__content, .modal__header, .modal__button-row, #{$dlg-mot-de-passe}))',
+	delete-popup: '#{$sur-comptes}:has(.modal__header, .modal__button-row)',
+	account-mgt-popup: '#{$sur-comptes}:has(.app-settings__content)',
+	global-search: ':has(.unified-search-modal)',
+	app-api-popup: ':has(.register-daemon-config-body, .daemon-config-modal-details)',
+	log-reader-popup: ':has([id="settings-section_logreader-settings-levels"])',
+	encryption-popup: ':where(:root:has(#{reglage-lien(security, admin)}) *):has(.dialog__content .notecard--warning)',
+	image-preview-popup: ':has(.preview-modal__content)',
+);
+
+// Fin d'un nom de fichier lue dans un attribut (data-cy-files-list-row-name, alt, title…) :
+// remplace les classes de type que posait un script. Ex. &#{fin-de-nom(alt, pdf)}.
+@function fin-de-nom($attr, $exts...) {
+	$liste: ();
+	@each $ext in $exts {
+		$liste: list.append($liste, '[#{$attr}$=".#{$ext}" i]', $separator: comma);
+	}
+	@return ':is(#{$liste})';
+}

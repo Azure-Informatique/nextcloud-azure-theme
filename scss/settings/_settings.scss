@@ -1,0 +1,246 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../images' as *;
+@use './mixins' as *;
+@use './sync-clients' as *;
+@use './sharing' as *;
+@use './admindelegation' as *;
+@use './survey-client' as *;
+@use './availability' as *;
+@use './personal-info' as *;
+@use './security' as *;
+@use './theming' as *;
+@use './workflow' as *;
+@use './adminworkflow' as *;
+@use './presets' as *;
+@use './usernotification' as *;
+@use './migration' as *;
+@use './privacy' as *;
+@use './overview' as *;
+@use './assistant' as *;
+@use './groupware' as *;
+@use './appapi' as *;
+@use './support' as *;
+@use './adminsharing' as *;
+@use './basicsetting' as *;
+@use './admintheming' as *;
+@use './adminsecurity' as *;
+@use './system' as *;
+@use './logging' as *;
+@use './teamfolders' as *;
+@use './saml' as *;
+@use './help' as *;
+@use './connected-accounts' as *;
+@use './talk' as *;
+@use './share-audit' as *;
+@use '../e2ee/e2ee' as *;
+@use './oidc' as *;
+@use './music' as *;
+@use './libresign' as *;
+
+
+// Réglages valables sur toutes les pages (aperçus de thème, états vides, encarts) : feuille commune.
+@mixin settings {
+	// Seuls les thèmes clair/sombre/défaut de Nextcloud sont grisés quand Azure est actif ; le contraste
+	// élevé et la police dyslexie restent toujours accessibles (ils désactivent Azure ou s'y ajoutent).
+	// Seuls l'aperçu et l'icône du bouton radio (désactivé par js/azure-state.js) sont estompés :
+	// titre, description et libellé du bouton restent lisibles (≥ 4,5:1) en texte atténué, au
+	// lieu d'une carte entière à 50 % (texte à 2,35:1).
+	// Liste simple et non :is() : Chromium range alors la règle sous chaque classe au lieu de la tester
+	// sur tous les éléments de la page (même poids, les trois classes pesant autant).
+	.theming__preview--default,
+	.theming__preview--light,
+	.theming__preview--dark {
+		pointer-events: none;
+		.theming__preview-image,
+		.checkbox-radio-switch .checkbox-content__icon {
+			opacity: 0.5;
+		}
+		.theming__preview-description :is(h3, p),
+		.checkbox-radio-switch .checkbox-content__text {
+			color: var(--color-text-maxcontrast) !important;
+		}
+	}
+	.empty-content{
+		margin-top: 0 !important;
+		gap: 8px;
+		.empty-content__icon{
+			width: auto;
+			height: auto;
+			margin-bottom: 0 !important;
+			.loading-icon{
+				width: 22px;
+				height: 22px;
+				svg{
+					width: 22px !important;
+					height: 22px !important;
+				}
+			}
+		}
+		.empty-content__name{
+			margin-bottom: 0 !important;
+			font-size: $text-heading-4 !important;
+			line-height: $leading-20 !important;
+			font-weight: $font-medium !important;
+			color: $colour-forground !important;
+		}
+	}
+	.notecard{
+		@include notecard;
+	}
+}
+
+// Pages des réglages (/settings/…) : feuille css/azure-app-settings.css, chargée sur ces seules pages.
+// Toutes ces règles visent le <main> de .app-settings, que n'a pas la fenêtre de réglages des apps.
+@mixin settings-pages {
+	@include help;
+	@include talk-admin-dropdown;
+	@include share-audit;
+	@include e2ee-reglages;
+	@include oidc;
+	@include music-admin;
+	@include libresign-admin;
+	// Onglets des sections (ONLYOFFICE…) : l'onglet actif écrit au bleu primaire (bleu de marque,
+	// 4:1 sur canvas) ; texte bleu = azure-text.
+	.tab-list__tab.tab-list__tab--active {
+		color: $colour-blue-600;
+	}
+	// Téléphone : trois onglets en trois colonnes égales ; avec 20 px de marge de chaque côté,
+	// « Paramètres du serveur » débordait de sa colonne et de la carte (5 px à 360 px).
+	@media (max-width: $bp-640) {
+		.tab-list__tabs > .tab-list__tab {
+			padding-inline: 10px;
+		}
+	}
+	.app-settings{
+		main{
+			scroll-behavior: smooth;
+			scroll-padding-top: 55px;
+			// Colonne, cartes et titres : voir _reglages.scss (règles communes, une seule fois).
+			#{$contenu-reglages}{
+				form{
+					fieldset{
+						// Sous-titre (ex. « Transférer la propriété… ») : 15 px comme les h3, jamais
+						// plus grand que le titre de la carte.
+						legend{
+							font-size: 0.9375rem;
+							line-height: $leading-22;
+							color: $colour-forground;
+							font-weight: $font-semibold;
+							padding: 0;
+						}
+					}
+					#{css-module('formGroup__content')}{
+						margin-top: 16px;
+						#{css-module('ncFormBox')}{
+							gap: 10px;
+							div#{css-module('ncFormBox__item')}{
+								border: 1px solid $theme-divider;
+								border-radius: $rounded-6 !important;
+								padding: 12px;
+								transition: transition-douce();
+								background-color: transparent;
+								#{css-module('formBoxItem__content')}{
+									padding: 0;
+									gap: 4px;
+								}
+								#{css-module('formBoxItem__icon')}{
+									svg{
+										width: 18px;
+										height: 18px;
+										fill: $colour-forground-1;
+									}
+								}
+								span{
+									font-size: $text-13;
+									line-height: $leading-20;
+									color: $colour-forground-1;
+								}
+								button{
+									font-size: $text-heading-5;
+									line-height: $leading-20;
+									color: $colour-forground;
+									font-weight: $font-medium;
+								}
+								&:hover{
+									background-color: transparent;
+									border-color: var(--color-primary-element);
+									button{
+										color: var(--color-primary-element);
+									}
+									#{css-module('formBoxItem__icon')}{
+										svg{
+											fill: var(--color-primary-element);
+										}
+									}
+								}
+								&#{css-module('transferOwnership__newOwner')}{
+									border: 1px solid $theme-divider;
+									background-color: transparent;
+									#{css-module('transferOwnership__newOwnerSelect')}{
+										@include select-field;
+									}
+								}
+							}
+						}
+						button{
+							&.button-vue--vue-primary{
+								@include primary-button;
+							}
+						}
+					}
+				}
+			}
+			.avatar__container{
+				@media (max-width: $bp-576) {
+					margin-top: 0;
+				}
+				.avatar__preview{
+					@media (max-width: $bp-576) {
+						width: 140px;
+						height: 140px;
+						.avatardiv{
+							width: 140px;
+							height: 140px;
+						}
+					}
+				}
+			}
+
+			@include sync-clients;
+			@include sharing;
+			@include admindelegation;
+			@include survey-client;
+			@include availability;
+			@include personal-info;
+			@include security;
+			@include theming;
+			@include workflow;
+			@include adminworkflow;
+			@include presets;
+			@include usernotification;
+			@include migration;
+			@include privacy;
+			@include overview;
+			@include assistant;
+			@include groupware;
+			@include appapi;
+			@include support;
+			@include adminsharing;
+			@include basicsetting;
+			@include admintheming;
+			@include adminsecurity;
+			@include system;
+			@include logging;
+			@include teamfolders;
+			@include saml;
+			@include connected-accounts;
+			@include talk-admin;
+		}
+	}
+}

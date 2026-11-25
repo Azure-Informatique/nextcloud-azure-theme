@@ -1,0 +1,638 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * App Fichiers (base Nextcloud 34, valable en 35 et 36 ; écarts dans _files-v35.scss).
+ * Modèle : liste du panel d'azure-informatique.fr (components/panel/demandes/Liste.tsx) :
+ * barre d'état paper + filet, rangées séparées par des filets `line`, survol canvas,
+ * sélection azure/10 + liseré intérieur gauche 3 px #0078D4, méta en muted chiffres tabulaires.
+ * Les icônes Nextcloud suivent `currentColor` : on colore le texte, jamais par filtre.
+ */
+@use '../variables' as *;
+@use '../images' as *;
+@use '../themes' as *;
+@use '../settings/mixins' as *;
+@use 'sidebar' as fside;
+@use 'picker' as fpicker;
+@use 'viewer' as fviewer;
+
+// Flèche de tri (réutilisée par les tableaux des paramètres et des fenêtres).
+@mixin sort-down {
+	width: 20px;
+	height: 20px;
+	background: none;
+	background-color: currentColor;
+	mask: $icon-sort-icon no-repeat center / contain;
+	-webkit-mask: $icon-sort-icon no-repeat center / contain;
+}
+
+// Appui du panel (.panel-appui) : 160 ms, scale .97.
+@mixin appui {
+	transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, scale 160ms cubic-bezier(0.23, 1, 0.32, 1);
+	&:active {
+		scale: 0.97;
+	}
+	@media (prefers-reduced-motion: reduce) {
+		transition: none;
+		&:active {
+			scale: none;
+		}
+	}
+}
+
+// Bouton secondaire du panel (btnSecondaire) : pilule, filet line, fond paper, texte ink 600 ;
+// survol : contour bleu de marque, texte azure-text.
+@mixin bouton-secondaire {
+	@include appui;
+	min-height: var(--default-clickable-area);
+	height: auto;
+	margin: 0;
+	padding-block: 0;
+	padding-inline: 14px;
+	border: 1px solid $colour-filet-bouton;
+	border-radius: $rounded-full;
+	background-color: $main-page-bg;
+	color: $colour-forground;
+	box-shadow: none;
+	.button-vue__wrapper {
+		gap: 6px;
+	}
+	.button-vue__icon {
+		width: 18px;
+		min-width: 18px;
+		height: 18px;
+		min-height: 18px;
+	}
+	.button-vue__text {
+		margin: 0;
+		padding: 0;
+		font-size: 13px;
+		line-height: 1.25rem;
+		font-weight: $font-semibold;
+		color: inherit;
+	}
+	&:hover:not(:disabled) {
+		border-color: $colour-brand;
+		background-color: $main-page-bg;
+		color: $colour-blue-600;
+	}
+}
+
+// Filtre actif (panel : case active = profond, texte blanc ; ici bouton déjà « secondaire » :
+// on reprend la teinte active azure/10 + texte azure-text, comme les dossiers de Mails).
+@mixin bouton-secondaire-actif {
+	border-color: $colour-brand;
+	background-color: $colour-primary-50;
+	color: $colour-blue-600;
+}
+
+// Bouton d'icône du panel : rond, muted, survol canvas + ink.
+@mixin bouton-icone($taille: var(--default-clickable-area)) {
+	@include appui;
+	width: $taille !important;
+	min-width: $taille;
+	height: $taille;
+	min-height: $taille;
+	padding: 0;
+	margin: 0;
+	border: 0;
+	border-radius: 50%;
+	background-color: transparent;
+	color: $colour-forground-1;
+	box-shadow: none;
+	&:hover:not(:disabled) {
+		background-color: $main-page-bg-dashboard;
+		color: $colour-forground;
+	}
+}
+
+// Sélection et élément actif d'une liste du panel.
+@mixin rangee-active {
+	background-color: $colour-primary-50;
+	box-shadow: inset var(--azure-liseret, 3px) 0 0 $colour-brand;
+}
+
+// Barre d'actions groupées (sélection multiple) : boutons secondaires.
+@mixin batch-action-button {
+	@include bouton-secondaire;
+}
+
+@mixin batch-actions {
+	.files-list__selected {
+		padding-inline: 4px 12px;
+		font-size: 0.875rem;
+		line-height: 1.25rem;
+		font-weight: $font-semibold;
+		color: $colour-forground;
+		white-space: nowrap;
+	}
+	.action-items {
+		gap: 8px;
+	}
+	.action-items > button,
+	.action-items > .action-item > .v-popper > button,
+	> .action-item > .v-popper > button {
+		@include bouton-secondaire;
+	}
+	.action-items > .action-item > .v-popper > .button-vue--icon-only {
+		padding: 0;
+		width: var(--default-clickable-area) !important;
+		min-width: var(--default-clickable-area);
+	}
+}
+
+// $public : version des pages publiques de partage (files-all), sans les règles qui supposent
+// le moteur de jetons :has() (js/azure-has.js), absent de ces pages.
+@mixin files($public: false) {
+	// ---------- Barre d'état de la vue (bouton Nouveau, fil d'Ariane, filtres, grille) ----------
+	.files-list__header {
+		min-height: 56px;
+		// Filet sur toute la largeur : la place du bouton de navigation passe en retrait intérieur.
+		margin: 0 !important;
+		padding-block: 8px;
+		padding-inline: calc(var(--default-clickable-area) + 16px) 12px;
+		&.files-list__header--public {
+			padding-inline-start: 12px;
+		}
+		gap: 8px;
+		border-bottom: 1px solid $theme-divider;
+		background-color: $main-page-bg;
+
+		// Filtres (Type, Modifié, Personnes) : l'enveloppe du menu (v-popper, en ligne) ajoutait sa
+		// hauteur de ligne sous le bouton (39 px pour 34) ; la barre les calait 2,5 px plus haut que
+		// « Nouveau », le fil d'Ariane et le bouton grille. Même ligne médiane pour tous.
+		#{css-module('fileListFilters')} {
+			align-self: center;
+			> .v-popper {
+				display: flex;
+			}
+		}
+
+		// « Nouveau » : bouton principal du panel (pilule pleine #0078D4), à la hauteur des contrôles
+		// de Nextcloud comme le bouton de la navigation voisin (34 px en 35 : 40 et 34 se côtoyaient).
+		.upload-picker .button-vue--vue-primary,
+		.files-list__header-upload-button .button-vue--vue-primary {
+			@include appui;
+			min-height: var(--default-clickable-area);
+			height: var(--default-clickable-area);
+			padding-inline: 14px 18px;
+			border: 0;
+			border-radius: $rounded-full;
+			background-color: $colour-brand;
+			color: $colour-white;
+			.button-vue__text {
+				margin: 0;
+				padding: 0;
+				font-size: 0.875rem;
+				font-weight: $font-semibold;
+				color: inherit;
+			}
+			&:hover:not(:disabled) {
+				background-color: $colour-brand-hover;
+			}
+		}
+
+		// Bouton d'affichage liste / grille.
+		.files-list__header-grid-button {
+			@include bouton-icone;
+		}
+
+		// Bouton « partager ce dossier » à droite du fil d'Ariane.
+		.files-list__header-share-button {
+			@include bouton-icone;
+		}
+
+		// Bouton d'actions de la vue (ex. « Vider la corbeille »).
+		.files-list__header-actions {
+			@include bouton-secondaire;
+		}
+
+		// Téléphone : un bouton d'action à long libellé (« Vider les fichiers supprimés ») reste entier,
+		// comme sans thème ; le fil d'Ariane prend la place restante. S'il ne reste qu'un éclat de pilule
+		// (moins de 64 px), il est masqué : le nom de la vue est déjà dans la navigation. Avec les boutons
+		// de 44 px, les deux étaient tronqués (« Fichiers… », « Vider l… »).
+		@media (max-width: $bp-512) {
+			.files-list__breadcrumbs {
+				flex: 1 1 0;
+				min-width: 0;
+				container-type: inline-size;
+			}
+			.files-list__header-actions {
+				flex: 0 0 auto;
+			}
+			// Dossier courant (menu) : retraits de Nextcloud (16 et 4 px) et chevron de 40 px ; avec les
+			// boutons de 44 px, « Photos vacances » finissait en « Photos vaca… » alors qu'il est entier
+			// sans thème. Retraits de 8 px et chevron de 24 px : le nom retrouve sa place.
+			.vue-crumb .action-item .action-item__menutoggle {
+				padding-inline: 8px 0;
+				.button-vue__icon {
+					width: 24px;
+					min-width: 24px;
+				}
+			}
+		}
+		// Téléphone et petite tablette : avec les boutons de 44 px, dossier racine + « … » + dossier
+		// courant (100 px au moins chez Nextcloud) ne tenaient plus (360 px, ou 512 à 640 px avec le
+		// bouton « Nouveau ») : le dossier courant débordait de 20 à 50 px sur le bouton des filtres.
+		// Chevrons resserrés (zone de 16 px au lieu de 20, le trait reste entier) et dossiers autorisés
+		// à se réduire, abrégés par Nextcloud, dans la place qui reste, jamais sous leur bouton
+		// (zone cliquable, plus le chevron qui suit). !important : Nextcloud pose 100 px en dur au
+		// dossier courant, à poids égal et chargé après le thème.
+		@media (max-width: $bp-640) {
+			.vue-crumb__separator {
+				margin-inline: -2px;
+			}
+			.vue-crumb {
+				min-width: calc(var(--default-clickable-area) + 16px);
+				.action-item {
+					min-width: 0;
+				}
+			}
+			.vue-crumb:last-child {
+				min-width: var(--default-clickable-area) !important;
+			}
+			// La racine (« Tous les fichiers », déjà dans la navigation) se réduit à son icône, comme
+			// Nextcloud la montre au téléphone, au lieu d'une lettre isolée (« T… ») : le dossier
+			// courant garde son nom. Le libellé reste lu par les lecteurs d'écran.
+			.vue-crumb:first-child:not(:last-child) .button-vue__text {
+				position: absolute;
+				width: 1px;
+				height: 1px;
+				overflow: hidden;
+				clip-path: inset(50%);
+				white-space: nowrap;
+			}
+		}
+		@container (max-width: 64px) {
+			.files-list__breadcrumbs > * {
+				visibility: hidden;
+			}
+		}
+
+		// Fil d'Ariane : parents en muted, dossier courant en ink 600 ; séparateurs discrets.
+		.breadcrumb__crumbs {
+			gap: 0;
+			> li {
+				align-items: center;
+			}
+		}
+		.vue-crumb > a.button-vue,
+		.vue-crumb .action-item__menutoggle {
+			@include appui;
+			min-height: var(--default-clickable-area);
+			height: var(--default-clickable-area);
+			padding-inline: 10px;
+			border: 0;
+			border-radius: $rounded-full;
+			background-color: transparent;
+			color: $colour-forground-1;
+			box-shadow: none;
+			.button-vue__text {
+				margin: 0;
+				padding: 0;
+				font-size: 0.9375rem;
+				font-weight: $font-semibold;
+				color: inherit;
+			}
+			&:hover:not(:disabled) {
+				background-color: $main-page-bg-dashboard;
+				color: $colour-forground;
+			}
+		}
+		.vue-crumb:last-child > a.button-vue,
+		.vue-crumb:last-child .action-item__menutoggle,
+		.vue-crumb > a.button-vue[aria-current='page'] {
+			color: $colour-forground;
+		}
+		.vue-crumb__separator {
+			color: $colour-forground-1;
+			opacity: 0.7;
+		}
+	}
+
+	// ---------- Liste ----------
+	.files-list {
+		// Readme.md du dossier (espace de travail riche) : aucun cadre, marge resserrée.
+		.files-list__header-workspace {
+			margin-top: 8px;
+		}
+
+		// Recommandations : rangée de raccourcis plats (cartes du panel : paper, filet, 12 px).
+		// Une seule rangée visible (les suivantes restent repliées, comme dans Nextcloud).
+		#recommendations {
+			height: auto !important;
+			max-height: 72px;
+			gap: 8px;
+			padding-block: 8px;
+			li {
+				height: 56px;
+			}
+			li.recommendation-item a,
+			li a {
+				@include appui;
+				height: 56px;
+				margin: 0;
+				padding: 8px 12px;
+				border: 1px solid $theme-divider;
+				border-radius: $rounded-8;
+				background-color: $main-page-bg;
+				box-shadow: none;
+				gap: 10px;
+				&:hover,
+				&:focus-visible {
+					background-color: $main-page-bg-dashboard;
+				}
+				.details .file-name {
+					color: $colour-forground;
+					font-weight: $font-medium;
+				}
+				.details .file-name .extension {
+					color: $colour-forground-1;
+				}
+				// 13 px au moins (charte) ; 0,75 rem donnait 11,25 px.
+				.details .description {
+					font-size: $text-12;
+					color: $colour-forground-1;
+				}
+			}
+		}
+
+		.files-list__table {
+			// En-têtes de colonnes : casse normale, 0,8125 rem, 600, muted (charte).
+			.files-list__thead {
+				background-color: $main-page-bg;
+				tr {
+					border-bottom: 1px solid $theme-divider;
+				}
+				th {
+					color: $colour-forground-1;
+					font-size: 13px;
+					font-weight: $font-semibold;
+				}
+				.files-list__column-sort-button {
+					min-height: 36px;
+					height: 36px;
+					padding-inline: 8px 6px;
+					border-radius: $rounded-full;
+					color: $colour-forground-1;
+					.button-vue__text,
+					.files-list__column-sort-button-text {
+						margin: 0;
+						font-size: 13px;
+						font-weight: $font-semibold;
+						color: inherit;
+					}
+					&:hover:not(:disabled) {
+						background-color: $main-page-bg-dashboard;
+						color: $colour-forground;
+					}
+					&.files-list__column-sort-button--active {
+						color: $colour-forground;
+					}
+				}
+			}
+
+			// Rangées : filets line, survol canvas, sélection azure/10 + liseré 3 px.
+			.files-list__row {
+				border-bottom: 1px solid $theme-divider;
+				background-color: transparent;
+				&:hover,
+				&:focus,
+				&:focus-within,
+				&.files-list__row--dragover {
+					background-color: $main-page-bg-dashboard;
+				}
+				&.files-list__row--active,
+				&:has(> .files-list__row-checkbox .checkbox-radio-switch--checked) {
+					@include rangee-active;
+				}
+				&.files-list__row--failed {
+					box-shadow: inset var(--azure-liseret, 3px) 0 0 $colour-red-600;
+				}
+			}
+
+			// Nom : ink 15 px 500, extension muted.
+			.files-list__row-name-text {
+				color: $colour-forground;
+				font-size: 0.9375rem;
+				font-weight: $font-medium;
+			}
+			.files-list__row-name-ext {
+				color: $colour-forground-1;
+				font-weight: $font-normal;
+			}
+
+			// Méta : muted, chiffres tabulaires.
+			td.files-list__row-size,
+			td.files-list__row-mtime,
+			td.files-list__row-mime,
+			td.files-list__row-column-custom {
+				color: $colour-forground-1;
+				font-size: 13px;
+				font-variant-numeric: tabular-nums;
+				.nc-datetime {
+					color: inherit;
+				}
+			}
+
+			// Icônes de type de fichier : jamais recolorées (les dossiers suivent la couleur principale).
+			.files-list__row-icon {
+				> .folder-icon,
+				> .folder-open-icon {
+					color: $colour-brand;
+				}
+				// Aperçus : filet intérieur pour que les pages blanches (texte) gardent un bord.
+				// Seulement quand la vignette est chargée : un cadre vide à côté de la case à cocher
+				// ressemblait à une deuxième case.
+				.files-list__row-icon-preview--loaded {
+					border-radius: $rounded-4;
+					outline: 1px solid $theme-divider;
+					outline-offset: -1px;
+				}
+				// Étoile de favori : ambre de la charte, liserée du fond de la rangée.
+				.files-list__row-icon-favorite {
+					color: $colour-yellow;
+				}
+			}
+
+			// Statut « Partagé » : texte bleu = azure-text (Nextcloud prend le bleu de marque, 3,98:1
+			// seulement sur la rangée sélectionnée azure/10).
+			.files-list__row-action-sharing-status .button-vue__text {
+				color: $colour-blue-600;
+			}
+
+			// Actions de rangée : boutons ronds muted (le statut de partage garde sa forme).
+			.files-list__row-actions {
+				.action-items > .button-vue--icon-only,
+				.action-item > .v-popper > .button-vue--icon-only {
+					padding: 0;
+					border-radius: 50%;
+					color: $colour-forground-1;
+					&:hover:not(:disabled) {
+						background-color: $colour-sidebar-link-bg;
+						color: $colour-forground;
+					}
+				}
+			}
+
+			// Étiquettes système : pastilles du panel (pilule, filet line).
+			.files-list__system-tags,
+			.files-list__row-action-system-tags ul {
+				li {
+					border-radius: $rounded-full;
+					font-size: $text-12;
+					font-weight: $font-semibold;
+				}
+			}
+
+			// Pied : récapitulatif en muted.
+			.files-list__tfoot {
+				color: $colour-forground-1;
+				font-size: 13px;
+				font-variant-numeric: tabular-nums;
+				tr {
+					border-top: 0;
+				}
+			}
+		}
+
+		// Cases à cocher : contour maxcontrast (≥ 3:1), cochée = bleu de marque.
+		.files-list__row-checkbox {
+			.checkbox-content__icon,
+			.checkbox-content__icon svg {
+				color: var(--color-border-maxcontrast);
+				fill: currentColor;
+			}
+			.checkbox-radio-switch--checked .checkbox-content__icon,
+			.checkbox-radio-switch--checked .checkbox-content__icon svg,
+			.checkbox-radio-switch--indeterminate .checkbox-content__icon,
+			.checkbox-radio-switch--indeterminate .checkbox-content__icon svg {
+				color: $colour-brand;
+			}
+			// Halo de survol de la case (38 × 34) : coins de liste, pas un ovale.
+			.checkbox-content {
+				border-radius: $rounded-8;
+			}
+		}
+
+		// Renommage en ligne : champ du panel (12 px, contour maxcontrast, focus azure).
+		.files-list__row-rename input {
+			min-height: 36px;
+			border: 1px solid var(--color-border-maxcontrast);
+			border-radius: $rounded-8;
+			background-color: $main-page-bg;
+			color: $colour-forground;
+			&:focus,
+			&:focus-visible {
+				border-color: $colour-blue-600;
+				box-shadow: none;
+			}
+		}
+
+		// ---------- Vue en grille : tuiles plates ----------
+
+		&.files-list--grid .files-list__tbody .files-list__row {
+			border: 1px solid transparent;
+			border-radius: $rounded-12;
+			&:hover,
+			&:focus-within {
+				background-color: $main-page-bg-dashboard;
+			}
+			&.files-list__row--active,
+			&:has(> .files-list__row-checkbox .checkbox-radio-switch--checked) {
+				border-color: $colour-brand;
+				background-color: $colour-primary-50;
+				box-shadow: none;
+			}
+			.files-list__row-icon-preview,
+			.files-list__row-icon-preview-container {
+				border-radius: $rounded-8;
+			}
+		}
+	}
+
+	// Barre de sélection multiple (remplace l'en-tête de la table).
+	.files-list__row-head--selected,
+	th.files-list__row-actions-batch {
+		@include batch-actions;
+	}
+
+	// Avis de glisser-déposer : voile canvas, cadre pointillé (état vide du panel).
+	.files-list__drag-drop-notice {
+		background-color: $main-page-bg-dashboard;
+		.files-list__drag-drop-notice-wrapper {
+			border: 2px dashed $theme-divider;
+			border-radius: $rounded-12;
+			color: $colour-forground-1;
+		}
+	}
+
+	// Téléphone : « + Nouveau » flotte en bas à droite, hors du conteneur de l'app (enfant direct de
+	// body). Il ne doit cacher ni la dernière rangée de la liste (ses « … »), ni le bas du panneau
+	// latéral plein écran : 56 px de fin de défilement leur laissent toujours dégager le bouton.
+	@media (max-width: $bp-640) {
+		.files-list {
+			padding-bottom: 56px;
+		}
+		.app-files aside.app-sidebar .app-sidebar-tabs__content {
+			padding-bottom: 56px;
+		}
+	}
+	// Une fenêtre est ouverte (visionneuse et son panneau latéral, boîte de dialogue) : le bouton
+	// flottant de la page dessous n'a plus rien à faire au premier plan ; sans thème, le voile de la
+	// visionneuse le recouvrait, ici le panneau plein écran le laissait capter les appuis.
+	// (Même condition que les autres règles « fenêtre ouverte » du thème : aucun calcul de plus.)
+	// Pas sur les pages publiques : la feuille y est préfixée par #body-public (le <body> lui-même,
+	// la règle ne s'appliquait jamais) et aucun jeton ne remplacerait ce :has() hors sujet ; le
+	// « + » public (34 px) y reste sous le voile de la visionneuse.
+	@if not $public {
+		body:has(.modal-container) .files-list__header-upload-button--narrow {
+			visibility: hidden;
+		}
+	}
+
+	// États vides de Fichiers : icône et texte muted, aucune illustration colorée.
+	.files-list__empty-view-wrapper,
+	.files-list__empty {
+		.empty-content {
+			padding-inline: 16px;
+			text-align: center;
+		}
+		.empty-content__icon {
+			color: $colour-forground-1;
+			opacity: 1;
+		}
+		.empty-content__name {
+			color: $colour-forground;
+			font-weight: $font-bold;
+		}
+		.empty-content__description {
+			color: $colour-forground-1;
+		}
+	}
+
+}
+
+// Sélecteur de fichiers et visionneuse : ouverts depuis toutes les apps (feuille commune).
+@mixin files-shared {
+	// Sélecteur de fichiers (fenêtre commune à toutes les apps).
+	@include fpicker.picker;
+
+	// Visionneuse (images, vidéos, PDF).
+	@include fviewer.viewer;
+}
+
+// Barre latérale de détail (dans le conteneur de l'app Fichiers).
+@mixin files-sidebar {
+	.app-files {
+		@include fside.sidebar;
+	}
+}
+
+// Tout Fichiers dans l'ordre d'origine (pages publiques de partage, scss/azure-public.scss).
+@mixin files-all {
+	@include files($public: true);
+	@include files-shared;
+	@include files-sidebar;
+}

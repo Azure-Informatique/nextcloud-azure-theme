@@ -1,0 +1,161 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Administration › LibreSign. L'app range une vingtaine de sections (NcSettingsSection) dans
+ * un seul bloc .section : tout tenait dans une carte unique, sections collées les unes aux
+ * autres (boutons contre le titre suivant) et titres à 20 px. Le bloc devient une enveloppe
+ * transparente et chaque section une carte, comme sur les autres pages.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+@mixin libresign-admin {
+	.app-settings #{$contenu-reglages} > #libresign-admin-settings {
+		padding: 0 !important;
+		border: 0 !important;
+		background: transparent !important;
+
+		> div {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+
+			@media (max-width: $bp-1023) {
+				gap: 12px;
+			}
+		}
+
+		> div > .settings-section {
+			@include carte;
+			width: auto !important;
+			max-width: none !important;
+			margin: 0 !important;
+			padding: 20px 16px !important;
+			border: 1px solid $theme-divider !important;
+			border-radius: $rounded-12 !important;
+			background-color: $colour-background !important;
+
+			@media (min-width: $bp-640) {
+				padding: 24px !important;
+			}
+
+			> h2.settings-section__name {
+				@include titre-carte;
+				font-size: 0.9375rem !important;
+				line-height: 1.35 !important;
+				margin: 0 0 6px !important;
+			}
+
+			&:empty {
+				display: none;
+			}
+		}
+
+		// Vérification de la configuration : « red » et « orange » codés en dur par l'app (orange à
+		// 2:1 sur fond clair) ; textes d'erreur et d'attention du thème, lisibles dans les deux.
+		td.error {
+			color: var(--color-error-text);
+		}
+		td.info {
+			color: var(--color-warning-text);
+		}
+		td.success {
+			color: var(--color-success-text);
+		}
+
+		// Formulaire du certificat racine : retrait de 20 px de chaque côté en plus d'une largeur
+		// de 100 % (il sortait de la carte de quelques pixels).
+		.form-libresign {
+			width: auto;
+			max-width: 100%;
+			margin-inline: 0;
+		}
+
+		// Aperçu du tampon (350 px en style en ligne) et interrupteurs : jamais plus larges que la
+		// carte au téléphone (ils dépassaient de 14 à 31 px à 360 px).
+		.settings-section__preview {
+			max-width: 100%;
+		}
+		.signature-flow-toggle > .checkbox-radio-switch {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+
+		// Éditeurs (Informations légales, modèles de tampon) : CodeMirror de l'app sur fond anthracite
+		// (#2e3235) même en thème clair, sans thème Nextcloud (défaut de l'app, identique sans
+		// thème) ; la zone de saisie y faisait un champ blanc dans un bloc sombre. Fond, marge des
+		// numéros et texte du thème, dans les deux palettes ; la saisie occupe l'éditeur entier.
+		.cm-editor {
+			background-color: $colour-background;
+			color: $colour-forground;
+		}
+		.cm-gutters {
+			border-inline-end: 1px solid $theme-divider;
+			background-color: $colour-sidebar-bg;
+			color: $colour-forground-1;
+		}
+		.cm-content {
+			border: 0 !important;
+			border-radius: 0 !important;
+			background-color: transparent !important;
+			box-shadow: none !important;
+			color: $colour-forground;
+			caret-color: $colour-forground;
+		}
+
+		// Vérification de la configuration, téléphone : le tableau à quatre colonnes défilait dans sa
+		// carte, colonne « Astuce » rognée (sans thème, il sortait de l'écran). Chaque ligne devient
+		// une fiche : statut à gauche, puis message, ressource (estompée) et astuce l'un sous
+		// l'autre ; la rangée d'en-tête, redondante, est masquée.
+		@media (max-width: $bp-640) {
+			table.grid.grid {
+				display: block;
+				overflow: visible;
+				max-width: 100%;
+
+				tbody {
+					display: block;
+				}
+				tr {
+					display: grid;
+					grid-template-columns: 4.5rem minmax(0, 1fr);
+					column-gap: 12px;
+					row-gap: 2px;
+					padding: 10px 0;
+					border-bottom: 1px solid $theme-divider;
+				}
+				tr.group-header {
+					display: none;
+				}
+				td {
+					display: block;
+					padding: 0 !important;
+					border: 0 !important;
+					white-space: normal !important;
+					overflow-wrap: break-word;
+				}
+				td:first-child {
+					grid-row: 1 / span 3;
+					font-weight: $font-semibold;
+				}
+				td:not(:first-child) {
+					grid-column: 2;
+				}
+				td:nth-child(3) {
+					color: $colour-forground-1;
+				}
+				td:nth-child(3):empty,
+				td.tip-cell:empty {
+					display: none;
+				}
+			}
+		}
+
+		// Téléphone : les quatre choix du mode d'affichage du tampon passent à la ligne.
+		fieldset.settings-section__row {
+			flex-wrap: wrap;
+		}
+	}
+}

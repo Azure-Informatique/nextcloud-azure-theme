@@ -1,0 +1,25 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Réglages, Nextcloud 36 : la colonne de « Profil et contact » (.settings-column) n'est plus un
+ * enfant direct de la colonne des réglages mais de son enveloppe (#profile-contact-settings). Elle
+ * suit la colonne de lecture commune, comme en 35 (_settings-v35.scss), au lieu de garder sa propre
+ * largeur (784 px) et ses gouttières calculées (42 px, 52 px au téléphone : carte de 262 px à 390 px).
+ * Les boutons de visibilité (_scope_…, posés en absolu juste après chaque champ ou rangée) gardent leur
+ * place dans la carte : les champs leur réservent la zone cliquable + 8 px (ils sortaient de la carte
+ * de 17 px, 35 px au téléphone).
+ */
+@use '../variables' as *;
+
+@mixin settings-v36 {
+	.app-settings #{$contenu-reglages} .settings-column {
+		width: 100% !important;
+		max-width: none !important;
+		margin-inline: 0 !important;
+		padding-inline: 0 !important;
+		:is(#{css-module('property')}, #{css-module('actions')}) {
+			margin-inline-end: calc(var(--default-clickable-area) + 8px);
+		}
+	}
+}

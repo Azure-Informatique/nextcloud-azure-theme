@@ -1,0 +1,61 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Fichiers, Nextcloud 35 et suivants : barre de filtres en module CSS (_fileListFilters_…),
+ * pastilles de filtres actifs, barre d'actions groupées.
+*/
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../files/files' as files;
+
+@mixin files {
+	// Boutons de filtre (Type, Modifié, Étiquettes, Personnes) : secondaires du panel.
+	.files-list__header {
+		#{css-module('fileListFilters')} {
+			gap: 6px;
+			margin: 0;
+			> .v-popper > .button-vue,
+			> .button-vue {
+				@include files.bouton-secondaire;
+			}
+			> .v-popper > .button-vue--vue-secondary,
+			> .v-popper > .button-vue--vue-primary,
+			> .v-popper--open > .button-vue,
+			> .v-popper[aria-expanded='true'] > .button-vue {
+				@include files.bouton-secondaire-actif;
+			}
+			// Téléphone : un seul bouton « filtres », rond comme le bouton grille.
+			> .v-popper > .button-vue--icon-only {
+				@include files.bouton-icone;
+			}
+		}
+	}
+
+	// Pastilles des filtres actifs, sous la barre.
+	.files-list .files-list__filters {
+		padding-inline: 12px;
+		padding-block: 8px 0;
+		gap: 6px;
+		.nc-chip,
+		.files-list__filter-chip {
+			border: 1px solid $theme-divider;
+			border-radius: $rounded-full;
+			background-color: $colour-primary-50;
+			color: $colour-blue-600;
+			font-size: 13px;
+			font-weight: $font-semibold;
+		}
+	}
+
+	th.files-list__row-checkbox {
+		@include files.batch-actions;
+	}
+	.files-list__row-actions-batch {
+		@include files.batch-actions;
+		> button.action-item--single {
+			@include files.batch-action-button;
+		}
+	}
+}

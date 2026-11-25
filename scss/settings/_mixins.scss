@@ -1,0 +1,1052 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+
+@mixin outline-button {
+	// Bouton secondaire du panel Azure : pilule cerclée, fond « paper » (contour un ton plus marqué en
+	// sombre, où le filet line se perd sur le fond nuit).
+	border: 1px solid $colour-filet-bouton;
+	padding: 6px 16px;
+	min-height: var(--default-clickable-area); // même hauteur que les autres contrôles de Nextcloud
+	border-radius: $rounded-full;
+	background-color: $colour-background;
+	transition: border-color 200ms ease, background-color 200ms ease, scale 160ms cubic-bezier(0.23, 1, 0.32, 1);
+	// Bouton d'icône seule : carré exact (rond), sans le remplissage des boutons à texte ; la hauteur
+	// suit la largeur (règle commune de azure-theme.scss).
+	&.button-vue--icon-only,
+	&:has(.button-vue__text:empty):not(.button-vue--wide) {
+		width: var(--button-size, var(--default-clickable-area));
+		min-height: 0;
+		padding: 0;
+	}
+	&:active{
+		scale: 0.97;
+	}
+	.button-vue__wrapper{
+		gap: 6px;
+		align-items: center;
+		.button-vue__icon{
+			width: 16px;
+			height: 16px;
+			min-width: unset;
+			min-height: unset;
+			img,
+			.icon{
+				width: 16px;
+				height: 16px;
+				filter: $filter-forground;
+			}
+			svg{
+				width: 16px;
+				height: 16px;
+				fill: $colour-forground;
+			}
+		}
+		.button-vue__text{
+			margin: 0;
+			padding: 0;
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-forground;
+			font-weight: $font-semibold;
+			transition: transition-douce();
+		}
+	}
+	&:hover{
+		border-color: $colour-brand;
+		background-color: $colour-background;
+		.button-vue__wrapper{
+			.button-vue__icon{
+				img,
+				.icon{
+					width: 16px;
+					height: 16px;
+					filter: $filter-primry-600;
+				}
+				svg{
+					width: 16px;
+					height: 16px;
+					fill: $colour-blue-600;
+				}
+			}
+			.button-vue__text{
+				color: $colour-blue-600;
+			}
+		}
+	}
+}
+
+@mixin white-button {
+	border: 1px solid $colour-background;
+	border-radius: $rounded-full !important;
+	padding: 6px 16px;
+	min-height: var(--default-clickable-area); // même hauteur que les autres contrôles de Nextcloud
+	background-color: transparent;
+	transition: transition-douce();
+	// Bouton d'icône seule : carré exact (rond), comme les autres boutons de la charte.
+	&.button-vue--icon-only,
+	&:has(.button-vue__text:empty):not(.button-vue--wide) {
+		width: var(--button-size, var(--default-clickable-area));
+		min-height: 0;
+		padding: 0;
+	}
+	.button-vue__wrapper{
+		gap: 6px;
+		align-items: center;
+		.button-vue__icon{
+			width: 16px;
+			height: 16px;
+			min-width: unset;
+			min-height: unset;
+			img{
+				width: 16px;
+				height: 16px;
+				filter: $filter-forground;
+			}
+			svg{
+				width: 16px;
+				height: 16px;
+				fill: $colour-forground-white;
+			}
+		}
+		.button-vue__text{
+			margin: 0;
+			padding: 0;
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-forground;
+			font-weight: $font-medium;
+			transition: transition-douce();
+		}
+	}
+	&:hover{
+		border-color: $colour-blue-600;
+		background-color: $colour-primary-50;
+		.button-vue__wrapper{
+			.button-vue__icon{
+				img{
+					width: 16px;
+					height: 16px;
+					filter: $filter-primry-600;
+				}
+				svg{
+					width: 16px;
+					height: 16px;
+					fill: $colour-blue-600;
+				}
+			}
+			.button-vue__text{
+				color: $colour-blue-600;
+			}
+		}
+	}
+}
+
+@mixin primary-button{
+	// Bouton principal du site et du panel : pilule bleu de marque, texte blanc ; survol plus foncé.
+	border: 1px solid $colour-brand;
+	background-color: $colour-brand;
+	border-radius: $rounded-full !important;
+	padding: 6px 20px;
+	min-height: var(--default-clickable-area); // même hauteur que les autres contrôles de Nextcloud
+	transition: background-color $duree-douce cubic-bezier(0.16, 1, 0.3, 1), border-color $duree-douce cubic-bezier(0.16, 1, 0.3, 1), scale 160ms cubic-bezier(0.23, 1, 0.32, 1);
+	// Bouton d'icône seule : carré exact (rond), sans le remplissage des boutons à texte ; la hauteur
+	// suit la largeur (règle commune de azure-theme.scss).
+	&.button-vue--icon-only,
+	&:has(.button-vue__text:empty):not(.button-vue--wide) {
+		width: var(--button-size, var(--default-clickable-area));
+		min-height: 0;
+		padding: 0;
+	}
+	.button-vue__wrapper{
+		gap: 6px;
+		align-items: center;
+		.button-vue__icon{
+			width: 16px;
+			height: 16px;
+			min-width: unset;
+			min-height: unset;
+			svg{
+				width: 16px;
+				height: 16px;
+				fill: #FFFFFF;
+			}
+		}
+		.button-vue__text{
+			margin: 0;
+			padding: 0;
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: #FFFFFF;
+			font-weight: $font-semibold;
+		}
+	}
+	&:hover,
+	&:focus-visible{
+		border-color: $colour-brand-hover;
+		background-color: $colour-brand-hover !important;
+	}
+	&:active{
+		scale: 0.97;
+	}
+	&:disabled{
+		pointer-events: none;
+		opacity: 0.6;
+	}
+}
+
+@mixin error-button{
+	border: 1px solid $colour-danger;
+	background-color: $colour-danger;
+	border-radius: $rounded-full !important;
+	padding: 6px 20px;
+	min-height: var(--default-clickable-area); // même hauteur que les autres contrôles de Nextcloud
+	// Bouton d'icône seule : carré exact (rond), sans le remplissage des boutons à texte ; la hauteur
+	// suit la largeur (règle commune de azure-theme.scss).
+	&.button-vue--icon-only,
+	&:has(.button-vue__text:empty):not(.button-vue--wide) {
+		width: var(--button-size, var(--default-clickable-area));
+		min-height: 0;
+		padding: 0;
+	}
+	.button-vue__wrapper{
+		gap: 6px;
+		align-items: center;
+		.button-vue__icon{
+			width: 16px;
+			height: 16px;
+			min-width: unset;
+			min-height: unset;
+			svg{
+				width: 16px;
+				height: 16px;
+				fill: #FFFFFF;
+			}
+		}
+		.button-vue__text{
+			margin: 0;
+			padding: 0;
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: #FFFFFF;
+			font-weight: $font-medium;
+			transition: transition-douce();
+		}
+	}
+	&:hover,
+	&:focus-visible{
+		border-color: $colour-danger-hover;
+		background-color: $colour-danger-hover !important;
+	}
+	&:disabled{
+		pointer-events: none;
+	}
+}
+
+@mixin warning-button{
+	border: 1px solid $colour-yellow;
+	background-color: transparent;
+	border-radius: $rounded-full !important;
+	padding: 6px 16px;
+	min-height: var(--default-clickable-area); // même hauteur que les autres contrôles de Nextcloud
+	// Bouton d'icône seule : carré exact (rond), comme les autres boutons de la charte.
+	&.button-vue--icon-only,
+	&:has(.button-vue__text:empty):not(.button-vue--wide) {
+		width: var(--button-size, var(--default-clickable-area));
+		min-height: 0;
+		padding: 0;
+	}
+	.button-vue__wrapper{
+		gap: 6px;
+		align-items: center;
+		.button-vue__icon{
+			width: 16px;
+			height: 16px;
+			min-width: unset;
+			min-height: unset;
+			svg{
+				width: 16px;
+				height: 16px;
+				fill: $colour-yellow;
+			}
+		}
+		.button-vue__text{
+			margin: 0;
+			padding: 0;
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-yellow;
+			font-weight: $font-medium;
+			transition: transition-douce();
+		}
+	}
+	&:hover{
+		background-color: $colour-yellow;
+		.button-vue__wrapper{
+			.button-vue__icon{
+				svg{
+					width: 16px;
+					height: 16px;
+					fill: $colour-on-status;
+				}
+			}
+			.button-vue__text{
+				color: $colour-on-status;
+			}
+		}
+	}
+	&:disabled{
+		pointer-events: none;
+	}
+}
+
+@mixin error-outline-button{
+	border: 1px solid $colour-red-600;
+	background-color: transparent;
+	border-radius: $rounded-full !important;
+	padding: 6px 16px;
+	min-height: var(--default-clickable-area); // même hauteur que les autres contrôles de Nextcloud
+	// Bouton d'icône seule : carré exact (rond), comme les autres boutons de la charte.
+	&.button-vue--icon-only,
+	&:has(.button-vue__text:empty):not(.button-vue--wide) {
+		width: var(--button-size, var(--default-clickable-area));
+		min-height: 0;
+		padding: 0;
+	}
+	.button-vue__wrapper{
+		gap: 6px;
+		align-items: center;
+		.button-vue__icon{
+			width: 16px;
+			height: 16px;
+			min-width: unset;
+			min-height: unset;
+			svg{
+				width: 16px;
+				height: 16px;
+				fill: $colour-red-600;
+			}
+		}
+		.button-vue__text{
+			margin: 0;
+			padding: 0;
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-red-600;
+			font-weight: $font-medium;
+			transition: transition-douce();
+		}
+	}
+	&:hover{
+		background-color: $colour-red-600;
+		.button-vue__wrapper{
+			.button-vue__icon{
+				svg{
+					fill: $colour-on-status;
+				}
+			}
+			.button-vue__text{
+				color: $colour-on-status;
+			}
+		}
+	}
+	&:disabled{
+		pointer-events: none;
+	}
+}
+
+// NcSelect de @nextcloud/vue 9 à valeur unique (.nc-select.vs--single) : exclu de ces mixins.
+// Son cadre est le champ intérieur (règle commune des champs) et son libellé flottant se pose
+// sur le contour : lui imposer une hauteur ou aplatir le champ fait chevaucher libellé et valeur.
+$hors-select-v9: ':not(.nc-select.vs--single *)';
+
+@mixin select-box {
+	margin-bottom: 0;
+	// Hauteur fixe pour la valeur unique seulement : une sélection multiple grandit avec ses
+	// rangées de pastilles (ui/_select.scss).
+	.vs__dropdown-toggle#{$hors-select-v9}:not(.vs--multiple *){
+		height: 34px;
+		min-height: unset !important;
+		@include noscrollbar;
+	}
+	&.vs--single.vs--open:not(.nc-select){
+		.vs__selected{
+			display: none;
+		}
+	}
+	// Pastilles d'une sélection multiple : règle unique dans ui/_select.scss.
+	.vs__selected#{$hors-select-v9}:not(.vs--multiple *){
+		border: 1px solid $theme-divider !important;
+		margin-block: 0 !important;
+		display: flex;
+		align-items: center;
+		cursor: pointer;
+		.option__linetwo{
+			display: none;
+		}
+		// La valeur choisie est la donnée principale du champ : couleur du texte, pas du texte secondaire.
+		.name-parts{
+			color: inherit;
+		}
+	}
+	// Valeur centrée verticalement, et assez de marge pour l'arrondi de 12 px du contour
+	// (8 px laissaient rogner la première lettre).
+	.vs__selected-options#{$hors-select-v9}:not(.vs--multiple *){
+		padding-inline-start: 12px !important;
+		align-items: center;
+	}
+	.vs__dropdown-menu{
+		border: 1px solid $theme-divider !important;
+		box-shadow: none !important;
+		box-sizing: border-box !important;
+		margin-top: 5px;
+		border-radius: $rounded-6;
+		padding: 8px !important;
+		display: flex;
+		flex-direction: column;
+		gap: 6px;
+		li{
+			padding: 6px 10px;
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-forground;
+			border-radius: $rounded-6;
+			span.option{
+				height: auto;
+				gap: 8px;
+				.avatardiv{
+					margin:0;
+					--avatar-size: 30px !important;
+					line-height: 30px !important;
+					font-size: $text-12 !important;
+				}
+				.option__lineone{
+					font-size: $text-12;
+					line-height: $leading-16;
+					font-weight: $font-medium;
+					color: $colour-forground;
+				}
+			}
+			.option__details{
+				.option__lineone{
+					font-size: $text-heading-5;
+					line-height: $leading-20;
+					color: $colour-forground;
+					font-weight: $font-medium;
+				}
+				.option__linetwo{
+					font-size: $text-12;
+					line-height: $leading-16;
+					color: $colour-forground-1;
+				}
+			}
+			&:hover,
+			&.vs__dropdown-option--highlight{
+				background-color: $colour-gray-100;
+			}
+			&.vs__no-options{
+				font-size: $text-12;
+				line-height: $leading-16;
+				font-weight: $font-medium;
+				color: $colour-forground;
+				&:hover{
+					background-color: transparent;
+				}
+			}
+		}
+	}
+}
+
+@mixin secondary-checkbox {
+	input{
+		&.checkbox{
+			+label{
+				font-size: $text-heading-5;
+				line-height: $leading-20;
+				color: $colour-forground;
+				&::before{
+					background-repeat: no-repeat;
+					width: 14px;
+					height: 14px;
+					border: 1px solid var(--color-border-maxcontrast);
+					border-radius: $rounded-4;
+					margin-bottom: 2px;
+				}
+				em{
+					color: $colour-forground-1;
+				}
+			}
+			&:checked{
+				+label{
+					&::before{
+						border-color: $colour-blue-600;
+					}
+				}
+			}
+		}
+	}
+}
+
+@mixin input($margin-top: 0){
+	margin-top: $margin-top;
+	// Champ à bouton intégré (« œil » d'un mot de passe, effacer) : le texte s'arrête avant le
+	// bouton (le remplissage de 10 px le faisait passer dessous).
+	&.input-field--trailing-icon .input-field__main-wrapper input{
+		padding-inline-end: calc(var(--default-clickable-area) + 4px);
+	}
+	.input-field__main-wrapper{
+		padding: 0;
+		input{
+			height: 100% !important;
+			min-height: unset;
+			padding: 10px;
+			border-radius: $rounded-8;
+			box-shadow: none;
+			border: 1px solid var(--color-border-maxcontrast);
+			background-color: $colour-background;
+			outline: 0;
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-forground;
+			font-weight: $font-normal;
+			&::placeholder,
+			+ label{
+				font-size: $text-heading-5;
+				line-height: $leading-20;
+				color: $colour-forground-1;
+				font-weight: $font-medium;
+			}
+			&:focus,
+			&:not(:placeholder-shown){
+				+label{
+					font-size: $text-12;
+				}
+			}
+			&:not(:placeholder-shown){
+				+label{
+					color: $colour-forground-1;
+				}
+			}
+			// Focus : filet bleu doublé d'un anneau de 1 px (2 px visibles), comme les dates et
+			// les listes ; un simple changement de couleur du filet de 1 px se voyait à peine.
+			&:focus,
+			&:focus-visible,
+			&:focus-within{
+				background-color: $colour-background;
+				outline: 0;
+				box-shadow: 0 0 0 1px $colour-blue-600 !important;
+				border-color: $colour-blue-600;
+				+label{
+					color: $colour-blue-600;
+				}
+			}
+		}
+		button{
+			svg{
+				width: 16px;
+				height: 16px;
+				fill: $colour-forground-1;
+			}
+			&:hover{
+				background-color: transparent;
+			}
+		}
+	}
+}
+
+@mixin textarea-field{
+	margin-top: 16px;
+	.textarea__main-wrapper{
+		padding: 0;
+		.textarea__input{
+			// Quatre lignes entières (4lh) + 2 × 10 px de marge intérieure + 2 × 1 px de bordure,
+			// en border-box (largeur 100 % sans débordement). L'app Agenda pose « textarea {
+			// padding: 5px 12px !important } » sur toutes les pages : sans ce !important, il restait
+			// 68 px utiles (4e ligne coupée en pleine lettre, 1re ligne sous le libellé flottant).
+			padding: 10px !important;
+			border-radius: $rounded-8;
+			box-shadow: none;
+			border: 1px solid var(--color-border-maxcontrast);
+			background-color: $colour-background;
+			outline: 0;
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-forground;
+			font-weight: $font-normal;
+			box-sizing: border-box !important;
+			height: calc(4lh + 22px) !important;
+			&::placeholder,
+			+ label{
+				font-size: $text-heading-5;
+				line-height: $leading-20;
+				color: $colour-forground-1;
+				font-weight: $font-medium;
+				top: 7px;
+			}
+			&:focus,
+			&:not(:placeholder-shown){
+				+label{
+					top: -8px;
+					font-size: $text-12;
+				}
+			}
+			&:not(:placeholder-shown){
+				+label{
+					color: $colour-forground-1;
+				}
+			}
+			// Focus : filet bleu doublé d'un anneau de 1 px (2 px visibles), comme les dates et
+			// les listes ; un simple changement de couleur du filet de 1 px se voyait à peine.
+			&:focus,
+			&:focus-visible,
+			&:focus-within{
+				background-color: $colour-background;
+				outline: 0;
+				box-shadow: 0 0 0 1px $colour-blue-600 !important;
+				border-color: $colour-blue-600;
+				+label{
+					top: -8px;
+					color: $colour-blue-600;
+				}
+			}
+		}
+	}
+}
+
+@mixin checkbox-radio-switch {
+	.checkbox-content{
+		padding: 0;
+		align-items: center;
+		gap: 6px;
+		min-height: unset;
+		&:hover{
+			background-color: transparent;
+		}
+	}
+	.checkbox-content__icon{
+		margin: 0;
+	}
+	.checkbox-content__wrapper{
+		flex: auto;
+		.checkbox-content__text{
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-forground;
+			font-weight: $font-medium;
+		}
+	}
+	+ .v-select{
+		margin-top: 16px;
+	}
+}
+
+@mixin checkbox-radio-switch-icon {
+	.checkbox-content{
+		align-items: start;
+		.checkbox-content__wrapper{
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			font-weight: $font-medium;
+			color: $colour-forground;
+		}
+	}
+	// Cases et boutons radio : glyphe de 20 px. Jamais les interrupteurs, dont le glyphe est plus
+	// large que haut (36 × 18 dans Nextcloud) : réduits à 20 px, ils ne faisaient plus que 17 × 8.
+	&:not(.checkbox-radio-switch-switch, .checkbox-radio-switch--switch) .checkbox-content{
+		.checkbox-content__icon{
+			width: 20px;
+			height: 20px;
+			.material-design-icon{
+				width: 20px;
+				height: 20px;
+				svg{
+					width: 20px;
+					height: 20px;
+					flex-shrink: 0;
+					transform-origin: center;
+					fill: $colour-forground-1;
+				}
+			}
+		}
+	}
+	&.checkbox-radio-switch--checked{
+		.checkbox-content{
+			.checkbox-content__icon{
+				.material-design-icon{
+					svg{
+						fill: $colour-blue-600;
+					}
+				}
+			}
+		}
+	}
+}
+
+@mixin datepicker{
+	height: auto !important;
+	padding: 10px;
+	border-radius: $rounded-8;
+	box-shadow: none;
+	border: 1px solid var(--color-border-maxcontrast);
+	background-color: $colour-background;
+	outline: 0;
+	font-size: $text-heading-5;
+	line-height: $leading-20;
+	color: $colour-forground;
+	font-weight: $font-normal;
+	min-height: var(--default-clickable-area); // même hauteur que les autres contrôles de Nextcloud
+	&::placeholder,
+	+ label{
+		font-size: $text-heading-5;
+		line-height: $leading-20;
+		color: $colour-forground;
+		font-weight: $font-medium;
+	}
+	&:focus,
+	&:not(:placeholder-shown){
+		+label{
+			font-size: $text-12;
+		}
+	}
+	&:not(:placeholder-shown){
+		+label{
+			color: $colour-forground-1;
+		}
+	}
+	// Focus : contour azure-text doublé d'un anneau, visible même quand le contour de repos
+	// est déjà sombre.
+	&:focus,
+	&:focus-visible,
+	&:focus-within{
+		background-color: $colour-background;
+		outline: 0;
+		box-shadow: 0 0 0 1px $colour-blue-600 !important;
+		border-color: $colour-blue-600;
+		+label{
+			color: $colour-blue-600;
+		}
+	}
+}
+
+// Pictogramme d'état de la note (NcNoteCard le pose en enfant direct, classe notecard__icon ;
+// icône fournie par l'app ou SVG des gabarits PHP) : seul lui passe à 16 px. Viser toute icône
+// contenue réduisait aussi celles des composants rangés dans la note (interrupteur ramené à un
+// trait de 16 × 8 px, boutons d'icône…).
+$icone-note: '> :is(.notecard__icon, .icon-vue, .material-design-icon, svg)';
+
+@mixin notecard{
+	margin: 16px 0 !important;
+	width: fit-content;
+	// Titre de la note (20 px chez Nextcloud) : il héritait de l'interlignage de 16 px du texte et
+	// ses lignes se chevauchaient dès qu'il passait à la ligne.
+	.notecard__heading {
+		line-height: 1.35;
+	}
+	&.notecard--info {
+		margin-bottom: 0;
+		padding: 6px 10px;
+		background-color: $colour-primary-50 !important;
+		color: $colour-blue-600 !important;
+		gap: 5px;
+		border-inline-start: 0;
+		border-radius: $rounded-6;
+		align-items: center;
+		font-size: $text-12;
+		line-height: $leading-16;
+		font-weight: $font-medium;
+
+		#{$icone-note},
+		#{$icone-note} svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		#{$icone-note} svg {
+			fill: $colour-blue-600;
+		}
+	}
+	&.notecard--warning{
+		margin-bottom: 0;
+		padding: 6px 10px;
+		background-color: $colour-yellow-50 !important;
+		color: $colour-yellow !important;
+		gap: 5px;
+		border-inline-start: 0;
+		border-radius: $rounded-6;
+		align-items: center;
+		font-size: $text-12;
+		line-height: $leading-16;
+		font-weight: $font-medium;
+
+		#{$icone-note},
+		#{$icone-note} svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		#{$icone-note} svg {
+			fill: $colour-yellow;
+		}
+	}
+	&.notecard--success{
+		margin-bottom: 0;
+		padding: 6px 10px;
+		background-color: $colour-green-50 !important;
+		color: $colour-green-700 !important;
+		gap: 5px;
+		border-inline-start: 0;
+		border-radius: $rounded-6;
+		align-items: center;
+		font-size: $text-12;
+		line-height: $leading-16;
+		font-weight: $font-medium;
+
+		#{$icone-note},
+		#{$icone-note} svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		#{$icone-note} svg {
+			fill: $colour-green-700;
+		}
+	}
+	&.notecard--error{
+		margin-bottom: 0;
+		padding: 6px 10px;
+		background-color: $colour-red-50 !important;
+		color: $colour-red-600 !important;
+		gap: 5px;
+		border-inline-start: 0;
+		border-radius: $rounded-6;
+		align-items: center;
+		font-size: $text-12;
+		line-height: $leading-16;
+		font-weight: $font-medium;
+
+		#{$icone-note},
+		#{$icone-note} svg {
+			width: 16px;
+			height: 16px;
+		}
+
+		#{$icone-note} svg {
+			fill: $colour-red-600;
+		}
+	}
+}
+
+@mixin development-notice{
+	padding: 16px 0;
+	border-top: 1px solid $theme-divider;
+	margin-top: 16px;
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+	width: 100%;
+	gap: 24px;
+	@media (max-width: $bp-640) {
+		text-align: center;
+		align-items: center;
+		gap: 16px;
+	}
+	p{
+		max-width: 100%;
+		margin-bottom: 0;
+		font-size: $text-heading-5;
+		line-height: $leading-20;
+		font-weight: $font-normal;
+		color: $colour-forground-1;
+		a{
+			color: $colour-forground;
+			transition: transition-douce();
+			font-weight: $font-medium;
+			&:hover{
+				color: $colour-blue-600;
+			}
+			&.link-button{
+				margin: 16px 0 0;
+				box-shadow: none;
+				border: 1px solid $colour-brand;
+				padding: 6px 12px;
+				background-color: $colour-brand;
+				border-radius: $rounded-full;
+				color: $colour-forground-white;
+				font-size: $text-heading-5;
+				line-height: $leading-20;
+				font-weight: $font-medium;
+				gap: 6px;
+				transition: transition-douce();
+				.icon-file-text{
+					width: 16px;
+					height: 16px;
+					background-size: 16px;
+				}
+				&:hover{
+					background-color: transparent;
+					color: $colour-blue-600;
+					.icon-file-text{
+						filter: $filter-primry-600;
+					}
+				}
+				@media (max-width: $bp-576) {
+					font-size: $text-12;
+					line-height: $leading-16;
+				}
+			}
+		}
+		&.social-button{
+			display: flex;
+			gap: 8px;
+			a{
+				display: flex;
+				width: 32px;
+				height: 32px;
+				img{
+					width: 100%;
+					height: 100%;
+				}
+			}
+		}
+	}
+}
+
+@mixin single-select($dropdown: true){
+	min-width: unset;
+	margin: 0;
+	// Champ « panel » pour @nextcloud/vue 8 et la sélection multiple ; la valeur unique de
+	// @nextcloud/vue 9 garde son champ natif (voir $hors-select-v9).
+	&:not(.nc-select.vs--single){
+		@include select-field($dropdown);
+		@include select-box;
+		.vs__dropdown-toggle{
+			height: 36px;
+			padding: 0;
+			align-items: center;
+			.vs__selected-options{
+				flex-wrap: nowrap;
+				align-items: center;
+				align-self: stretch;
+				min-height: unset;
+			}
+			.vs__selected{
+				inset-block: 0;
+				// Hauteur de la ligne seulement : centrée par .vs__selected-options (Nextcloud lui donne
+				// la hauteur du champ, le texte restait collé en haut).
+				height: auto;
+				margin: 0 !important;
+				padding: 0 36px 0 12px !important;
+				border: 0 !important;
+				border-radius: 0;
+				background-color: transparent !important;
+				font-size: $text-heading-5;
+				line-height: $leading-20;
+				font-weight: $font-medium;
+				color: $colour-forground;
+			}
+		}
+		.vs__search{
+			margin: 0;
+			padding: 0;
+		}
+		.vs__actions{
+			button{
+				width: 20px;
+				height: 20px;
+				min-width: unset;
+				min-height: unset;
+				padding: 0;
+				background-color: transparent;
+			}
+			svg{
+				fill: $colour-forground-1;
+			}
+		}
+		&.vs--open{
+			.vs__dropdown-toggle{
+				border-color: $colour-blue-600;
+			}
+			.vs__actions svg{
+				fill: $colour-blue-600;
+			}
+		}
+		&:not(.nc-select){
+			.vs__selected-options{
+				.vs__selected{
+					flex: 0 1 auto;
+				}
+				input.vs__search{
+					flex: 1 1 0;
+					width: 0 !important;
+					min-width: 0;
+				}
+			}
+		}
+	}
+}
+
+@mixin select-dropdown-menu{
+	margin-top: 4px;
+	padding: 6px !important;
+	border: 1px solid $theme-divider !important;
+	border-radius: $rounded-6;
+	box-shadow: $box-shadow-3 !important;
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+	@include scrollbar($thumb-colour: $colour-scrollbar-main);
+	li{
+		padding: 6px 10px;
+		border-radius: $rounded-6;
+		font-size: $text-heading-5;
+		line-height: $leading-20;
+		color: $colour-forground;
+		&:hover,
+		&.vs__dropdown-option--highlight{
+			background-color: $colour-gray-100;
+		}
+		&.vs__dropdown-option--selected{
+			color: $colour-blue-600;
+		}
+	}
+}
+
+// Carte du panel Azure (rgpd/communs.tsx « carte ») : paper, filet line, rayon 16 px,
+// padding 16 px au téléphone, 24 px dès 640 px. Aucune ombre.
+@mixin carte {
+	box-sizing: border-box;
+	background-color: $colour-background;
+	border: 1px solid $theme-divider;
+	border-radius: $rounded-12;
+	box-shadow: none;
+	padding: 20px 16px;
+	@media (min-width: $bp-640) {
+		padding: 24px;
+	}
+}
+
+// Titre de section ou de carte : 15 px, graisse 700, ink.
+@mixin titre-carte {
+	margin: 0 0 6px;
+	padding: 0;
+	font-size: 0.9375rem;
+	line-height: 1.35;
+	font-weight: $font-bold;
+	color: $colour-forground;
+	text-transform: none;
+	letter-spacing: normal;
+}
+
+// Texte d'aide : muted, 14 px.
+@mixin aide {
+	font-size: 0.875rem;
+	line-height: 1.45;
+	font-weight: $font-normal;
+	color: $colour-forground-1;
+	text-transform: none;
+	letter-spacing: normal;
+}

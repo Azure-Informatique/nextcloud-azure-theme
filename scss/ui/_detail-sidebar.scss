@@ -1,0 +1,167 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Barre latérale de détail (NcAppSidebar) de toutes les apps.
+ * La mise en page reste celle de Nextcloud : sur ordinateur, la barre se range à côté du
+ * contenu ; sur téléphone (≤ 512 px), elle passe en plein écran. Le thème ne règle que
+ * l'apparence : fond paper, filet line, onglets en contrôle segmenté du panel (une seule
+ * ligne, icône au-dessus du libellé, case active pleine), champs à 44 px.
+ * Deux générations d'onglets coexistent : NcCheckboxRadioSwitch (@nextcloud/vue 8) et le
+ * bouton en module CSS _sidebarTabsButton_ (@nextcloud/vue 9, présent dans les apps
+ * Vue 3 dès Nextcloud 34) : les deux reçoivent le même dessin.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+
+$onglet-actif: ':is([aria-selected="true"], .checkbox-radio-switch--checked)';
+
+@mixin onglets {
+	.app-sidebar-tabs__nav {
+		flex-wrap: nowrap;
+		gap: 2px;
+		margin: 8px 8px 4px;
+		padding: 3px;
+		border: 1px solid $theme-divider;
+		border-radius: $rounded-12;
+		background-color: $main-page-bg;
+	}
+	// Surlignage animé de @nextcloud/vue 9 : remplacé par la case pleine.
+	.app-sidebar-tabs__highlight {
+		display: none;
+	}
+	// Une case : colonnes égales, icône au-dessus, libellé tronqué ; les !important répondent
+	// aux valeurs fixées en dur par NcCheckboxRadioSwitch (fond, bordure, largeur mini).
+	.app-sidebar-tabs__nav .app-sidebar-tabs__tab {
+		flex: 1 1 0 !important;
+		min-width: 0 !important;
+		margin: 0;
+		border: 0 !important;
+		border-radius: $rounded-8 !important;
+		background-color: transparent !important;
+		color: $colour-forground-1;
+		&::after {
+			display: none;
+		}
+		&:hover:not(#{$onglet-actif}) {
+			background-color: $main-page-bg-dashboard !important;
+			color: $colour-forground;
+		}
+		// Onglet actif : bleu de marque au repos, au survol et après un toucher (le survol de
+		// Nextcloud lui donnait le gris de survol sous un libellé blanc : 1,2:1).
+		&#{$onglet-actif},
+		&#{$onglet-actif}:hover,
+		&#{$onglet-actif}:focus-visible {
+			background-color: $colour-brand !important;
+			color: $colour-white !important;
+		}
+		&:focus-visible,
+		&:has(:focus-visible) {
+			outline: 2px solid $colour-brand;
+			outline-offset: 1px;
+		}
+	}
+	// Bouton @nextcloud/vue 9.
+	.app-sidebar-tabs__tab#{css-module('sidebarTabsButton')} {
+		justify-content: center;
+		gap: 2px;
+		min-height: 48px;
+		padding: 4px 2px;
+	}
+	#{css-module('sidebarTabsButton__name')} {
+		max-width: 100%;
+		font-size: 13px;
+		line-height: 1.25rem;
+		font-weight: $font-semibold;
+	}
+	// Case NcCheckboxRadioSwitch de @nextcloud/vue 8.
+	.app-sidebar-tabs__tab.checkbox-radio-switch-button {
+		padding: 0 !important;
+		.checkbox-content {
+			flex-direction: column;
+			justify-content: center;
+			gap: 2px;
+			min-height: 48px;
+			height: auto;
+			padding: 4px 2px;
+			background-color: transparent !important;
+		}
+		.checkbox-content__wrapper {
+			flex: 0 1 auto;
+			min-width: 0;
+			max-width: 100%;
+		}
+		// !important et classe doublée : Nextcloud 35 impose var(--color-main-text) !important au
+		// contenu de l'onglet coché, à spécificité égale ; sur le bleu de marque, le libellé restait
+		// encre (4,2:1) au lieu de blanc.
+		.checkbox-content.checkbox-radio-switch__content,
+		.checkbox-content__wrapper,
+		.checkbox-content__text {
+			color: inherit !important;
+		}
+		.checkbox-content__icon,
+		.checkbox-content__icon .icon-vue {
+			width: 20px;
+			min-width: 20px;
+			height: 20px;
+			min-height: 20px;
+			color: inherit;
+		}
+		.app-sidebar-tabs__tab-caption {
+			display: block;
+			overflow: hidden;
+			font-size: 13px;
+			line-height: 1.25rem;
+			font-weight: $font-semibold;
+			text-overflow: ellipsis;
+			white-space: nowrap;
+			color: inherit;
+		}
+	}
+}
+
+@mixin detail-sidebar {
+	.app-sidebar:not(.modal__card *) {
+		border-inline-start: 1px solid $theme-divider;
+		background-color: $main-page-bg;
+
+		// En-tête : titre et sous-titre en casse d'origine (noms de fichiers intacts).
+		.app-sidebar-header__subname {
+			color: $colour-forground-1;
+		}
+		// Aperçu : marche de ton canvas + filet, pour qu'une page blanche ne disparaisse pas.
+		.app-sidebar-header--with-figure .app-sidebar-header__figure {
+			border: 1px solid $theme-divider;
+			border-radius: $rounded-12;
+			background-color: $main-page-bg-dashboard;
+		}
+		// Bouton de fermeture posé sur l'aperçu : rond paper + filet, lisible sur toute image.
+		.app-sidebar-header--with-figure .app-sidebar__close {
+			border: 1px solid $theme-divider;
+			background-color: $main-page-bg;
+		}
+
+		@include onglets;
+
+		// Panneau d'onglet : pas de halo de focus programmatique autour de tout le contenu.
+		.app-sidebar__tab:focus {
+			box-shadow: none;
+		}
+
+		// Champs de recherche du partage : 44 px au doigt, contour ink/50 de la charte. La hauteur
+		// passe par la variable de Nextcloud (écart de Nextcloud 36 dans _files-v36).
+		.sharing-search {
+			--default-clickable-area: 44px;
+		}
+		.sharing-search .vs__dropdown-toggle:not(.nc-select.vs--single *) {
+			min-height: 44px;
+			padding-inline: 12px 4px;
+			border-color: var(--color-border-maxcontrast) !important;
+			// Focus clavier visible (la règle ci-dessus effaçait celui des sélecteurs).
+			&:focus-within {
+				border-color: $colour-blue-600 !important;
+				box-shadow: 0 0 0 1px $colour-blue-600;
+			}
+		}
+	}
+}

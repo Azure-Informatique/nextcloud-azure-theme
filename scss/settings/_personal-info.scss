@@ -1,0 +1,506 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+@mixin personal-info {
+	// Nextcloud 34 : deux colonnes, l'image de profil occupe les rangées 1-2 et le bloc Profil les
+	// rangées 3-4 ; à côté, chaque champ (un libellé et un champ de 34 px) était étiré sur la moitié
+	// de leur hauteur, d'où de grands vides entre « Nom complet », « Pronoms », « E-mail »… Sur
+	// trois rangées chacun, les champs voisins gardent leur hauteur naturelle. Sur une colonne
+	// (téléphone), l'ordre et l'empilement restent ceux de Nextcloud.
+	&#{reglage(personal-info)} #personal-settings{
+		#vue-avatar-section{
+			grid-row: 1 / 4;
+		}
+		.personal-settings-setting-box-profile{
+			grid-row: 4 / 7;
+		}
+		.personal-settings-setting-box-detail{
+			grid-row: 7;
+		}
+	}
+	// Nextcloud 35 et suivants : la même page s’appelle « profile-contact ».
+	&#{reglage(personal-info)},
+	&#{reglage(profile-contact)}{
+		// La grille des propriétés est elle-même la carte (règle des réglages) : elle garde le
+		// remplissage de la carte, sinon libellés et champs touchent son filet.
+		#personal-settings{
+			gap: 16px;
+			@media (max-width: $bp-576) {
+				gap: 12px;
+			}
+		}
+		#vue-avatar-section{
+			.headerbar-label{
+				margin-top: 0;
+				margin-bottom: 16px;
+				gap: 0;
+				@media (max-width: $bp-576) {
+					margin-bottom: 12px;
+				}
+				svg{
+					fill: $colour-forground;
+				}
+				.action-item{
+					margin-inline-start: 0 !important;
+				}
+			}
+			.avatar__container{
+				margin: 0;
+				@media (max-width: $bp-512) {
+					margin-inline: auto;
+				}
+				> span{
+					font-size: 13px;
+					line-height: 1.4;
+					color: $colour-forground-1;
+				}
+			}
+		}
+		.personal-settings-setting-box-profile{
+			.checkbox-content{
+				padding: 0;
+				.checkbox-content__icon{
+					margin: 0;
+				}
+			}
+			.checkbox-content__text{
+				font-size: $text-heading-5;
+				line-height: $leading-20;
+				color: $colour-forground;
+				font-weight: $font-medium;
+			}
+		}
+		label{
+			font-size: $text-heading-5;
+			line-height: $leading-20;
+			color: $colour-forground-1;
+			font-weight: $font-medium;
+		}
+		em,
+		.property__helper-text-message{
+			margin-top: 4px;
+			font-size: 13px;
+			line-height: 1.4;
+			color: $colour-forground-1;
+			font-weight: $font-normal;
+			font-style: normal;
+			padding: 0;
+			display: flex;
+		}
+		.example__text{
+			font-size: 13px;
+			line-height: 1.4;
+			color: $colour-forground-1;
+			p{
+				margin: 0;
+			}
+		}
+		// « Aider à traduire » (lien sous la langue) : cible de 44 px au doigt, sans décaler le texte.
+		.language a{
+			@media (pointer: coarse) and (max-width: $bp-640) {
+				display: inline-block;
+				padding-block: 11px;
+				margin-block: -11px;
+			}
+		}
+		.example{
+			margin-top: 8px;
+			align-items: center;
+			@media (max-width: $bp-576) {
+				margin-bottom: 0;
+			}
+			.material-design-icon{
+				width: 16px;
+				height: 16px;
+				svg{
+					width: 16px;
+					height: 16px;
+				}
+			}
+		}
+		.personal-settings-setting-box{
+			section{
+				padding: 0;
+			}
+			.headerbar-label {
+				margin-top: 0;
+				button {
+					margin-inline-start: -8px !important;
+					&.button-vue--icon-and-text{
+						margin-inline-start: auto !important;
+						.button-vue__wrapper{
+							gap: 6px;
+							.button-vue__icon{
+								width: 16px;
+								height: 16px;
+								min-width: unset;
+								min-height: unset;
+								svg{
+									width: 16px;
+									height: 16px;
+									fill: $colour-forground-1;
+								}
+							}
+							.button-vue__text{
+								font-size: $text-heading-5;
+								line-height: $leading-20;
+								margin: 0;
+								padding-inline-start: 0;
+								font-weight: $font-medium;
+								color: $colour-forground-1;
+										
+							}
+						}
+						&:hover{
+							background-color: transparent;
+							.button-vue__icon{
+								svg{
+									fill: $colour-forground;
+								}
+							}
+							.button-vue__text{
+								color: $colour-forground;
+							}
+						}
+					}
+					&:hover{
+						background-color: transparent;
+						svg{
+							fill: $colour-forground;
+						}
+					}
+				}
+			}
+			&.personal-settings-setting-box-detail{
+				.headerbar-label{
+					h3{
+						font-size: $text-heading-3;
+						line-height: $leading-22;
+						color: $colour-forground;
+						font-weight: $font-semibold;
+					}
+				}
+				.details{
+					margin: 12px 0 0;
+					.details__groups,
+					.details__quota{
+						gap: 8px;
+						.material-design-icon{
+							margin-top: 2px;
+							svg{
+								width: 16px;
+								height: 16px;
+								fill: $colour-forground-1;
+							}
+						}
+						.details__groups-info,
+						.details__quota-info{
+							gap: 0;
+							p,
+							.details__quota-text{
+								font-size: $text-heading-5;
+								line-height: $leading-20;
+								font-weight: $font-normal;
+								color: $colour-forground-1;
+								&.details__groups-list,
+								strong{
+									color: $colour-forground;
+									font-weight: $font-medium;
+								}
+							}
+							.progress-bar{
+								border-radius: 999px;
+								margin-top: 8px;
+								&::-webkit-progress-value{
+									border-radius: 999px;
+									background: $colour-blue-600;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		.action-item{
+			.button-vue__icon{
+				width: 16px;
+				height: 16px;
+				min-width: unset;
+				min-height: unset;
+				svg{
+					width: 16px;
+					height: 16px;
+					fill: $colour-forground-1;
+				}
+			}
+			&:hover{
+				background-color: transparent !important;
+			}
+		}
+		.checkbox-content--has-text{
+			padding-inline: 0 !important;
+			&:hover{
+				background-color: transparent !important;
+			}
+		}
+		.input-field{
+			@include input;
+		}
+		.textarea{
+			@include textarea-field;
+			margin-top: 0;
+			// « À propos » : la zone suit son contenu, de 4 à 10 lignes entières (unités lh),
+			// au lieu de 4 lignes fixes ; sans field-sizing, hauteur des « rows » de Nextcloud.
+			.textarea__main-wrapper .textarea__input{
+				height: auto !important;
+				min-height: calc(4lh + 22px);
+				max-height: calc(10lh + 22px);
+				field-sizing: content;
+			}
+		}
+		.v-select{
+			@include select-field;
+			@include select-box;
+			margin-top: 0 !important;
+			.vs__selected{
+				border: 0 !important;
+				background-color: transparent !important;
+				border-radius: 0;
+				padding: 0 !important;
+			}
+			// Valeur sur deux lignes (téléphone : « Déduit de vos paramètres régionaux (Lundi) »,
+			// « Afficher uniquement aux comptes connectés ») : 8 px d'air au-dessus et au-dessous au
+			// lieu de 1 px ; une valeur d'une ligne reste centrée dans les 44 px du champ.
+			// Sélecteur renforcé : plus fort que la règle commune des listes (padding: 0 !important).
+			&.v-select .vs__dropdown-toggle:not(.nc-select.vs--single *) .vs__selected-options > .vs__selected:not(.vs--multiple *){
+				padding-block: 8px !important;
+			}
+		}
+		// Date de naissance : même hauteur (34 px) que les autres champs de la carte.
+		input[type="date"]{
+			@include datepicker;
+			padding-block: 5px;
+		}
+		.native-datetime-picker--label{
+			&:empty{
+				display: none;
+				margin-top: 0;
+			}
+		}
+		// Image de profil : ciblage par la structure (conteneurs nommés par Nextcloud), jamais par
+		// le libellé des boutons, qui est traduit (« Remove profile picture » ne correspondait
+		// jamais en français et la règle générale attrapait aussi les boutons du recadreur).
+		#vue-avatar-section{
+			padding: 0;
+			// Téléverser / Choisir dans Fichiers / Retirer : boutons ronds à icône, cerclés.
+			.avatar__buttons button.button-vue{
+				@include outline-button;
+			}
+			// Recadrage (colonne de 300 px) : « Annuler » cerclé, « Définir comme image de profil »
+			// principal, séparés de 8 px. Côte à côte s'ils tiennent, sinon l'un sous l'autre sur
+			// toute la largeur, plutôt que de couper le libellé sur deux lignes.
+			.avatar__cropper-buttons{
+				display: flex;
+				flex-wrap: wrap;
+				align-items: center;
+				gap: 8px;
+				button.button-vue{
+					flex: 1 0 auto;
+					max-width: 100%;
+				}
+				button.button-vue--vue-secondary{
+					@include outline-button;
+				}
+				button.button-vue--vue-primary{
+					@include primary-button;
+				}
+			}
+		}
+		.headerbar__heading{
+			font-size: $text-heading-3;
+			line-height: $leading-22;
+			color: $colour-forground;
+			font-weight: $font-semibold;
+		}
+		// Aperçu du profil (Nextcloud 34 : avatar, puis __header et __footer dont le texte est posé en
+		// absolu sur un bandeau coloré) : sans bandeau, une grille à deux colonnes : l'avatar à gauche,
+		// le nom au-dessus de l'organisation à droite. Les deux textes passent à la ligne au lieu
+		// d'être tronqués (le nom s'affichait « A… » quand ils se partageaient une seule rangée).
+		.preview-card{
+			// La règle commune des réglages (_reglages.scss) pose « display: flex !important ».
+			display: grid !important;
+			grid-template-columns: auto minmax(0, 1fr);
+			grid-template-rows: auto auto;
+			align-content: center;
+			column-gap: 16px;
+			row-gap: 2px;
+			height: auto;
+			min-height: 82px;
+			box-shadow: none;
+			margin-inline: 0;
+			@media (max-width: $bp-576) {
+				margin-inline: auto;
+			}
+			&:hover,
+			&:focus,
+			&:active{
+				box-shadow: none;
+			}
+			&:focus-visible{
+				outline: 2px solid $colour-brand;
+				outline-offset: 2px;
+			}
+			.preview-card__avatar{
+				grid-column: 1;
+				grid-row: 1 / span 2;
+				align-self: center;
+				margin: 0;
+			}
+			.preview-card__header,
+			.preview-card__footer{
+				grid-column: 2;
+				position: static;
+				display: block;
+				min-width: 0;
+				height: auto;
+				margin: 0;
+				padding: 0;
+				background: none;
+				&:empty{
+					display: none;
+				}
+				span{
+					position: static;
+					display: block;
+					min-width: 0;
+					margin: 0;
+					height: auto;
+					white-space: normal;
+					overflow-wrap: anywhere;
+					&:empty{
+						display: none;
+					}
+				}
+			}
+			.preview-card__header{
+				grid-row: 1;
+				align-self: end;
+			}
+			.preview-card__footer{
+				grid-row: 2;
+				align-self: start;
+			}
+			.preview-card__header span{
+				font-size: 1.125rem;
+				line-height: 1.3;
+				color: $colour-forground;
+				font-weight: $font-bold;
+			}
+			.preview-card__footer span{
+				font-size: 0.875rem;
+				line-height: $leading-20;
+				color: $colour-forground-1;
+			}
+			+a{
+				margin: 0;
+				padding: 6px 12px;
+				border: 1px solid $theme-divider;
+				border-radius: $rounded-6;
+				display: flex;
+				gap: 6px;
+				align-items: center;
+				font-size: $text-heading-5;
+				line-height: $leading-20;
+				font-weight: $font-medium;
+				color: $colour-forground;
+				height: auto;
+				transition: transition-douce();
+				.material-design-icon{
+					display: flex;
+					margin: 0;
+					width: 16px;
+					height: 16px;
+					svg{
+						width: 16px;
+						height: 16px;
+					}
+				}
+				&:hover{
+					background-color: $colour-primary-50;
+					border-color: $colour-blue-600;
+					color: $colour-blue-600;
+				}
+				@media (max-width: $bp-576) {
+					margin-inline: auto;
+				}
+				@media (pointer: coarse) and (max-width: $bp-640) {
+					min-height: 44px;
+				}
+			}
+		}
+		.personal-settings-section{
+			padding-block: 16px;
+			margin-top: 16px;
+			border-top: 1px solid $theme-divider;
+			> section{
+				margin: 0 !important;
+				width: 100%;
+				max-width: 100%;
+				padding: 0;
+				.headerbar-label{
+					margin-top: 0;
+				}
+				em{
+					margin-block: 16px;
+					max-width: 600px;
+					@media (max-width: $bp-576) {
+						margin-block: 12px;
+					}
+				}
+				.visibility-dropdowns{
+					padding-top: 16px;
+					display: flex;
+					flex-direction: column;
+					gap: 16px;
+					.visibility-container{
+						align-items: center;
+						// Libellés de portée en entier (« Afficher uniquement aux comptes connectés »),
+						// au lieu d'une coupure au milieu dans un champ de 270 px.
+						.visibility-container__select{
+							width: 340px;
+							max-width: 100%;
+						}
+						@media (max-width: $bp-576) {
+							flex-direction: column;
+							gap: 4px;
+							align-items: start;
+							.v-select{
+								width: 100%;
+								max-width: 100%;
+							}
+						}
+					}
+					@media (max-width: $bp-576) {
+						padding-top: 12px;
+						gap: 12px;
+					}
+				}
+			}
+		}
+		.development-notice{
+			@include development-notice;
+		}
+		.msg,
+		#personal-settings-group-container{
+			&:empty{
+				display: none;
+			}
+		}
+	}
+}

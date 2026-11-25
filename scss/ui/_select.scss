@@ -1,0 +1,292 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Sélecteurs NcSelect de toutes les apps : champ du panel (contour ink/50, rayon 12 px,
+ * 40 px au moins, focus azure-text) et liste déroulante qui flotte (paper, filet, ombre float).
+ * Deux générations coexistent :
+ * - @nextcloud/vue 8 et sélection multiple de la 9 : le cadre est porté par .vs__dropdown-toggle ;
+ * - @nextcloud/vue 9 à valeur unique (.nc-select.vs--single) : le cadre est le champ intérieur
+ *   (NcInputField, stylé avec les autres champs) et le libellé flottant se pose sur le contour,
+ *   au-dessus de la valeur. On ne touche ni à sa hauteur ni à sa position : la règle commune
+ *   des champs suffit, sinon le libellé chevauche la valeur (« Statut / Confirmé »).
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+
+@mixin select {
+	.v-select.select:not(.nc-select.vs--single) {
+		.vs__dropdown-toggle {
+			min-height: 40px;
+			border: 1px solid var(--color-border-maxcontrast) !important;
+			border-radius: $rounded-8 !important;
+			background-color: $colour-background;
+			// @nextcloud/vue trace aussi un contour par ombre (filet haut + halo à 35 %) : avec le
+			// contour plein de la charte, le filet paraissait doublé.
+			box-shadow: none !important;
+		}
+		&.vs--open .vs__dropdown-toggle,
+		.vs__dropdown-toggle:focus-within {
+			border-color: $colour-blue-600 !important;
+			box-shadow: 0 0 0 1px $colour-blue-600 !important;
+			outline: 0;
+		}
+	}
+	// Valeur unique (@nextcloud/vue 8) : la valeur prend sa largeur, le champ de saisie voisin le
+	// reste ; sans cela le champ vide écrase la valeur (« Qu… r défaut »).
+	.v-select.select.vs--single:not(.nc-select) .vs__selected-options {
+		.vs__selected {
+			flex: 0 1 auto;
+			min-width: 0;
+		}
+		.vs__search {
+			flex: 1 1 0;
+			width: 0 !important;
+			min-width: 0;
+		}
+	}
+	// Bouton d'ouverture (chevron) : cible d'au moins 24 px (WCAG 2.5.8), 20 px une fois l'icône
+	// réduite à 16 px.
+	.vs__open-indicator-button {
+		min-width: 24px;
+		min-height: 24px;
+	}
+	// Liste désactivée : le champ garde un seul fond ; Nextcloud teintait encore la saisie, le
+	// chevron et la croix, des boîtes grises dans le champ (double cadre, Flux › comparateur).
+	.v-select.vs--disabled :is(.vs__open-indicator-button, .vs__clear, .vs__search, .vs__actions .material-design-icon) {
+		background-color: transparent !important;
+	}
+	.vs__dropdown-menu {
+		border: 1px solid $theme-divider !important;
+		border-radius: $rounded-8 !important;
+		background-color: $colour-background !important;
+		box-shadow: $box-shadow-3 !important;
+		// Liste détachée (posée sur la page, ex. destinataires du partage) : contour du champ (ink/50)
+		// pour un bord net ; avec le filet clair, le titre de section qu'elle recouvre à moitié
+		// semblait peint par-dessus la dernière entrée.
+		&.vs__dropdown-menu--floating {
+			border-color: var(--color-border-maxcontrast) !important;
+		}
+		.vs__dropdown-option {
+			border-radius: $rounded-6;
+			color: $colour-forground;
+			&--highlight {
+				background-color: $main-page-bg-dashboard !important;
+				color: $colour-forground !important;
+			}
+			&--selected {
+				background-color: $colour-primary-50 !important;
+			}
+		}
+	}
+
+	// ── Sélection multiple (groupes, comptes, étiquettes…) : règle unique et finale ─────────────
+	// Champ de 40 px au moins qui grandit avec ses rangées de pastilles ; pastilles de 28 px, à 5 px
+	// du contour en haut, en bas et à gauche, 4 px entre elles (en ligne comme entre deux rangées) ;
+	// le champ de saisie se range après la dernière pastille au lieu de passer, invisible, sur une
+	// rangée de plus (il masquait les pastilles suivantes dans un champ de hauteur fixe).
+	// Poids : l'identifiant du body l'emporte sur les règles propres aux pages (réglages, fenêtres)
+	// qui figeaient autrefois la hauteur ; !important seulement contre les hauteurs et marges que
+	// @nextcloud/vue pose lui-même en !important.
+	:is(#body-user, #body-settings, #body-public) .v-select.vs--multiple {
+		.vs__dropdown-toggle {
+			box-sizing: border-box;
+			display: flex;
+			align-items: center;
+			height: auto !important;
+			min-height: 40px !important;
+			// Nextcloud plafonne le champ à 100 px et fait défiler les pastilles à l'intérieur : au
+			// téléphone, la 4e rangée de groupes était masquée. Le champ montre toutes ses pastilles.
+			max-height: none !important;
+			padding: 0 !important;
+			overflow: visible;
+		}
+		.vs__selected-options {
+			box-sizing: border-box;
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			align-content: center;
+			gap: 4px;
+			min-width: 0;
+			min-height: 38px !important;
+			padding: 5px 0 5px 5px !important;
+		}
+		.vs__selected {
+			box-sizing: border-box;
+			display: inline-flex !important;
+			align-items: center;
+			gap: 2px;
+			height: 28px !important;
+			min-height: 0;
+			max-width: 100%;
+			margin: 0 !important;
+			padding: 0 4px 0 10px !important;
+			border: 1px solid $theme-divider !important;
+			border-radius: $rounded-full !important;
+			background-color: $colour-sidebar-link-bg !important;
+			color: $colour-forground;
+			font-size: 13px !important;
+			line-height: 1 !important;
+			font-weight: $font-medium;
+			// Nom long : Nextcloud l'abrège au milieu (__first tronqué + __last), en flex.
+			.name-parts {
+				display: flex;
+				min-width: 0;
+				margin: 0 !important;
+				overflow: hidden;
+				font-size: inherit !important;
+				line-height: 16px !important;
+				color: inherit !important;
+			}
+			// Nom du groupe : mêmes taille, interlignage et couleur que la pastille, sur toutes les pages.
+			.name-parts__first,
+			.name-parts__last {
+				margin: 0 !important;
+				white-space: pre;
+				font-size: inherit !important;
+				line-height: inherit !important;
+				color: inherit !important;
+			}
+			.name-parts__first {
+				min-width: 0;
+				overflow: hidden;
+				text-overflow: ellipsis;
+			}
+			// Avatar (initiales d'un groupe, photo d'un compte) : 22 px centré dans la pastille de
+			// 28 px, à 3 px du bord ; à 36 px (Deck, « Limiter à des groupes »), il débordait de la
+			// pastille. Variable et dimensions : NcAvatar les pose en style en ligne.
+			.avatardiv {
+				--avatar-size: 22px !important;
+				flex: none;
+				width: 22px !important;
+				height: 22px !important;
+				margin: 0 4px 0 -7px !important;
+				// Initiales : interlignage et corps posés en ligne pour 36 px.
+				line-height: 22px !important;
+				font-size: 10px !important;
+
+				.avatardiv__initials {
+					height: 22px;
+					line-height: 22px;
+				}
+			}
+		}
+		// Bouton « Désélectionner » : rond de 20 px centré dans la pastille, survol filet.
+		.vs__deselect {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			flex: none;
+			width: 20px !important;
+			height: 20px !important;
+			min-width: 0;
+			min-height: 0;
+			margin: 0 !important;
+			padding: 0 !important;
+			border: 0;
+			border-radius: 50%;
+			background-color: transparent;
+			color: $colour-forground-1;
+			fill: currentColor;
+			cursor: pointer;
+			.material-design-icon,
+			svg {
+				width: 14px !important;
+				height: 14px !important;
+			}
+			&:hover,
+			&:focus-visible {
+				background-color: $theme-divider;
+				color: $colour-forground;
+			}
+		}
+		// Champ de saisie : seul (aucune valeur), il occupe la rangée, texte à 12 px du contour ; après
+		// des pastilles, il ne prend que la place restante, sans largeur minimale tant qu'on n'écrit
+		// pas, et ne crée donc jamais de rangée vide ; à la saisie, il passe à la ligne s'il le faut.
+		.vs__search,
+		.vs__search:focus {
+			flex: 1 1 0;
+			width: 0 !important;
+			min-width: 0;
+			height: 28px !important;
+			min-height: 0 !important;
+			margin: 0 !important;
+			padding: 0 7px !important;
+			border: 0 !important;
+			line-height: 28px;
+		}
+		// @nextcloud/vue 9 : la saisie est un NcInputField ; aucun champ dans le champ (les règles
+		// communes des champs lui dessinaient un second contour après les pastilles).
+		.vs__search .input-field__main-wrapper,
+		.vs__search .input-field__input {
+			height: 28px !important;
+			min-height: 0 !important;
+			margin: 0 !important;
+			padding: 0 !important;
+			border: 0 !important;
+			border-radius: 0 !important;
+			background: transparent !important;
+			box-shadow: none !important;
+		}
+		.vs__selected + .vs__search:not(:focus) {
+			margin-inline-start: -4px !important;
+			padding: 0 !important;
+		}
+		.vs__selected + .vs__search:focus {
+			min-width: 64px;
+		}
+		// Chevron et croix : dans la rangée, après les pastilles. @nextcloud/vue 9 les pose en
+		// position absolue au bout du champ et réserve leur place par un retrait que le remplissage
+		// ci-dessus annule : la dernière pastille passait dessous (« Direction » coupée, Talk).
+		.vs__actions {
+			position: static !important;
+			// Le décalage de centrage (-50 %) de la position absolue n'a plus lieu d'être.
+			transform: none !important;
+			align-self: center;
+			height: auto;
+			padding: 0 8px 0 4px !important;
+		}
+	}
+
+	// @nextcloud/vue 9 à valeur unique : le libellé flottant (« Flux autorisés avec le client. »)
+	// se pose à cheval sur le contour, au-dessus de la zone des valeurs qui défile : il y était
+	// rogné de moitié. La valeur garde ses points de suspension (elle est rognée par elle-même).
+	// !important : la variante « sans retour à la ligne » de Nextcloud impose « overflow: auto
+	// !important » (utile aux seules pastilles de la sélection multiple).
+	.v-select.nc-select.vs--single .vs__selected-options {
+		overflow: visible !important;
+	}
+
+	// Téléphone : dans une liste ouverte, un choix long n'est plus abrégé au milieu (« Afficher
+	// uniquement aux co… connectés ») ; il passe entier sur deux lignes.
+	@media (max-width: $bp-640) {
+		.vs__dropdown-menu .vs__dropdown-option {
+			height: auto;
+			.name-parts {
+				display: block;
+				white-space: normal;
+				overflow: visible;
+			}
+			.name-parts__first,
+			.name-parts__last {
+				display: inline;
+				white-space: normal !important;
+				overflow: visible;
+				text-overflow: clip;
+			}
+		}
+	}
+
+	// Toutes les listes déroulantes à choix unique : la valeur choisie est centrée verticalement dans
+	// le champ (une règle « display: block » héritée annulait le centrage prévu par Nextcloud).
+	.v-select.vs--single .vs__selected-options {
+		align-items: center;
+	}
+	// !important : certaines pages de Nextcloud (ex. « Nouveau compte ») imposent display: block en dur.
+	// Les sélecteurs de Deck (.selector-wrapper) gardent leur propre mise en page.
+	.v-select.vs--single:not(.selector-wrapper *) .vs__selected {
+		display: flex !important;
+		align-items: center;
+	}
+}

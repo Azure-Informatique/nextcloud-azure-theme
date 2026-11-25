@@ -1,0 +1,37 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+*/
+@use 'ui/waffle-menu-v35' as waffle-menu;
+@use 'ui/search-v35' as search;
+@use 'activity/activity-v35' as activity;
+@use 'ui/empty-content-v35' as empty-content;
+@use 'dashboard/dashboard-v35' as dashboard;
+@use 'ui/modal-v35' as modal;
+@use 'settings/settings-v35' as settings;
+@use 'teams/teams-v35' as teams;
+@use 'variables' as *;
+@use 'themes' as *;
+
+:root {
+	@include waffle-menu.waffle-menu;
+	@include search.search;
+	@include empty-content.empty-content;
+	@include activity.activity;
+	@include dashboard.dashboard;
+	@include modal.modal;
+	@include settings.settings;
+	@include teams.teams-app;
+	@include teams.teams-app-popup;
+
+	// Notifications toast de Nextcloud 35+ (nouveau composant, classes de module CSS sans nom
+	// public : on vise la boîte par son rôle dans le conteneur) : elles flottent, donc paper +
+	// filet + ombre « float », coins de 12 px ; le liseré coloré de Nextcloud est gardé.
+	[class*="_toastContainer_"] > * > [role] {
+		border-block: 1px solid $theme-divider;
+		border-inline-end: 1px solid $theme-divider;
+		border-radius: $rounded-8;
+		box-shadow: $box-shadow-3;
+	}
+}

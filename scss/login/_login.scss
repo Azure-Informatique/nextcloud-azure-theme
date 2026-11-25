@@ -1,0 +1,613 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Pages « invité » de Nextcloud : connexion, mot de passe oublié, 2FA, connexion d'un
+ * appareil, pages d'erreur, rendez-vous de l'Agenda. Toutes ont <body id="body-login">.
+ *
+ * Mise en scène reprise du champ « nuit » d'azure-informatique.fr (pied de page) : fond
+ * #0B1A30 plein, carte à plat (« paper » en clair ; en sombre, la surface du champ nuit
+ * avec son filet), bouton pilule bleu de marque, champs du formulaire de contact du site.
+ * Aucun flou, aucune ombre au repos, aucune animation d'arrivée.
+ */
+
+$nuit: #0B1A30;
+
+@mixin card-light {
+	--azure-card: #FFFFFF;
+	--azure-card-line: #D9E1EB;
+	--azure-ink: #0B0F1C;
+	--azure-muted: #485268;
+	--azure-field-border: #85878E;
+	--azure-text-link: #0062AD;
+	--azure-focus: #0078D4;
+	--azure-tint-info: #E6F2FB;
+	--azure-tint-error: #F8E8E8;
+	--azure-tint-ok: #E6F2EE;
+	--azure-tint-warn: #F4ECE7;
+	--azure-err: #B91C1C;
+	--azure-ok: #047857;
+	--azure-warn: #92400E;
+	--azure-icon-filter: brightness(0) saturate(100%) invert(30%) sepia(93%) saturate(3403%) hue-rotate(190deg) brightness(95%) contrast(100%);
+}
+
+@mixin card-dark {
+	--azure-card: #11243F;
+	--azure-card-line: #263C5E;
+	--azure-ink: #EDF2F9;
+	--azure-muted: #AAB8D0;
+	--azure-field-border: #7F8B9C;
+	--azure-text-link: #66AEE5;
+	--azure-focus: #66AEE5;
+	--azure-tint-info: #0D3964;
+	--azure-tint-error: #343046;
+	--azure-tint-ok: #12353A;
+	--azure-tint-warn: #2D2625; // teinte d'avertissement des pages connectées (pas un gris « désactivé »)
+	--azure-err: #F87171;
+	--azure-ok: #34D399;
+	--azure-warn: #F0A857;
+	--azure-icon-filter: brightness(0) saturate(100%) invert(65%) sepia(43%) saturate(512%) hue-rotate(180deg) brightness(95%) contrast(91%);
+}
+
+@mixin login {
+	@include card-light;
+	@media (prefers-color-scheme: dark) {
+		@include card-dark;
+	}
+
+	// Variables Nextcloud alignées sur la carte : les composants (champs, cases, boutons) suivent.
+	--color-main-background: var(--azure-card) !important;
+	--color-main-background-blur: var(--azure-card) !important;
+	--filter-background-blur: none !important;
+	--color-main-text: var(--azure-ink) !important;
+	--color-text-maxcontrast: var(--azure-muted) !important;
+	--color-text-maxcontrast-background-blur: var(--azure-muted) !important;
+	--color-border: var(--azure-card-line) !important;
+	--color-border-dark: var(--azure-field-border) !important;
+	--color-border-maxcontrast: var(--azure-field-border) !important;
+	--color-background-hover: var(--azure-tint-info) !important;
+	--color-primary: #0078D4 !important;
+	--color-primary-hover: #005CAA !important;
+	--color-primary-text: #FFFFFF !important;
+	--color-primary-element: #0078D4 !important;
+	--color-primary-element-hover: #005CAA !important;
+	--color-primary-element-text: #FFFFFF !important;
+	--color-primary-element-light: var(--azure-tint-info) !important;
+	--color-primary-element-light-text: var(--azure-text-link) !important;
+	--color-primary-light-text: var(--azure-text-link) !important;
+	--color-error: var(--azure-tint-error) !important;
+	--color-error-text: var(--azure-err) !important;
+	--color-element-error: var(--azure-err) !important;
+	--color-success: var(--azure-tint-ok) !important;
+	--color-success-text: var(--azure-ok) !important;
+	--color-warning: var(--azure-tint-warn) !important;
+	--color-warning-text: var(--azure-warn) !important;
+	--color-info: var(--azure-tint-info) !important;
+	--color-info-text: var(--azure-text-link) !important;
+	--color-background-plain: #{$nuit} !important;
+	--color-background-plain-text: #EDF2F9 !important;
+	--image-background: none !important;
+	--border-radius-element: 16px !important;
+	// Hauteur des champs et boutons de Nextcloud (calcule aussi la position des libellés flottants).
+	--default-clickable-area: 48px !important;
+	--border-radius-container: 28px !important;
+	--border-radius-container-large: 28px !important;
+	background: $nuit none !important;
+	color: #EDF2F9;
+	font-family: var(--font-face) !important; // core/css/guest.css impose sa propre police
+
+	&:not([data-theme-opendyslexic]) {
+		--font-face: "Ubuntu Sans", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+	}
+
+	::selection {
+		background: rgba(0, 120, 212, 0.35);
+	}
+
+	// Texte posé directement sur le fond nuit (pied de page, liens sous la carte).
+	footer,
+	footer .info,
+	.v-align > p,
+	#alternative-logins + p {
+		color: #AAB8D0 !important;
+	}
+	footer a,
+	.v-align > a {
+		color: #66AEE5 !important;
+	}
+
+	// ----- Carte -----
+	.guest-box:not(footer),
+	.body-login-container,
+	.picker-window {
+		background: var(--azure-card) !important;
+		color: var(--azure-ink) !important;
+		border: 1px solid transparent;
+		border-radius: 28px !important;
+		box-shadow: none !important;
+		backdrop-filter: none !important;
+		-webkit-backdrop-filter: none !important;
+		padding: 32px 28px !important;
+		box-sizing: border-box;
+		width: calc(100% - 32px);
+		max-width: 440px;
+		margin-inline: auto;
+		text-align: start;
+
+		@media (prefers-color-scheme: dark) {
+			border-color: var(--azure-card-line);
+		}
+
+		// Boutons : jamais plus larges que la carte ; un libellé long passe à la ligne au lieu de
+		// sortir de la carte et de l'écran (flux de connexion au téléphone : « Connexion à l'aide
+		// d'un mot de passe d'application », 345 px pour 292).
+		// (Sauf le bouton œil des champs mot de passe : rond de 44 px dans le champ, voir plus bas.)
+		.button-vue:not(.input-field__trailing-button) {
+			max-width: 100%;
+			height: auto;
+			min-height: var(--default-clickable-area);
+		}
+		.button-vue__wrapper {
+			min-width: 0;
+		}
+		.button-vue__text {
+			white-space: normal;
+			text-align: center;
+		}
+	}
+
+	// Pied de page (nom + slogan) : simple ligne de texte sur le fond nuit, jamais une carte.
+	footer.guest-box,
+	footer {
+		background: transparent !important;
+		border: 0 !important;
+		box-shadow: none !important;
+		padding: 16px !important;
+		width: auto !important;
+		max-width: none !important;
+		color: #AAB8D0 !important;
+		font-size: 0.875rem;
+		text-align: center;
+		.info,
+		.entity-name,
+		p {
+			color: #AAB8D0 !important;
+		}
+		a,
+		.entity-name a {
+			color: #66AEE5 !important;
+			font-weight: 600;
+		}
+	}
+
+	// Air entre le logo et la carte.
+	#header.header-guest,
+	.header-guest {
+		margin-bottom: 28px !important;
+	}
+
+	// Liens d'action sous le bouton principal (« Se connecter avec un périphérique », « Mot de passe oublié ? »).
+	.login-form__alternative-logins .button-vue--vue-tertiary,
+	.login-form__alternative-logins .button-vue--tertiary,
+	.lost-password-container a,
+	.login-form .button-vue--vue-tertiary,
+	.login-form .button-vue--tertiary,
+	.login-box .button-vue--tertiary,
+	.login-box .button-vue--vue-tertiary {
+		color: var(--azure-text-link) !important;
+		background: transparent !important;
+		font-weight: 600;
+		&:hover {
+			background: var(--azure-tint-info) !important;
+		}
+		.button-vue__text {
+			color: var(--azure-text-link) !important;
+		}
+	}
+
+	// Carte placée dans une autre (Agenda : confirmation de rendez-vous) : une seule carte visible.
+	.guest-box .guest-box,
+	.guest-box .body-login-container,
+	.body-login-container .guest-box,
+	.body-login-container .body-login-container {
+		background: transparent !important;
+		border: 0 !important;
+		border-radius: 0 !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		width: 100% !important;
+		max-width: none !important;
+	}
+
+	// Pages 403 / 404 / succès : icône, titre, texte et bouton centrés ensemble.
+	.body-login-container.update {
+		text-align: center;
+		> p,
+		> .hint {
+			text-align: center;
+		}
+	}
+
+	// Page « Erreur » (core/templates/error.php) : messages centrés sous le titre, comme la page 404.
+	.guest-box > h2 + ul {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+		text-align: center;
+		p {
+			text-align: center;
+		}
+		.hint {
+			margin-top: 4px;
+		}
+	}
+
+	// Page « Erreur interne » : seule carte en display:block, à recentrer.
+	.guest-box.wide {
+		max-width: 720px;
+		margin-inline: auto !important;
+	}
+
+	// ----- Titres et textes -----
+	.login-form__headline,
+	.guest-box h2,
+	.body-login-container h2,
+	.body-login-container > h3,
+	.two-factor-header,
+	.picker-window h2 {
+		color: var(--azure-ink) !important;
+		font-size: 1.5rem !important;
+		line-height: 1.25 !important;
+		font-weight: 700 !important;
+		letter-spacing: -0.01em;
+		text-align: center;
+		margin: 0 0 16px !important;
+		hyphens: manual;
+	}
+
+	.guest-box p,
+	.body-login-container p,
+	.body-login-container > p.hint,
+	.two-factor-selection > p {
+		color: var(--azure-muted);
+		line-height: 1.6;
+	}
+
+	a:not(.button):not(.button-vue):not(.two-factor-provider) {
+		color: var(--azure-text-link);
+	}
+	.guest-box a:not(.button):not(.button-vue):not(.two-factor-provider):hover,
+	.body-login-container a:not(.button):not(.button-vue):not(.two-factor-provider):hover {
+		text-decoration: underline;
+	}
+
+	// ----- Champs (formulaire de contact du site) -----
+	.input-field__main-wrapper {
+		--input-border-radius: 16px;
+	}
+	// Retrait du texte à 16 px, comme le rayon : le libellé flottant (posé 4 px avant le texte) ne
+	// mange plus l'arrondi ni le halo du coin haut-gauche ; texte saisi et libellé restent alignés.
+	.input-field {
+		--input-padding-start: 16px !important;
+	}
+	.input-field + .input-field,
+	.login-form__fieldset > * + .input-field {
+		margin-top: 12px !important;
+	}
+	.input-field__input,
+	input[type="text"],
+	input[type="password"],
+	input[type="email"],
+	input[type="number"] {
+		min-height: 48px;
+		border-radius: 16px !important;
+		border: 1px solid var(--azure-field-border) !important;
+		background: var(--azure-card) !important;
+		color: var(--azure-ink) !important;
+		font-size: 16px !important; // pas de zoom automatique sur iPhone
+		box-shadow: none !important;
+		transition: border-color 200ms ease;
+
+		&:hover {
+			border-color: var(--azure-ink) !important;
+		}
+		&:focus,
+		&:focus-visible {
+			border-color: var(--azure-text-link) !important;
+			box-shadow: 0 0 0 4px color-mix(in srgb, var(--azure-text-link) 25%, transparent) !important;
+			outline: none !important;
+		}
+	}
+	.input-field__label {
+		color: var(--azure-muted) !important;
+	}
+	// Champ en erreur (identifiants refusés) : contour rouge hors focus ; le message d'aide est un
+	// <p> que la règle des paragraphes de la carte passait en gris.
+	.input-field__input--error:not(:focus) {
+		border-color: var(--azure-err) !important;
+	}
+	.guest-box p.input-field__helper-text-message--error {
+		color: var(--azure-err);
+	}
+	.guest-box p.input-field__helper-text-message--success {
+		color: var(--azure-ok);
+	}
+
+	// Libellé au repos (champ vide, sans focus) : centré sur la hauteur du champ. La boîte de ligne
+	// d'Ubuntu Sans place le texte 2,5 px trop haut ; le libellé flottant (focus, champ rempli) n'est pas touché.
+	.input-field__input:placeholder-shown:not(:focus) + .input-field__label {
+		translate: 0 2.5px;
+	}
+
+	// Bouton à droite du champ (afficher le mot de passe) : centré dans la hauteur du champ,
+	// icône à 22 px pour rester lisible à côté d'un texte de 16 px.
+	// Rond entier dans le champ de 48 px, fond de survol et anneau de focus compris : l'anneau est
+	// tracé à l'intérieur au lieu de chevaucher le contour du champ. Le conteneur déborde du champ
+	// de 2 px de chaque côté : 5 px depuis son bord laissent 3 px entre le rond et le filet (il
+	// était collé au filet, que le fond de survol recouvrait).
+	.input-field__trailing-button {
+		inset-block: 0 !important;
+		inset-inline-end: 5px !important;
+		margin-block: auto !important;
+		width: 44px !important;
+		min-width: 0 !important;
+		height: 44px !important;
+		min-height: 0 !important;
+		border-radius: 50% !important;
+		&:focus-visible {
+			outline-offset: -3px !important;
+		}
+		.material-design-icon,
+		svg {
+			width: 22px !important;
+			height: 22px !important;
+		}
+	}
+
+	// Code à usage unique (2FA) : grand, centré, espacé.
+	input[autocomplete="one-time-code"],
+	input[name="challenge"] {
+		font-size: 1.5rem !important;
+		font-weight: 700 !important;
+		text-align: center;
+		letter-spacing: 0.3em;
+		font-variant-numeric: tabular-nums;
+
+		// Le texte indicatif (« Code d'authentification ») garde une taille normale : seul le code saisi est grand.
+		&::placeholder {
+			font-size: 1rem;
+			font-weight: 400;
+			letter-spacing: normal;
+		}
+	}
+
+	// ----- Boutons : pilule bleu de marque (Button.tsx du site) -----
+	.button-vue--vue-primary,
+	.button-vue--primary,
+	.button.primary,
+	input.primary,
+	input[type="submit"].primary,
+	.two-factor-submit {
+		background: #0078D4 !important;
+		border: 0 !important;
+		border-radius: 999px !important;
+		color: #FFFFFF !important;
+		font-weight: 700 !important;
+		min-height: 48px;
+		padding-inline: 28px !important;
+		box-shadow: none !important;
+		text-decoration: none !important;
+		transition: background-color 200ms cubic-bezier(0.16, 1, 0.3, 1), scale 160ms cubic-bezier(0.23, 1, 0.32, 1);
+
+		&:hover,
+		&:focus-visible {
+			background: #005CAA !important;
+			color: #FFFFFF !important;
+		}
+		&:active {
+			scale: 0.97;
+		}
+		&:disabled {
+			opacity: 0.6;
+		}
+	}
+	a.button.primary {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		margin-top: 8px;
+	}
+	.button-vue--vue-secondary,
+	.button-vue--secondary,
+	.button-vue--vue-tertiary,
+	.button-vue--tertiary {
+		border-radius: 999px !important;
+		font-weight: 600;
+	}
+	.button-vue--vue-secondary,
+	.button-vue--secondary {
+		background: color-mix(in srgb, var(--azure-ink) 7%, transparent) !important;
+		color: var(--azure-ink) !important;
+		&:hover {
+			background: color-mix(in srgb, var(--azure-ink) 13%, transparent) !important;
+		}
+	}
+
+	:focus-visible {
+		outline: 2px solid var(--azure-focus) !important;
+		outline-offset: 2px !important;
+	}
+
+	// ----- Messages -----
+	.notecard,
+	.warning,
+	.update .warning {
+		border-radius: 16px !important;
+		color: var(--azure-ink) !important;
+	}
+	// Titre de note (« Avertissement de sécurité » des flux de connexion) : titre de carte de la
+	// charte ; à 20 px sur un interlignage de 21, ses deux lignes se touchaient au téléphone.
+	.notecard__heading {
+		margin-bottom: 4px;
+		font-size: 1rem;
+		line-height: 1.35;
+		font-weight: 700;
+	}
+
+	// ----- 2FA -----
+	// Liste des méthodes : un paragraphe d'explication la sépare du titre (« + ul » ne la visait
+	// pas), les blocs se touchaient. 10 px entre eux, sur ordinateur comme au téléphone.
+	.two-factor-header ~ ul {
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		margin: 16px 0 0;
+		padding: 0;
+		li {
+			margin: 0;
+		}
+	}
+	// Méthodes proposées : rangées à plat du panel (filet, coins 16 px, survol teinté).
+	.two-factor-provider {
+		box-sizing: border-box;
+		display: flex !important;
+		align-items: center;
+		gap: 14px;
+		width: 100% !important;
+		margin: 0 !important;
+		padding: 12px 16px !important;
+		border: 1px solid var(--azure-card-line) !important;
+		border-radius: 16px !important;
+		background: transparent !important;
+		color: var(--azure-ink) !important;
+		text-align: start !important;
+		transition: background-color 200ms ease, border-color 200ms ease;
+		&:hover,
+		&:focus-visible {
+			background: var(--azure-tint-info) !important;
+			border-color: var(--azure-focus) !important;
+		}
+		// Icône de 40 px sans le remplissage de 12 px de Nextcloud (colonne de 64 px qui écartait
+		// le texte, à l'étroit au téléphone).
+		img {
+			flex: 0 0 40px;
+			box-sizing: border-box;
+			width: 40px !important;
+			height: 40px !important;
+			margin: 0 !important;
+			padding: 4px !important;
+			filter: var(--azure-icon-filter) !important;
+		}
+		> div {
+			min-width: 0;
+			margin: 0;
+		}
+		h3 {
+			margin: 0 0 2px !important;
+			color: var(--azure-ink);
+			font-size: 1rem;
+			font-weight: 700;
+			text-align: start !important;
+		}
+		p {
+			margin: 0 !important;
+			color: var(--azure-muted);
+			text-align: start !important;
+			line-height: 1.45;
+		}
+	}
+	// Icônes livrées blanches par les apps 2FA (prévues pour un fond sombre) : recolorées en bleu.
+	img.two-factor-icon:not(.two-factor-webauthn-icon),
+	.icon-error-white,
+	.icon-info-white,
+	.icon-caret-white,
+	.icon-checkmark-white {
+		filter: var(--azure-icon-filter) !important;
+	}
+	// Icônes livrées noires (WebAuthn, grandes icônes des pages 403/404).
+	img.two-factor-webauthn-icon,
+	.body-login-container .icon-big {
+		filter: var(--azure-icon-filter) !important;
+	}
+	// Saisie du code (TOTP, codes de récupération…) : champ pleine largeur, bouton centré 12 px
+	// dessous. Le champ TOTP était plus étroit que celui des codes de secours, le bouton décalé de
+	// 1 à 2 px (marge de 3 px du cœur) et l'écart variait (6 ou 8 px).
+	// Chaque :has() porte sur l'élément ciblé lui-même (règle 7 de la charte) : cette feuille ne
+	// passe pas par la compilation des jetons.
+	form:has(> .two-factor-submit) {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		gap: 12px;
+	}
+	form > input:not([type="hidden"]):has(~ .two-factor-submit) {
+		box-sizing: border-box;
+		width: 100% !important;
+		margin: 0 !important;
+	}
+	// « Envoyer » : pilule pleine largeur, comme « Se connecter » à l'étape précédente, et
+	// 24 px sous le champ (12 d'écart + 12 de marge), le même souffle qu'avant « Se connecter ».
+	form > input:not([type="hidden"]) ~ .two-factor-submit {
+		box-sizing: border-box;
+		width: 100%;
+		margin: 12px 0 0 !important;
+	}
+	// « Annuler la connexion », « Utiliser un code de secours » : même lettre que les liens sous
+	// « Se connecter » (15 px, la taille de base de la page, graisse 600).
+	.two-factor-secondary {
+		color: var(--azure-text-link) !important;
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	// ----- Rendez-vous (Agenda) : contenu centré dans la carte -----
+	.guest-box .update {
+		width: 100% !important;
+		margin: 0 !important;
+		text-align: center;
+		.booking__date,
+		.booking__time,
+		.booking__attendee,
+		.buttons {
+			justify-content: center !important;
+			flex-wrap: wrap;
+			text-align: center;
+		}
+	}
+
+	// ----- Téléphone -----
+	@media (max-width: 480px) {
+		.v-align {
+			padding-top: 40px;
+		}
+		// Même sélecteur que la carte (:not(footer)), sinon la règle de base, plus forte, gardait
+		// ses 28 px de marge au téléphone et les boutons étaient tronqués à 360 px.
+		.guest-box:not(footer),
+		.body-login-container,
+		.picker-window {
+			padding: 26px 18px !important;
+			border-radius: 24px !important;
+		}
+		.login-form__headline,
+		.guest-box h2,
+		.body-login-container h2,
+		.two-factor-header {
+			font-size: 1.3rem !important;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		* {
+			transition-duration: 0.001ms !important;
+		}
+	}
+}
+
+// Firefox : la barre de défilement de la page appartient à <html>, pas à <body>.
+@mixin login-scrollbar {
+	html:has(#body-login) {
+		scrollbar-width: thin;
+		scrollbar-color: #263C5E transparent;
+		background: $nuit;
+	}
+}

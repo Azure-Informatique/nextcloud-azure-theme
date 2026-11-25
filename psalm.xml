@@ -1,0 +1,31 @@
+<?xml version="1.0"?>
+<!--
+  - SPDX-FileCopyrightText: 2026 Nexeno contributors
+  - SPDX-FileCopyrightText: 2026 Azure Informatique
+  - SPDX-License-Identifier: AGPL-3.0-or-later
+-->
+<psalm
+		errorLevel="4"
+		resolveFromConfigFile="true"
+		xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xmlns="https://getpsalm.org/schema/config"
+		xsi:schemaLocation="https://getpsalm.org/schema/config vendor/vimeo/psalm/config.xsd"
+		findUnusedBaselineEntry="true"
+		findUnusedCode="false"
+		phpVersion="8.2"
+>
+	<projectFiles>
+		<directory name="lib" />
+		<ignoreFiles>
+			<directory name="vendor" />
+		</ignoreFiles>
+	</projectFiles>
+	<extraFiles>
+		<directory name="vendor" />
+	</extraFiles>
+	<issueHandlers>
+		<MissingDependency errorLevel="suppress" />
+		<!-- #[\Override] needs PHP 8.3; the app still supports older PHP versions. -->
+		<MissingOverrideAttribute errorLevel="suppress" />
+	</issueHandlers>
+</psalm>

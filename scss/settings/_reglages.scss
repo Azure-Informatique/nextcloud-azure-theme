@@ -1,0 +1,546 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Refonte des pages de paramètres (personnels et administration) sur le modèle du panel
+ * d'administration du site : fond « toile », colonne de lecture de 960 px au plus, chaque
+ * section dans une carte à plat (paper, filet line, rayon 16 px), titre 15 px gras, aide
+ * « muted », rangées séparées par des filets.
+ *
+ * Les sections sont reconnues par leurs classes stables : .settings-section (NcSettingsSection)
+ * et .section (gabarits PHP). Une section imbriquée dans une autre n'est jamais une seconde
+ * carte ; les enveloppes sans classe (#vue-admin-…, span#settings-personal-theming…) restent
+ * transparentes.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+@use './mixins' as *;
+
+$section: '.settings-section, .section';
+$carte: ':is(.settings-section, .section):not(:is(.settings-section, .section) *)';
+
+@mixin reglages {
+	// Fond de page « toile » : contenu des paramètres, comptes, applications.
+	// Le défilement interne ne passe jamais sous le bouton de navigation.
+	.app-settings .app-content {
+		background-color: $main-page-bg-dashboard;
+		scroll-padding-top: 64px;
+	}
+
+	.app-settings #{$contenu-reglages} {
+		box-sizing: border-box;
+		max-width: 960px;
+		margin-inline: auto;
+		padding: 56px 24px 48px !important;
+		display: flex !important;
+		flex-direction: column;
+		gap: 16px;
+
+		@media (max-width: $bp-1023) {
+			padding: 64px 12px 32px !important;
+			gap: 12px;
+		}
+
+		// Enveloppes : elles ne dessinent rien, leurs sections se suivent comme des cartes.
+		> :not(#{$section}):has(#{$section}) {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			width: auto !important;
+			max-width: none !important;
+			min-width: 0;
+			margin: 0 !important;
+			padding: 0 !important;
+			border: 0 !important;
+			background: transparent !important;
+
+			@media (max-width: $bp-1023) {
+				gap: 12px;
+			}
+
+			&:empty {
+				display: none;
+			}
+		}
+
+		// Cartes sœurs plus profondes (enveloppe d'app dans une enveloppe, ex. Forms) : même écart de
+		// 16 px, sinon leurs filets se touchent (deux filets accolés, coins arrondis l'un contre l'autre).
+		> * * > #{$carte} + #{$carte} {
+			margin-top: 16px !important;
+		}
+
+		// Bloc d'application sans aucune section (ex. dossiers d'équipe, lecteur de logs) :
+		// il devient lui-même la carte.
+		> :not(#{$section}):not(:has(#{$section})) {
+			@include carte;
+			min-width: 0;
+			margin: 0;
+
+			&:empty {
+				display: none;
+			}
+
+			> h2 {
+				@include titre-carte;
+			}
+		}
+
+		#{$carte} {
+			@include carte;
+			// Les feuilles propres à chaque page visent souvent un id (#profile-settings…) :
+			// la forme de la carte doit l'emporter.
+			padding: 20px 16px !important;
+			border: 1px solid $theme-divider !important;
+			border-radius: $rounded-12 !important;
+			background-color: $colour-background !important;
+			width: auto !important;
+			max-width: none !important;
+			min-width: 0;
+			align-self: stretch !important;
+			margin: 0 !important;
+			overflow-wrap: break-word;
+			text-align: start;
+
+			@media (min-width: $bp-640) {
+				padding: 24px !important;
+			}
+
+			// Les gabarits PHP séparent les sections par un filet bas : la carte le remplace.
+			&.section {
+				border-bottom: 1px solid $theme-divider;
+			}
+
+			// Section vide (application qui n'a rien rendu) : pas de carte vide.
+			&:empty {
+				display: none;
+			}
+
+			> h2,
+			> .settings-section__name,
+			> h2.settings-section__name {
+				@include titre-carte;
+				display: flex !important;
+				justify-content: flex-start !important;
+				align-items: center;
+				gap: 6px;
+				min-height: 0;
+				height: auto;
+				margin: 0 0 6px !important;
+				font-size: 0.9375rem !important;
+				line-height: 1.35 !important;
+				font-weight: $font-bold !important;
+				text-align: start !important;
+			}
+
+			// Titre suivi de son lien d'aide (gabarits PHP) : l'icône reste sur la ligne du titre.
+			> h2:has(+ a.icon-info) {
+				display: inline-flex !important;
+				vertical-align: middle;
+			}
+			// Icône centrée sur le titre : même marge basse que lui (6 px), sans quoi leurs
+			// milieux diffèrent ; le fond de Nextcloud (décalé de 4 px vers le bas) est recentré.
+			> h2 + a.icon-info {
+				display: inline-block;
+				vertical-align: middle;
+				margin-inline-start: 4px;
+				margin-block-end: 6px;
+				background-position: center;
+			}
+
+			// Sous-titres (h3, h4, h5, légende de NcFormGroup) : 15 px, 600, ink, quel que soit le
+			// gabarit ; jamais plus grands que le titre de la carte (« Adresse source », « Gestion des
+			// étiquettes système », « Priorité de l'application par défaut » passaient à 16-18 px sous
+			// un titre de 15 px). Le remplissage haut reste aux pages qui posent un filet au-dessus.
+			:is(h3, h4, h5):not(.settings-section__name) {
+				margin-block: 20px 8px;
+				padding-inline: 0;
+				font-size: 0.9375rem !important;
+				line-height: 1.4 !important;
+				font-weight: $font-semibold !important;
+				color: $colour-forground;
+				text-transform: none;
+				letter-spacing: normal;
+			}
+			// Sous-titre en tête de carte (carte du Thème Azure…) : pas de marge au-dessus.
+			> h3:first-child {
+				margin-top: 0;
+			}
+
+			legend#{css-module('formGroup__label')} {
+				margin: 0;
+				padding: 0;
+				font-size: 0.9375rem !important;
+				line-height: 1.4 !important;
+				font-weight: $font-semibold !important;
+				color: $colour-forground;
+			}
+
+			> .settings-section__desc,
+			> p.settings-hint,
+			> .settings-hint,
+			> em {
+				@include aide;
+				display: block;
+				max-width: none;
+				margin: 0 0 16px !important;
+			}
+
+			// Lien d'aide (« ? ») collé au titre : rond, muted.
+			> h2 + a.icon-info,
+			.settings-section__info,
+			.settings-section__name + a {
+				opacity: 1;
+			}
+
+			// Titres plus profonds posés par les apps (h4, h5 : Assistant, OpenAI…) : jamais plus
+			// grands que le titre de la carte ; même format que les sous-titres.
+			:is(h4, h5) {
+				font-size: 0.9375rem !important;
+				line-height: 1.4 !important;
+				font-weight: $font-semibold !important;
+				color: $colour-forground;
+				text-transform: none;
+				letter-spacing: normal;
+			}
+
+			// Une section dans une section : simple bloc, sans carte ni marge propre, sur toute la
+			// largeur (NcSettingsSection se retire de 56 px : brute-force, LibreSign…).
+			#{$section} {
+				margin: 0;
+				padding: 0;
+				border: 0;
+				background: transparent;
+				width: auto;
+				max-width: none;
+			}
+		}
+
+		// Titres d'enveloppes (h2 posés hors section par certaines apps).
+		> :not(#{$section}):has(#{$section}) > h2:not(.settings-section__name) {
+			@include titre-carte;
+			margin-inline: 4px;
+		}
+
+		// Textes d'aide : muted plein (Nextcloud les estompe à 70 %, sous 4,5:1).
+		.settings-hint,
+		.settings-section__desc {
+			opacity: 1 !important;
+			color: $colour-forground-1;
+		}
+
+		// Liens dans un texte : azure-text souligné (jamais distingués par la seule couleur).
+		:is(p, .settings-hint, [class*='__description'], [class*='__desc']) a:not(.button-vue):not([class*='button']) {
+			color: $colour-blue-600;
+			text-decoration: underline;
+			text-underline-offset: 2px;
+		}
+
+		// Tableaux des réglages : filets line, en-tête muted, sans fond.
+		table {
+			border-collapse: collapse;
+			max-width: 100%;
+			// Téléphone : les libellés passent à la ligne entre les mots (jamais au milieu d'un
+			// mot) ; le lecteur de logs garde son tableau défilant.
+			@media (max-width: $bp-640) {
+				&:not(#logreader-root *) {
+					th,
+					td {
+						white-space: normal !important;
+					}
+				}
+			}
+			th {
+				font-size: 0.875rem !important;
+				font-weight: $font-semibold !important;
+				color: $colour-forground-1;
+				text-transform: none;
+				letter-spacing: normal;
+			}
+			// Filets portés par les rangées (jamais par une seule cellule) : pas de trait coupé.
+			th,
+			td {
+				border-top: 0 !important;
+				border-bottom: 0 !important;
+			}
+			tr {
+				border-bottom: 1px solid $theme-divider;
+			}
+			tbody tr:last-child,
+			tfoot tr:last-child {
+				border-bottom: 0;
+			}
+		}
+	}
+
+	// Profil et contact : aperçu sans bandeau coloré derrière l'avatar ; avatar et nom
+	// côte à côte, dans un cadre à filet.
+	.app-settings .preview-card {
+		display: flex !important;
+		align-items: center;
+		gap: 16px;
+		height: auto !important;
+		min-height: 0;
+		padding: 16px;
+		border: 1px solid $theme-divider !important;
+		border-radius: $rounded-12 !important;
+		background-color: $colour-background !important;
+		overflow: visible;
+
+		.preview-card__banner,
+		.preview-card__body {
+			display: none !important;
+		}
+		.preview-card__avatar {
+			position: relative !important;
+			inset: auto !important;
+			flex: none;
+			box-shadow: none !important;
+		}
+		.preview-card__text {
+			position: static !important;
+			display: flex;
+			flex-direction: column;
+			gap: 2px;
+			min-width: 0;
+		}
+		.preview-card__name {
+			font-size: 1.125rem !important;
+			line-height: 1.3 !important;
+			font-weight: $font-bold !important;
+			color: $colour-forground !important;
+		}
+		.preview-card__secondary {
+			font-size: 0.875rem !important;
+			color: $colour-forground-1 !important;
+		}
+	}
+
+	// Propriété du profil : champ et bouton de portée côte à côte, dans la carte.
+	.app-settings .property-section .property {
+		display: flex;
+		align-items: flex-end;
+		gap: 8px;
+		.property__field {
+			flex: 1 1 auto;
+			width: auto;
+			min-width: 0;
+		}
+		.property__scope {
+			position: static !important;
+			flex: none;
+		}
+	}
+
+	// Image de profil : rangées et bouton de portée côte à côte.
+	.app-settings .avatar-section__actions {
+		display: flex;
+		align-items: flex-start;
+		gap: 8px;
+		> :first-child {
+			flex: 1 1 auto;
+			min-width: 0;
+		}
+		.avatar-section__scope {
+			position: static !important;
+			flex: none;
+		}
+	}
+
+	// Rangées NcFormBox (Profil Nextcloud, Voir le profil, Téléverser…) : liste à filets
+	// dans un cadre, survol canvas — liste du panel. Une rangée de champs (adresse e-mail + domaine,
+	// hôte + port) ou une boîte de champs (mot de passe actuel et nouveau, Sécurité) n'est pas une
+	// liste : ses champs gardent leur écart et ne se touchent pas.
+	.app-settings #{css-module('ncFormBox')}:not(:has(.v-select, .button-vue--vue-primary, .input-field)) {
+		gap: 0 !important;
+		border: 1px solid $theme-divider;
+		border-radius: $rounded-12;
+		background-color: $colour-background;
+		overflow: hidden;
+		#{css-module('formBoxItem')} {
+			min-height: 48px;
+			margin: 0 !important;
+			border: 0 !important;
+			border-radius: 0 !important;
+			background-color: transparent !important;
+			box-shadow: none !important;
+			+ #{css-module('formBoxItem')} {
+				border-top: 1px solid $theme-divider !important;
+			}
+			&:hover,
+			&:focus-within {
+				background-color: $main-page-bg-dashboard !important;
+			}
+		}
+	}
+
+	// Même liste encadrée dans une fenêtre de paramètres (Agenda, Talk… : la fenêtre porte aussi la
+	// classe .app-settings ; contenu .app-settings__content) : les rangées y étaient sans retrait (texte collé au filet du cadre) et la
+	// première sans marge haute. Retrait de 16 px et rembourrage égal sur toutes les rangées.
+	.app-settings__content #{css-module('ncFormBox')}:not(:has(.v-select, .button-vue--vue-primary, .input-field)) #{css-module('formBoxItem')} {
+		padding: 10px 16px !important;
+	}
+
+	// Lecteur de logs : tableau large, la colonne de lecture s'élargit.
+	.app-settings #{$contenu-reglages}:has(#logreader-root) {
+		max-width: none;
+	}
+
+	// Choix unique avec libellé posé sur le bord du champ (« Flux autorisés avec le client »,
+	// OpenID…) : Nextcloud fait défiler la zone de valeur, ce qui rognait la moitié haute du
+	// libellé. La valeur, elle, garde ses propres points de suspension.
+	.app-settings #{$contenu-reglages} .nc-select.vs--single .vs__selected-options {
+		overflow: visible;
+	}
+
+	// Lisibilité : aucun texte d'aide sous 13 px dans les réglages (les composants partagés du
+	// thème — encarts, libellés posés sur les champs, descriptions de cases — en mettent à 12).
+	.app-settings #{$contenu-reglages} :is(.notecard :is(p, div, a, span, strong), .input-field__helper-text-message, .checkbox-content__description, #{css-module('formBoxItem__description')}) {
+		font-size: $text-13 !important;
+		line-height: 1.45 !important;
+	}
+	// Libellés posés sur le bord des champs : la taille seule (leur position en dépend).
+	.app-settings #{$contenu-reglages} :is(.input-field:not(.input-field--label-outside) .input-field__label, .textarea__label) {
+		font-size: $text-13 !important;
+	}
+
+	// Boutons à long libellé (« Connectez-vous à GitHub… », « Réinitialiser tous les paramètres
+	// de Two-Factor Email… ») : à toute largeur, le texte passe à la ligne au lieu de sortir de la
+	// carte ; coupure entre les mots seulement (jamais « Enregistr-er »).
+	.app-settings #{$contenu-reglages} .button-vue:not(.button-vue--icon-only) {
+		max-width: 100%;
+		height: auto;
+		min-height: var(--default-clickable-area);
+		// Jamais plus étroit que son mot le plus long : rangé dans une grille ou une rangée flexible,
+		// le bouton (overflow: hidden) pouvait rétrécir jusqu'à couper « Enregistr/er » en pleine lettre.
+		min-width: min-content;
+		.button-vue__wrapper {
+			min-width: 0;
+		}
+		.button-vue__text {
+			white-space: normal;
+			overflow-wrap: break-word;
+			text-align: center;
+			// Sur deux lignes, des lignes équilibrées plutôt qu'un mot seul sur la seconde.
+			text-wrap: balance;
+		}
+	}
+
+	// Téléphone : champs de sélection, champs natifs et boutons d'icône que des feuilles de page
+	// fixent à 30-34 px (« height: 34px; min-height: unset !important ») : 44 px au doigt. Les
+	// classes répétées donnent à ce plancher le poids nécessaire face à ces règles de page.
+	@media (max-width: $bp-640) {
+		.app-settings main.app-content #{$contenu-reglages} {
+			.v-select.v-select.select .vs__dropdown-toggle.vs__dropdown-toggle,
+			input:not([type='checkbox'], [type='radio'], [type='hidden'], .vs__search) {
+				min-height: var(--default-clickable-area) !important;
+			}
+			.button-vue.button-vue--icon-only,
+			.button-vue.add-another {
+				min-width: var(--default-clickable-area) !important;
+				min-height: var(--default-clickable-area) !important;
+			}
+		}
+	}
+
+	// Téléphone : rien ne dépasse de la carte (sans défilement horizontal de la page).
+	@media (max-width: $bp-640) {
+		.app-settings #{$contenu-reglages} {
+			// Cibles tactiles de 44 px au doigt : boutons, champs, choix et cases de Nextcloud
+			// suivent tous la zone cliquable officielle (comme le volet de détails).
+			--default-clickable-area: 44px;
+			// Rangées de cases et d'interrupteurs, champs : plusieurs feuilles de page les ramènent
+			// à leur hauteur de texte (« min-height: unset ») ; le doigt garde ses 44 px.
+			.checkbox-radio-switch .checkbox-content,
+			.input-field__input,
+			select {
+				min-height: var(--default-clickable-area) !important;
+			}
+
+			// Tableaux larges (appareils et sessions, LibreSign, quota, Context Chat…) : ils défilent
+			// dans leur carte ; le tableau des notifications a déjà son conteneur défilant.
+			table:not(.activitysettings, #logreader-root *) {
+				display: block;
+				max-width: 100%;
+				overflow-x: auto;
+			}
+			// Sélecteurs à largeur fixe (fournisseurs de l'Assistant, transfert de propriété) ; leur
+			// champ (fixé à 34 px par endroits) atteint aussi les 44 px au doigt. Largeur minimale
+			// de Nextcloud (260 px) gardée tant que la carte la permet : à 0, une liste de groupes
+			// VIDE s'écrasait sur son chevron (59 px, « L. » : E2EE, LibreSign, quota de l'Assistant).
+			// Transfert de propriété (administration) : les deux listes de comptes, côte à côte, passent
+			// l'une sous l'autre (avec leur largeur minimale, la seconde sortait de la carte).
+			.user-selects {
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+			.v-select {
+				max-width: 100%;
+				min-width: min(260px, 100%);
+				.vs__dropdown-toggle {
+					min-height: var(--default-clickable-area);
+				}
+			}
+			// Listes déroulantes à valeur unique (@nextcloud/vue 8 : langue, premier jour de la
+			// semaine, visibilité des champs du profil…) : Nextcloud abrège un libellé long au milieu
+			// (« Afficher uniquement aux comp… connectés ») ; le libellé entier passe sur deux lignes,
+			// dans le champ comme dans la liste ouverte, et le champ grandit avec lui.
+			.v-select.vs--single:not(.nc-select) {
+				.vs__dropdown-toggle {
+					height: auto !important;
+				}
+				// Fermée, le champ de recherche (vide) ne prend pas de place après la valeur choisie :
+				// sans cela il passait sur une seconde rangée sous le libellé replié. Sans valeur, il
+				// garde sa place : il porte l'invite (« Sélectionner un filtre » des Flux, liste vide
+				// au téléphone).
+				&:not(.vs--open) .vs__selected-options {
+					flex-wrap: nowrap !important;
+				}
+				&:not(.vs--open) .vs__selected ~ .vs__search {
+					flex: 0 0 0;
+					width: 0 !important;
+					min-width: 0;
+					padding: 0 !important;
+				}
+				.vs__selected-options {
+					align-items: center;
+					height: auto !important;
+					min-height: 0;
+				}
+				.vs__selected {
+					height: auto !important;
+					min-width: 0;
+					padding-block: 5px !important;
+				}
+			}
+			.v-select.vs--single:not(.nc-select) .vs__selected,
+			.vs__dropdown-option {
+				.name-parts {
+					display: block;
+					white-space: normal;
+					overflow: visible;
+				}
+				.name-parts__first,
+				.name-parts__last {
+					display: inline;
+					white-space: normal !important;
+					overflow: visible;
+					text-overflow: clip;
+				}
+			}
+			// Transfert de propriété (administration) : Fichiers, Agenda, Contacts sur une rangée qui
+			// ne se repliait pas ; « Contacts » sortait de la carte (ou, boutons écrasés, « Fichi/ers »).
+			#transfer_settings .app-pickers {
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+			// Adresses longues (URL de redirection…) : coupées plutôt que débordantes, n'importe où
+			// (une URL n'a pas d'espace). Les liens d'une rangée flexible qui rétrécissait jusqu'à
+			// « Op/enAI » (Assistant) passent désormais à la ligne entiers (voir _assistant.scss).
+			:is(strong, code, a) {
+				overflow-wrap: anywhere;
+			}
+		}
+	}
+
+
+}

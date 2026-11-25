@@ -1,0 +1,11 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Palette Azure, variante « dark » : chargée par le serveur quand l'utilisateur a choisi cette variante.
+ */
+@use 'palette' as *;
+
+@include page-palette(dark);
+@include forced-subtrees;
+@include font-face-var;

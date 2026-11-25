@@ -1,0 +1,263 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Chiffrement de bout en bout dans le navigateur (app end_to_end_encryption).
+ * - e2ee-fichiers : fenêtres ouvertes depuis Fichiers (feuille azure-app-files) : « Créer un nouveau
+ *   dossier chiffré » (mise en place, phrase de récupération, phrase à saisir, nom du dossier) et
+ *   « Entrez vos 12 mots mnémotechniques » à l'ouverture d'un dossier chiffré.
+ * - e2ee-reglages : section Personnel › Sécurité › Chiffrement de bout en bout (feuille
+ *   azure-app-settings), montée dans #security-end-to-end.
+ *
+ * Repères (aucun :has() sur un ancêtre de l'élément stylé, exigence de performance) :
+ * - contenu de « Créer un nouveau dossier chiffré » : classe de module createFolderDialog posée par
+ *   l'app sur .dialog__content ;
+ * - phrase de récupération affichée : classe de module setupEncryption__mnemonic ;
+ * - champ des 12 mots (les deux fenêtres) : son motif de saisie, pattern="^(\w+\s+){11}\w+$" ;
+ * - avertissement « … peut affaiblir la sécurité » : note d'alerte (role="alert") posée directement
+ *   dans le contenu d'une fenêtre ;
+ * - fenêtre « Entrez vos 12 mots » : NcDialog en formulaire (form.dialog), contenu reconnu à son
+ *   champ (:has() sur le contenu lui-même).
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+
+// Contenu des deux fenêtres (élément stylé lui-même).
+$e2ee-creation: '.dialog__content#{css-module("createFolderDialog")}';
+$e2ee-saisie: 'form.dialog .dialog__content:has(> .input-field .input-field__input[pattern*="{11}"])';
+// Avertissement « Le chiffrement / déchiffrement dans le navigateur peut affaiblir la sécurité ».
+$e2ee-alerte: '.dialog__content > .notecard--warning[role="alert"]';
+// Champ des 12 mots, et son bloc (:has() sur le bloc lui-même).
+$e2ee-champ-mots: '.input-field__input[pattern*="{11}"]';
+$e2ee-champ: '.dialog__content > .input-field:has(> .input-field__main-wrapper > #{$e2ee-champ-mots})';
+
+// Note d'alerte de l'app (fenêtres et réglages) : carte ambre de la charte, titre de carte (15 px,
+// 700) au lieu du titre de 20 px de Nextcloud que l'interlignage de 16 px des notes faisait
+// chevaucher ; texte courant à l'encre, lisible ; l'icône d'alerte reste ambre.
+@mixin e2ee-note {
+	box-sizing: border-box;
+	gap: 12px;
+	padding: 14px 16px;
+	border: 0;
+	border-radius: $rounded-8;
+	background-color: $colour-yellow-50 !important;
+	color: $colour-forground !important;
+	font-size: $text-heading-5;
+	line-height: $leading-20;
+	font-weight: $font-normal;
+	align-items: flex-start;
+
+	// Icône de la note seule (les interrupteurs et boutons de la note gardent leur taille).
+	> .notecard__icon {
+		flex: 0 0 auto;
+		width: 20px;
+		height: 20px;
+		margin: 1px 0 0;
+		color: $colour-yellow;
+
+		svg {
+			width: 20px;
+			height: 20px;
+			fill: $colour-yellow;
+		}
+	}
+
+	> div {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 4px;
+		min-width: 0;
+	}
+
+	.notecard__heading {
+		margin: 0;
+		font-size: 0.9375rem;
+		line-height: $leading-22;
+		font-weight: $font-bold;
+		color: $colour-yellow;
+	}
+
+	// Interrupteurs de la note : taille de Nextcloud (une règle commune des notes ramenait toute
+	// icône à 16 px : interrupteur réduit à un trait), rangée de 40 px, libellé à l'encre.
+	.checkbox-radio-switch {
+		margin: 0;
+		color: $colour-forground;
+	}
+	.checkbox-content {
+		padding-inline-start: 0;
+		gap: 10px;
+	}
+	.checkbox-content__icon > .icon-vue,
+	.checkbox-content__icon > .icon-vue svg {
+		width: 36px;
+		height: 18px;
+	}
+	.checkbox-content__text {
+		font-size: 0.9375rem;
+		line-height: $leading-20;
+	}
+}
+
+@mixin e2ee-fichiers {
+	// Contenu : marges de la charte (16 px comme le titre, 12 px à droite comme la rangée de boutons
+	// de Nextcloud, pour aligner champ et bouton), blocs espacés de 16 px. Le thème retire le
+	// remplissage gauche des fenêtres : sans cela, texte et champs touchaient le bord.
+	#{$e2ee-creation},
+	#{$e2ee-saisie} {
+		display: flex;
+		flex-direction: column;
+		gap: 16px;
+		box-sizing: border-box;
+		// L'app réserve 150 px (!important) pour que la fenêtre ne saute pas d'une étape à l'autre :
+		// sur une étape courte, un grand vide restait sous le texte.
+		min-height: 0 !important;
+		padding: 20px 12px 20px 16px;
+		color: $colour-forground;
+		font-size: 0.9375rem;
+		line-height: $leading-22;
+	}
+	// Descendants : repères propres (jamais derrière le :has() de $e2ee-saisie).
+	#{$e2ee-creation} p {
+		margin: 0;
+	}
+	// Champ et carte d'alerte : pleine largeur du contenu, sans marge propre.
+	#{$e2ee-creation} > .input-field,
+	#{$e2ee-creation} > .notecard,
+	#{$e2ee-champ} {
+		margin: 0 !important;
+		width: 100%;
+	}
+
+	// Étape « Vérification de la configuration… » : roue et libellé centrés, sans marge de 5vh.
+	#{$e2ee-creation} > .empty-content {
+		margin: 0;
+		padding-block: 24px;
+
+		.empty-content__name {
+			margin: 0;
+			font-size: $text-heading-4;
+			line-height: $leading-22;
+			font-weight: $font-semibold;
+		}
+	}
+
+	// Phrase de récupération affichée à la mise en place : encadré « canvas » à filet, rayon 12 px,
+	// mots en Ubuntu Sans 16 px gras et bien espacés (une police à chasse fixe collée aux bords
+	// auparavant). Un clic sélectionne toute la phrase, pour la copier d'un geste.
+	#{css-module('setupEncryption__mnemonic')} {
+		margin-top: 8px;
+		padding: 14px 16px;
+		border: 1px solid $theme-divider;
+		border-radius: $rounded-8;
+		background-color: $colour-sidebar-bg;
+
+		code {
+			display: block;
+			padding: 0;
+			background: none;
+			font-family: var(--font-face);
+			font-size: $text-heading-4;
+			line-height: 1.75;
+			font-weight: $font-semibold;
+			word-spacing: 0.2em;
+			color: $colour-forground;
+			overflow-wrap: anywhere;
+			user-select: all;
+		}
+	}
+
+	#{$e2ee-alerte} {
+		@include e2ee-note;
+		margin: 0 !important;
+	}
+	// Rangées d'interrupteurs de 40 px à la souris ; la règle commune (24 px, 44 px au doigt) porte
+	// l'identifiant du corps de page : même poids ici, sans toucher au cas tactile.
+	:is(#body-user, #body-public) #{$e2ee-alerte} .checkbox-content {
+		@media not all and (pointer: coarse) and (max-width: $bp-640) {
+			min-height: 40px !important;
+		}
+	}
+
+	// Champs (12 mots, nom du dossier) : 40 px à la souris (charte) par la variable de Nextcloud,
+	// que suivent bloc, champ et libellé (une hauteur posée sur le seul champ décentrait le libellé) ;
+	// au doigt, la règle commune des 44 px s'applique. Texte à 16 px : pas de zoom sur iPhone.
+	#{$e2ee-creation} > .input-field,
+	#{$e2ee-champ} {
+		@media not all and (pointer: coarse) and (max-width: $bp-640) {
+			--default-clickable-area: 40px;
+		}
+	}
+	#{$e2ee-champ-mots} {
+		font-size: $text-heading-4;
+	}
+
+	// Titre des deux fenêtres : place réservée à la croix de fermeture (44 px au doigt, à 17 px du
+	// bord) ; « Entrez vos 12 mots mnémotechniques » passait dessous au téléphone. :has() sur le
+	// titre lui-même (son voisin .dialog porte le contenu).
+	.dialog__name:has(+ .dialog :is(#{$e2ee-champ-mots}, #{css-module('createFolderDialog')})) {
+		padding-inline-end: 72px;
+	}
+
+	// Fenêtre « Entrez vos 12 mots » (NcDialog « small », 400 px) : 480 px pour que l'avertissement
+	// et ses interrupteurs respirent (le libellé du second passait sur deux lignes).
+	.modal-wrapper--small > .modal-container:has(#{$e2ee-champ-mots}) {
+		width: 480px;
+	}
+}
+
+@mixin e2ee-reglages {
+	#security-end-to-end {
+		.notecard {
+			@include e2ee-note;
+			// La carte suit la largeur de la section.
+			width: 100%;
+			max-width: 720px;
+		}
+		// Croix de fermeture (en haut à droite) : place réservée sur la ligne du titre seulement.
+		.notecard .notecard__heading {
+			padding-inline-end: 40px;
+		}
+		.notecard .close-button {
+			top: 6px;
+			inset-inline-end: 6px;
+		}
+		// Liste « Veuillez lire attentivement… » : puces alignées sur le texte, lignes aérées.
+		.notecard ul {
+			display: flex;
+			flex-direction: column;
+			gap: 6px;
+			margin: 4px 0 8px;
+			padding-inline-start: 20px;
+		}
+		.notecard li {
+			margin: 0;
+			padding: 0;
+			list-style: disc;
+		}
+		.notecard .checkbox-content {
+			@media not all and (pointer: coarse) and (max-width: $bp-640) {
+				min-height: 40px !important;
+			}
+		}
+		// La marge basse de l'app (0,75 rem) laissait un vide sous le dernier interrupteur.
+		.notecard .margin-bottom {
+			margin-bottom: 0;
+		}
+
+		// Téléphone : « Activer la navigation E2EE dans le navigateur » et « Réinitialiser le
+		// chiffrement de bout en bout » ne tiennent pas sur une ligne ; pleine largeur, deux lignes
+		// équilibrées (plus de mot seul sur la seconde), rayon de 16 px pour un bouton haut de deux
+		// lignes (une pilule y devenait une gélule).
+		@media (max-width: $bp-640) {
+			.button-vue:not(.button-vue--icon-only, .close-button) {
+				width: 100%;
+				border-radius: $rounded-12;
+
+				.button-vue__text {
+					text-wrap: balance;
+				}
+			}
+		}
+	}
+}

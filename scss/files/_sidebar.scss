@@ -1,0 +1,230 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Contenu des onglets de la barre de détail de Fichiers (Partage, Versions, Activité et
+ * commentaires). Le cadre, l'en-tête et les onglets viennent du module commun ui/_detail-sidebar.
+ * Modèles du panel : listes à filets, médaillons pleins, champs 12 px.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+
+// Une rangée de liste du panel : filet bas, rien d'autre.
+@mixin rangee-liste {
+	border-bottom: 1px solid $theme-divider;
+	&:last-child {
+		border-bottom: 0;
+	}
+}
+
+@mixin titre-section {
+	margin: 0;
+	font-size: 0.9375rem;
+	line-height: 1.5rem;
+	font-weight: $font-bold;
+	color: $colour-forground;
+}
+
+@mixin champ {
+	min-height: 44px;
+	border: 1px solid var(--color-border-maxcontrast);
+	border-radius: $rounded-8;
+	background-color: $main-page-bg;
+	color: $colour-forground;
+	box-shadow: none;
+}
+
+@mixin sidebar {
+	.app-sidebar:not(.modal__card *) {
+		// ---------- Onglet Partage ----------
+		.sharingTab {
+			.section-header {
+				gap: 6px;
+				h4 {
+					@include titre-section;
+				}
+				.icon-vue,
+				.material-design-icon {
+					color: $colour-forground-1;
+				}
+			}
+			.sharing-entry {
+				min-height: 56px;
+				gap: 12px;
+				.sharing-entry__title,
+				.sharing-entry__summary__desc > span:first-child {
+					font-size: 0.9375rem;
+					font-weight: $font-medium;
+					color: $colour-forground;
+				}
+				.sharing-entry__desc p,
+				.sharing-entry__summary__desc-unique,
+				.sharing-entry__desc > span,
+				.sharing-entry__summary__desc p {
+					font-size: 13px;
+					color: $colour-forground-1;
+				}
+				// Médaillons d'icône (lien, autres utilisateurs, lien interne) : plein azur, icône blanche.
+				// Jamais les avatars à initiales (groupes, équipes) : Nextcloud y écrit les initiales dans
+				// leur propre couleur, illisible sur le bleu.
+				.sharing-entry__avatar:not(.avatardiv):not(:has(.avatardiv__initials-wrapper)),
+				.avatar-link-share,
+				.avatar-external {
+					background-color: $colour-brand;
+					color: $colour-white;
+				}
+				.sharing-entry__actions .button-vue--icon-only,
+				.action-item__menutoggle.button-vue--icon-only {
+					border: 0;
+					border-radius: 50%;
+					background-color: transparent;
+					color: $colour-forground-1;
+					&:hover:not(:disabled) {
+						background-color: $main-page-bg-dashboard;
+						color: $colour-forground;
+					}
+				}
+			}
+			// Sélecteur rapide des droits (« Lecture seule ») : pastille azure/12 + azure-text.
+			.share-select,
+			.sharing-entry__quick-share-select,
+			.sharing-entry .share-select .trigger-text,
+			.sharing-entry .share-select .button-vue__text {
+				border-radius: $rounded-full;
+				color: $colour-blue-600;
+				font-size: $text-12;
+				font-weight: $font-semibold;
+			}
+		}
+
+		// Vue détaillée d'un partage (droits, options avancées).
+		.sharingTabDetailsView {
+			.sharingTabDetailsView__header {
+				gap: 12px;
+				padding-bottom: 12px;
+				border-bottom: 1px solid $theme-divider;
+				h1,
+				span {
+					font-size: 1.0625rem;
+					font-weight: $font-bold;
+					color: $colour-forground;
+				}
+			}
+			// Groupe de choix « Lecture seule / Modification / Personnalisées » : un seul cadre, arrondi par
+			// Nextcloud en haut du premier et en bas du dernier (un rayon par choix le découpait en trois).
+			.sharingTabDetailsView__quick-permissions {
+				.checkbox-radio-switch {
+					&:hover {
+						background-color: $main-page-bg-dashboard;
+					}
+				}
+			}
+			.sharingTabDetailsView__advanced-control button {
+				border-radius: $rounded-full;
+				color: $colour-blue-600;
+				font-weight: $font-semibold;
+			}
+			// Champs de 44 px : par la variable de Nextcloud sur le champ entier (cadre, libellé flottant,
+			// bouton de fin, aide en dessous) ; un min-height sur le seul <input> le faisait déborder de son
+			// cadre de 34 px, sur l'aide « Remplacer le mot de passe actuel » et sur la case suivante.
+			.input-field {
+				--default-clickable-area: 44px;
+			}
+			.input-field__input,
+			textarea {
+				@include champ;
+			}
+			// Hauteur du champ laissée à Nextcloud (44 px moins ses 2 px de retrait haut et bas).
+			.input-field__input {
+				min-height: unset;
+			}
+			.sharingTabDetailsView__footer {
+				gap: 8px;
+				padding-top: 12px;
+				border-top: 1px solid $theme-divider;
+				background-color: $main-page-bg;
+			}
+		}
+
+		// ---------- Onglet Versions : liste à filets ----------
+		.versions-tab__container li.list-item__wrapper {
+			@include rangee-liste;
+			.list-item {
+				min-height: 64px;
+				padding: 10px 8px;
+				border-radius: $rounded-8;
+				&:hover {
+					background-color: $main-page-bg-dashboard;
+				}
+			}
+			// Vignette : page blanche bordée d'un filet, pour rester lisible sur le fond paper.
+			img.version__image {
+				width: 44px;
+				height: 44px;
+				border: 1px solid $theme-divider;
+				border-radius: $rounded-8;
+				background-color: $main-page-bg;
+				object-fit: cover;
+			}
+			.list-item-content__name,
+			.version__info__label {
+				font-size: 0.9375rem;
+				font-weight: $font-medium;
+				color: $colour-forground;
+			}
+			.list-item-content__subname,
+			.version__info__date,
+			.version__info__size,
+			.version__info__subline {
+				font-size: 13px;
+				color: $colour-forground-1;
+				font-variant-numeric: tabular-nums;
+			}
+		}
+
+		// ---------- Activité et commentaires ----------
+		.comments-activity,
+		.activity__list,
+		#tab-activity {
+			.comment__editor .rich-contenteditable__input,
+			.rich-contenteditable__input {
+				@include champ;
+				padding: 10px 44px 10px 12px;
+				line-height: 1.5rem;
+			}
+			.activity-entry,
+			.activity {
+				@include rangee-liste;
+				padding-block: 10px;
+			}
+			.activity-entry__content,
+			.activity__message {
+				font-size: 0.875rem;
+				color: $colour-forground;
+			}
+			// Horodatages de l'onglet Activité (entrées et commentaires) : même taille (13 px, muted) et
+			// même bord droit (retrait de 10 px des commentaires), donc sur une seule colonne.
+			.activity-entry__date {
+				margin-inline-end: 10px;
+			}
+			.activity-entry__datetime,
+			.activity-entry__date,
+			.activity__date,
+			.comment__timestamp {
+				font-size: $text-12;
+				color: $colour-forground-1;
+				font-variant-numeric: tabular-nums;
+			}
+			// Liens d'objet (nom du fichier) : texte bleu de la charte, souligné au survol seulement.
+			.activity-entry__content a,
+			.activity__message a {
+				color: $colour-blue-600;
+				text-decoration: none;
+				&:hover,
+				&:focus-visible {
+					text-decoration: underline;
+				}
+			}
+		}
+	}
+}

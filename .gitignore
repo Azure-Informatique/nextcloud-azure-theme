@@ -1,0 +1,18 @@
+# SPDX-FileCopyrightText: 2026 Nexeno contributors
+# SPDX-FileCopyrightText: 2026 Azure Informatique
+# SPDX-License-Identifier: AGPL-3.0-or-later
+
+# Build output, rebuilt by `npm run build` (css/ from scss/, js/page/ and js/azure-has.js from src/)
+/css/
+/js/page/
+/js/azure-has.js
+# App Store package, written by `make appstore`
+/build/
+
+node_modules
+/vendor/
+
+.DS_Store
+*.log
+*.map
+.php-cs-fixer.cache

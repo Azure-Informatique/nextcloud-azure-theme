@@ -1,0 +1,172 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Sélecteur de fichiers (@nextcloud/dialogs, toutes les apps) : même grammaire que Fichiers.
+ * Colonne de gauche = navigation d'app (canvas ; actif azure/10 + liseré 3 px), liste à filets,
+ * sélection azure/10 + liseré, champ de filtre du panel.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+
+@mixin picker {
+	.file-picker {
+		.file-picker__navigation,
+		.dialog__navigation {
+			background-color: $main-page-bg-dashboard;
+			border-inline-end: 1px solid $theme-divider;
+		}
+		.file-picker__filter-input input {
+			min-height: 44px;
+			border: 1px solid var(--color-border-maxcontrast);
+			border-radius: $rounded-8;
+			background-color: $main-page-bg;
+			color: $colour-forground;
+			&:focus,
+			&:focus-visible {
+				border-color: $colour-blue-600;
+				box-shadow: none;
+			}
+		}
+		.file-picker__side {
+			gap: 2px;
+			.button-vue {
+				min-height: 40px;
+				border: 0;
+				border-radius: $rounded-8;
+				background-color: transparent;
+				color: $colour-forground;
+				box-shadow: none;
+				.button-vue__wrapper {
+					justify-content: flex-start;
+				}
+				.button-vue__text {
+					font-size: 0.9375rem;
+					font-weight: $font-medium;
+					color: inherit;
+				}
+				&:hover:not(:disabled) {
+					background-color: $colour-sidebar-link-bg;
+				}
+				&.button-vue--primary,
+				&.button-vue--vue-primary {
+					background-color: $colour-primary-50;
+					box-shadow: inset var(--azure-liseret, 3px) 0 0 $colour-brand;
+					color: $colour-forground;
+					.button-vue__icon {
+						color: $colour-blue-600;
+					}
+				}
+			}
+		}
+		.file-picker__breadcrumbs {
+			.vue-crumb > a.button-vue,
+			.vue-crumb > button.button-vue,
+			.vue-crumb .action-item__menutoggle {
+				border-radius: $rounded-full;
+				color: $colour-forground-1;
+				.button-vue__text {
+					font-weight: $font-semibold;
+				}
+				&:hover:not(:disabled) {
+					background-color: $main-page-bg-dashboard;
+					color: $colour-forground;
+				}
+			}
+			.vue-crumb:last-child > a.button-vue,
+			.vue-crumb:last-child > button.button-vue {
+				color: $colour-forground;
+			}
+			.vue-crumb__separator {
+				color: $colour-forground-1;
+			}
+		}
+		.file-picker__files {
+			thead th {
+				border-bottom: 1px solid $theme-divider;
+				color: $colour-forground-1;
+				font-size: 13px;
+				font-weight: $font-semibold;
+				.button-vue {
+					border-radius: $rounded-full;
+					color: inherit;
+					.button-vue__text {
+						font-size: 13px;
+						font-weight: $font-semibold;
+					}
+				}
+			}
+			.file-picker__row {
+				border-bottom: 1px solid $theme-divider;
+				td {
+					border-bottom: 0;
+				}
+				&:hover,
+				&:focus-within {
+					background-color: $main-page-bg-dashboard;
+				}
+				&[aria-selected='true'],
+				&:has(.checkbox-radio-switch--checked) {
+					background-color: $colour-primary-50;
+					box-shadow: inset var(--azure-liseret, 3px) 0 0 $colour-brand;
+				}
+				.row-name {
+					color: $colour-forground;
+					font-weight: $font-medium;
+				}
+				.row-size,
+				.row-modified,
+				td:not(.row-name):not(.row-checkbox) {
+					color: $colour-forground-1;
+					font-size: 13px;
+					font-variant-numeric: tabular-nums;
+				}
+				// Rangée non sélectionnable (estompée par Nextcloud) : taille et date en ink, pour que
+				// l'estompage ne les fasse pas tomber sous 4,5:1 (muted estompé : 3,65:1).
+				&.file-picker__row--not-navigatable :is(.row-size, .row-modified) {
+					color: $colour-forground;
+				}
+				.file-picker__file-icon {
+					border-radius: $rounded-4;
+				}
+			}
+			.checkbox-content__icon,
+			.checkbox-content__icon svg {
+				color: var(--color-border-maxcontrast);
+				fill: currentColor;
+			}
+			.checkbox-radio-switch--checked .checkbox-content__icon,
+			.checkbox-radio-switch--checked .checkbox-content__icon svg {
+				color: $colour-brand;
+			}
+		}
+		// Téléphone : la colonne devient une rangée (sans défilement) ; la date de modification
+		// cède la place au nom, qui ne doit jamais être coupé par le bord de la fenêtre.
+		@media (max-width: $bp-512) {
+			.file-picker__navigation,
+			.dialog__navigation {
+				border-inline-end: 0;
+				border-bottom: 1px solid $theme-divider;
+				background-color: $main-page-bg;
+			}
+			.file-picker__files {
+				.row-modified {
+					display: none;
+				}
+			}
+		}
+	}
+
+	// Boîte de dialogue plein écran sur téléphone (charte).
+	@media (max-width: $bp-512) {
+		.modal-container:has(> .dialog.file-picker),
+		.modal-container:has(.file-picker) {
+			width: 100vw !important;
+			max-width: 100vw !important;
+			height: 100dvh !important;
+			max-height: 100dvh !important;
+			margin: 0;
+			border-radius: 0 !important;
+		}
+	}
+}

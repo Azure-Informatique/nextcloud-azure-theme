@@ -1,0 +1,49 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Visionneuse (images, vidéos, PDF côté cadre, Text en plein écran).
+ * Modèle : visionneuse d'image du site (ArticleFigure.tsx) : voile sombre presque opaque.
+ * Le voile vient du module commun des fenêtres (ui/_cadre) : la visionneuse est une fenêtre
+ * « opaque » de Nextcloud (.modal-mask--opaque) : voile nuit, relevé ici de 92 à 96 %.
+ */
+@use '../variables' as *;
+@use '../themes' as *;
+
+@mixin viewer {
+	#viewer.modal-mask,
+	.modal-mask#viewer,
+	.modal-mask.viewer {
+		// Panneau latéral ouvert au téléphone : le thème l'affiche en plein écran et la visionneuse est
+		// ramenée à 0 px de large ; ses flèches « Précédent / Suivant », placées par rapport à ses bords,
+		// restaient peintes sur le titre du panneau (ou hors écran). Rien ne doit dépasser du voile.
+		overflow: hidden;
+		// Voile nuit à 96 % (92 % chez Nextcloud) : sur une page claire, la liste de fichiers se lisait
+		// encore au-dessus et au-dessous de l'image ; un fond calme met l'image en valeur.
+		&.modal-mask--opaque {
+			background-color: rgba(var(--backdrop-color), 0.96);
+		}
+		// Le conteneur reçoit le focus par programme (piège à focus) dès l'ouverture : Chromium le
+		// compte comme « focus-visible » tant que rien n'a été cliqué, d'où un cadre bleu sans action
+		// clavier. Ce n'est pas une commande : aucun cadre ; ses boutons gardent leur anneau.
+		&:focus,
+		&:focus-visible {
+			outline: none;
+		}
+		.modal-header {
+			.modal-header__name,
+			.modal-name {
+				font-size: 0.9375rem;
+				font-weight: $font-semibold;
+			}
+		}
+		// Text en plein écran : le titre ne colle pas à la barre d'outils.
+		.text-editor__content {
+			padding-top: 16px;
+		}
+		// Bouton d'éditeur d'image et autres actions pleines : bouton principal de la charte.
+		.button-vue--vue-primary {
+			border-radius: $rounded-full;
+		}
+	}
+}

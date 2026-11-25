@@ -1,0 +1,48 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+*/
+@use '../variables' as *;
+@use '../themes' as *;
+@use '../settings/mixins' as *;
+
+@mixin notifications {
+    &#{reglage(notifications)}{
+        .v-select.select{
+            @include single-select($dropdown: false);
+            .vs__dropdown-toggle{
+                height: 34px;
+            }
+        }
+        #{$contenu-reglages}{
+            #activity-user-settings{
+                .settings-section__name{
+                    justify-content: flex-start;
+                    text-align: start;
+                }
+            }
+            #activity-digest-user-settings{
+                margin-top: 16px;
+            }
+            div{
+                &:has(.activity-frequency__label){
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 12px;
+                    p{
+                        gap: 8px;
+                        margin: 0;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@mixin notifications-dropdown {
+    body:has(#{reglage-lien(notifications)}) .vs__dropdown-menu{
+        @include select-dropdown-menu;
+    }
+}

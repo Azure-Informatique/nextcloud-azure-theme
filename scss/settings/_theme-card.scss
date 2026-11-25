@@ -1,0 +1,208 @@
+/**
+ * SPDX-FileCopyrightText: 2026 Nexeno contributors
+ * SPDX-FileCopyrightText: 2026 Azure Informatique
+ * SPDX-License-Identifier: AGPL-3.0-or-later
+ *
+ * Carte « Thème Azure » des réglages personnels (Apparence et accessibilité).
+ * Feuille autonome (css/azure-settings.css) : visible que le thème soit actif, désactivé ou mis en pause
+ * par le contraste élevé, sans charger la mise en page du thème.
+ */
+@use '../variables' as *;
+
+// Thème désactivé ou en pause : les variantes ne sont pas cliquables. Seuls les aperçus et les
+// boutons radio sont estompés ; titres, descriptions et libellés restent lisibles (≥ 4,5:1) en
+// texte atténué, au lieu d'une carte entière à 50 % (texte à 2,05-3,94:1).
+:root:not([data-azure-light]):not([data-azure-dark])
+	#azure_theme-settings .azure_theme-theme-card {
+	pointer-events: none;
+
+	.azure_theme-theme-card__preview,
+	input.radio + label::before {
+		opacity: 0.5;
+	}
+
+	.azure_theme-theme-card__body :is(h3, p, label) {
+		color: var(--color-text-maxcontrast);
+	}
+}
+
+// Same size the 280 × 160 preview image had as an <img>.
+.azure_theme-theme-card {
+	display: flex;
+	flex-direction: column;
+	gap: 20px;
+}
+
+// Admin-only login page setting, below the theme cards, set apart by a divider.
+// Starting from the id makes these spacing rules stronger than the shared switch rule below.
+#azure_theme-settings .azure_theme-login-style {
+	margin-block-start: 30px;
+	padding-block: 24px;
+	border-block-start: 1px solid var(--color-border);
+
+	.settings-hint {
+		margin: 0;
+
+		// "Only admins see this setting." – medium weight in the main text colour, so it stands out
+		// from the muted hint text around it.
+		strong {
+			font-weight: 500;
+			color: var(--color-main-text);
+		}
+	}
+
+	.azure_theme-switch {
+		margin-block: 0;
+	}
+
+	// Chaque explication suit son interrupteur, à 8 px (rattachée à lui) ; le réglage suivant
+	// commence 20 px plus bas.
+	.azure_theme-switch + .settings-hint {
+		margin-block-start: 8px;
+	}
+	.settings-hint + .azure_theme-switch {
+		margin-block-start: 20px;
+	}
+}
+
+.azure_theme-theme-card__item {
+	display: flex;
+	align-items: center;
+	gap: 30px;
+
+	@media (max-width: $bp-576) {
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 12px;
+	}
+}
+
+.azure_theme-theme-card__body {
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-width: 0;
+
+	h3,
+	p {
+		margin: 0;
+	}
+
+	h3 {
+		text-transform: none;
+	}
+}
+
+.azure_theme-theme-card__preview {
+	display: block;
+	flex: 0 0 256px;
+	width: 256px;
+	max-width: 100%;
+	aspect-ratio: 280 / 160;
+	background: center / contain no-repeat;
+	cursor: pointer;
+
+	// Téléphone : carte en colonne, l'aperçu prend toute la largeur comme ceux de Nextcloud
+	// juste dessous (au lieu de 256 px calés à gauche).
+	@media (max-width: $bp-576) {
+		flex: none;
+		width: 100%;
+	}
+
+	// Real screenshots of Files in each variant, shipped in img/ at 1x and 2x (high-density screens).
+	@each $variant in light, dark, system {
+		&--#{$variant} {
+			background-image: url("../img/preview-#{$variant}.webp");
+			background-image: image-set(
+				url("../img/preview-#{$variant}.webp") 1x,
+				url("../img/preview-#{$variant}-2x.webp") 2x
+			);
+		}
+	}
+}
+
+#azure_theme-settings {
+	input.radio {
+		&:disabled:not(:checked) {
+			+ label {
+				&::before {
+					background-color: transparent !important;
+				}
+			}
+		}
+	}
+}
+
+// Toggle switch shared by "Enable Azure theme" and the admin-only login page setting.
+// The id keeps it stronger than Nextcloud's own checkbox styles.
+#azure_theme-settings .azure_theme-switch {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	margin-block: 20px;
+	input.checkbox {
+		position: relative !important;
+		inset-inline-start: auto !important;
+		top: auto !important;
+		z-index: auto !important;
+		width: 32px !important;
+		height: 16px !important;
+		min-width: 32px !important;
+		min-height: 16px !important;
+		max-width: 32px !important;
+		margin: 0 !important;
+		padding: 0 !important;
+		opacity: 1 !important;
+		appearance: none !important;
+		-webkit-appearance: none !important;
+		border: none !important;
+		border-radius: 16px !important;
+		background-color: var(--color-background-darker) !important;
+		cursor: pointer;
+		transition: background-color 0.2s ease;
+
+		& + label::before {
+			display: none;
+			content: none;
+		}
+
+		&::before {
+			content: "" !important;
+			position: absolute;
+			top: 2px;
+			inset-inline-start: 2px;
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			background: var(--color-main-background);
+			box-shadow: var(--box-shadow-2);
+			transition: transform 0.2s ease;
+		}
+
+		&:checked {
+			background-color: var(--color-primary-element) !important;
+
+			&::before {
+				transform: translateX(16px);
+			}
+		}
+
+		&:focus-visible {
+			outline: 2px solid var(--color-primary-element);
+			outline-offset: 2px;
+		}
+
+		&:disabled {
+			cursor: wait;
+			opacity: 0.6 !important;
+		}
+	}
+
+	label {
+		cursor: pointer;
+		font-size: $text-heading-5;
+		line-height: $leading-20;
+		color: var(--color-main-text);
+		font-weight: $font-medium;
+	}
+}
