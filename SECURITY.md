@@ -14,7 +14,7 @@
 
 ## Signaler une faille
 
-Merci de ne pas signaler de faille de sécurité dans un ticket public. Signalez-la en privé avec l'outil de signalement de failles de GitHub (onglet *Security* → *Report a vulnerability* du dépôt <https://github.com/oboeglen/nextcloud-azure-theme>), ou contactez Azure Informatique par le formulaire de contact de son site, en indiquant :
+Merci de ne pas signaler de faille de sécurité dans un ticket public. Signalez-la en privé avec l'outil de signalement de failles de GitHub (onglet *Security* → *Report a vulnerability* du dépôt <https://github.com/Azure-Informatique/nextcloud-azure-theme>), ou contactez Azure Informatique par le formulaire de contact de son site, en indiquant :
 
 - la version de l'application et la version de Nextcloud ;
 - une description de la faille ;

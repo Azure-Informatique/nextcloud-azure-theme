@@ -5,7 +5,7 @@
 -->
 # Azure Theme for Nextcloud — clean light & dark theme
 
-[![Release](https://img.shields.io/github/v/release/oboeglen/nextcloud-azure-theme?label=release&color=0078D4)](https://github.com/oboeglen/nextcloud-azure-theme/releases/latest)
+[![Release](https://img.shields.io/github/v/release/Azure-Informatique/nextcloud-azure-theme?label=release&color=0078D4)](https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/latest)
 [![Nextcloud 34 · 35 · 36](https://img.shields.io/badge/Nextcloud-34%20%C2%B7%2035%20%C2%B7%2036-0082C9?logo=nextcloud&logoColor=white)](#compatibility)
 [![PHP 8.2–8.5](https://img.shields.io/badge/PHP-8.2%E2%80%938.5-777BB4?logo=php&logoColor=white)](#compatibility)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/license-AGPL--3.0--or--later-0B1A30)](LICENSE)
@@ -53,7 +53,7 @@
 
 ```bash
 cd /path/to/nextcloud/apps        # or custom_apps
-curl -LO https://github.com/oboeglen/nextcloud-azure-theme/releases/latest/download/azure_theme-1.1.0.tar.gz
+curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/latest/download/azure_theme-1.1.0.tar.gz
 tar xzf azure_theme-1.1.0.tar.gz && rm azure_theme-1.1.0.tar.gz
 chown -R www-data:www-data azure_theme
 sudo -u www-data php ../occ app:enable azure_theme
