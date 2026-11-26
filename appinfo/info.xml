@@ -68,10 +68,10 @@ Le thème fonctionne entièrement dans votre Nextcloud et ne charge rien depuis 
     <website>https://github.com/Azure-Informatique/nextcloud-azure-theme</website>
     <bugs>https://github.com/Azure-Informatique/nextcloud-azure-theme/issues</bugs>
     <repository type="git">https://github.com/Azure-Informatique/nextcloud-azure-theme.git</repository>
-    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/apercu-en-clair.webp</screenshot>
-    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/apercu-en-sombre.webp</screenshot>
-    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/tableau-de-bord.webp</screenshot>
-    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/telephone.webp</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/store/apercu-en-clair.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/store/apercu-en-sombre.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/store/tableau-de-bord.png</screenshot>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.3/docs/images/store/telephone.png</screenshot>
 
     <dependencies>
         <php min-version="8.2" max-version="8.5"/>
