@@ -106,7 +106,9 @@
         .team-folders__sort-header:hover,
         .team-folders__sort-header:focus{
             gap: 4px;
-            min-height: unset;
+            // Cible tactile de 24 px (WCAG 2.5.8) sans changer la hauteur de l'en-tête.
+            min-height: 24px;
+            margin-block: -2px;
             padding: 0;
             border: 0;
             background-color: transparent !important;

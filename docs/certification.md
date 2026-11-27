@@ -2,17 +2,40 @@
   - SPDX-FileCopyrightText: 2026 Azure Informatique
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# Certification du Thème Azure 1.1.3
+# Certification du Thème Azure 1.1.4
 
-Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.3, et celles des versions 1.1.2, 1.1.1 et 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles), puis la version a été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
+Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.4, et celles des versions 1.1.3 à 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles) ; la 1.1.3, certifiée de la même façon, a ensuite été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
 
 | Élément | Valeur |
 |---|---|
-| Version certifiée | 1.1.3 — étiquette `v1.1.3` (correctifs des versions 1.1.0 à 1.1.2, certifiée en totalité ci-dessous) |
-| Nextcloud | **34.0.6 : vérification complète** ; 35.0.3 et 36.0.0 (préversion du 24 novembre 2026) : contrôle des écrans clés |
+| Version certifiée | 1.1.4 — étiquette `v1.1.4` (correctifs des versions 1.1.0 à 1.1.3, certifiées en totalité ci-dessous) |
+| Nextcloud | **34.0.6 et 35.0.3 : vérification complète de la 1.1.4** ; 36.0.0 (préversion du 24 novembre 2026) : contrôle des écrans clés (1.1.3) |
 | Navigateur | Chromium 156 (ordinateur 1440 × 900, tablette 1024 et 768, téléphone 390 et 360 par émulation) |
 | Outils | Playwright, axe-core 4.14, PHPUnit 13, Psalm 6 (avec `--taint-analysis`), REUSE 3.3, gitleaks 8 |
-| Date | 25 novembre 2026 |
+| Date | 27 novembre 2026 |
+
+## Version 1.1.4 : correctifs, sécurité et non-régression
+
+La 1.1.4 corrige neuf points d'affichage et d'accessibilité tactile, sans autre changement :
+
+1. **Tâches, fiche d'une tâche** : l'indication « Sélectionner un statut » n'apparaissait pas tant qu'aucune valeur n'était choisie (le champ qui la porte était rétréci à 0 px par le thème, 347 px sans) ; le champ garde sa largeur, les listes déjà remplies ne changent pas (mesure : 0 px → 347 px au téléphone).
+2. **Talk, nouvelle conversation au téléphone** : les deux choix de type de conversation débordaient de la fenêtre vers la droite de 32 à 35 px ; ils s'empilent sur une colonne et tiennent dans l'écran (6 débordements + 2 éléments hors écran sur Nextcloud 35 → 0).
+3. **Talk au téléphone, actions sur un message** : la rangée de boutons (94 px dont 18 hors écran, troisième bouton coupé) tient désormais dans l'écran (78 px) avec des boutons de 24 px ; la conversation au repos ne change pas (0,0 % de pixels hors survol) et le décalage de 14 px de la liste à l'ouverture du menu des actions disparaît.
+4. **Contacts au téléphone, croix d'effacement d'une valeur** : zone tactile de 18 px ramenée à 24 px sans occuper davantage de place (marge négative) ; aucune croix sous 24 px après correction sur les deux bancs.
+5. **Notes, liste des notes** : chaque ligne offre désormais sa hauteur entière (36 px) à la zone tactile, au lieu de la bande de son texte (20 px) ; l'aspect de la liste ne change pas.
+6. **Tableau de bord (Nextcloud 35), fenêtre de statut** : le champ « Effacer le statut après » écrasé à 18 px de haut (34 px sans le thème) reprend la hauteur standard ; 4 cibles sous 24 px → 0.
+7. **Chevrons et croix des listes déroulantes des réglages au téléphone** (Langue et paramètres régionaux, fiche Tâches…) : zone tactile portée de 20 à 24 px, l'aspect à l'écran ne change pas (la marge compense la taille).
+8. **Réglages d'administration, Équipes (Nextcloud 35) au téléphone** : les en-têtes de tri des colonnes passent de 20 à 24 px de haut sans changer l'aspect (0,0 % de pixels changés).
+9. **Réglages d'administration, audit des partages en sombre** : l'icône de la carte « Total » repasse au-dessus du seuil de contraste des éléments d'interface (2,74:1 → ≥ 3:1, conformément au rendu sans thème).
+
+| Contrôle | Résultat |
+|---|---|
+| Sécurité | Seuls changent onze fichiers SCSS, la documentation et `info.xml` (version, huit captures) : aucun fichier PHP, JavaScript ou gabarit modifié, aucune dépendance ajoutée, aucune ressource externe ; surface d'attaque inchangée. Psalm (y compris `--taint-analysis`) sans erreur, gitleaks sans fuite |
+| CSS et scripts compilés, comparés au paquet 1.1.3 publié | 80 feuilles sur 145 changent, uniquement par les règles des corrections : le passage des chevrons de 20 à 24 px se propage dans les feuilles de réglages qui partagent le même bloc, les autres changent par leurs correctifs propres ; `azure-has.js` identique octet par octet ; les règles dupliquées du menu des listes déroulantes ne sont plus émises qu'une fois par feuille (158,4 Ko de CSS en moins, ensembles de règles identiques avant/après, vérifié règle par règle) |
+| Parcours complet 1.1.3 / 1.1.4 au pixel, Nextcloud 34 et 35 | 4802 paires d'écrans (2408 sur 34, 2394 sur 35 : toutes les applications du parcours d'audit, comptes utilisateur et administrateur, ordinateur, tablette et téléphone tactile, clair et sombre) : 234 écarts, tous cantonnés aux zones corrigées (C-01 : 53, C-02 : 96, C-04 : 5, C-05 : 13, icône « Total » : 31, champ Statut : 28, chevrons : 8, les autres correctifs sans changement visuel mesurable) ; 2659 écarts prouvés comme bruit capture par capture (calibration : deux passages de la même 1.1.3 font bouger 43 à 44 % des captures), 55 non-captures déterministes documentées, 1854 paires identiques : **aucune régression** |
+| Performances (passes alternées 1.1.3 / 1.1.4, banc Nextcloud 34 épinglé) | 12 passes (6 × 1.1.3, 5 × 1.1.4 après écart d'une passe pour charge), 264 mesures, 0 échec, 110 combinaisons écran × vue × métrique (11 écrans, ordinateur et téléphone) : aucune plage de mesures disjointe en défaveur de la 1.1.4 ; 4 plages disjointes en sa faveur (fichiers au téléphone : tâche complète 4585 → 4341 ms, −5,3 % ; fiche de tâche au téléphone : recalcul de style 208 → 193 ms, −7,2 %, tâche complète 361 → 327 ms, −9,5 %, élément utile 296 → 267 ms, −9,9 %) |
+| Tests | PHPUnit 113 tests et 217 assertions, `php -l` sur les 31 fichiers, style de code (php-cs-fixer) sans écart, Psalm sans erreur, ESLint sans erreur, Stylelint : 69 signalements préexistants inchangés, REUSE 3.3 conforme (284 fichiers), `info.xml` bien formé, gitleaks sans fuite : tout passe |
+| Production (Nextcloud 34.0.6) | version préparée le 27 novembre 2026 ; publication et vérification en production à venir |
 
 ## Version 1.1.3 : correctifs, sécurité et non-régression
 
@@ -77,7 +100,7 @@ La 1.1.1 corrige cinq points d'affichage, sans autre changement :
 
 Agenda 6 ouvre les événements dans une fenêtre sans onglets : il n'est pas concerné par le point 1. Dans l'en-tête, le nom de l'app et le bouton du menu sont centrés sur la même ligne (28 px) ; l'encre des points du bouton est 1,5 px plus bas que celle du texte, ce qui tient au dessin de l'icône : rien n'a été modifié. Les sections suivantes restent celles de la certification complète de la 1.1.0, toujours valables pour la 1.1.1.
 
-**Conclusion : le Thème Azure 1.1.3 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
+**Conclusion : le Thème Azure 1.1.4 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
 
 ## 1. Sécurité
 

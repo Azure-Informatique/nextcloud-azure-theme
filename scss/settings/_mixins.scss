@@ -954,11 +954,13 @@ $icone-note: '> :is(.notecard__icon, .icon-vue, .material-design-icon, svg)';
 			padding: 0;
 		}
 		.vs__actions{
+			// Cible tactile de 24 px (WCAG 2.5.8) ; la marge négative garde la place de 20 px.
 			button{
-				width: 20px;
-				height: 20px;
+				width: 24px;
+				height: 24px;
 				min-width: unset;
 				min-height: unset;
+				margin: -2px;
 				padding: 0;
 				background-color: transparent;
 			}

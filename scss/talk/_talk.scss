@@ -418,6 +418,18 @@
 			color: $colour-forground;
 		}
 	}
+	// Téléphone : le conteneur Talk de la barre (position absolute, right -100 %
+	// de sa largeur) pend au bord droit du message ; la barre encadrée du thème
+	// (94 px pour 3 boutons) le faisait déborder de l'écran à droite (+4 px
+	// mesurés, sonde K-12 ; +8 px sur le conteneur — sonde C-04j : sans thème
+	// boutons 24 px, barre 72 px, conteneur 80 px, bord à 390). La marge
+	// négative sur le conteneur (élément Talk) ramène la chaîne entière de
+	// 6 px vers la gauche : la barre encadrée tient dans l'écran, cadre intact.
+	.message-buttons-bar-wrapper {
+		@media (max-width: $bp-640) {
+			margin-inline-start: -6px;
+		}
+	}
 	.message-buttons-bar {
 		gap: 2px;
 		padding: 2px;
@@ -428,6 +440,22 @@
 		.button-vue,
 		.action-item__menutoggle {
 			@include talk-icon-button(28px);
+		}
+		// Téléphone (suite) : boutons à 24 px — la taille Nextcloud d'origine
+		// mobile (≥ 24 exigé) — et interstices nuls : la barre encadrée passe
+		// de 94 à 78 px pour 3 boutons. Le --button-size est nécessaire : Talk
+		// impose width: var(--button-size) par un sélecteur :has() plus
+		// spécifique que celui du mixin (sonde C-04g).
+		@media (max-width: $bp-640) {
+			gap: 0;
+			.button-vue,
+			.action-item__menutoggle {
+				--button-size: 24px;
+				width: 24px;
+				min-width: 24px;
+				height: 24px;
+				min-height: 24px;
+			}
 		}
 	}
 	.messages__author {

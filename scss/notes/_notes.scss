@@ -119,6 +119,11 @@
 							gap: 8px;
 							height: auto;
 							padding: 0;
+							// Cible tactile : l'ancre ne couvrait que le contenu de 20 px de la
+							// ligne de 36 px ; les marges négatives l'étendent sur toute la ligne
+							// (WCAG 2.5.8) sans changer l'aspect du fond.
+							padding-block: 8px;
+							margin-block: -8px;
 							> .material-design-icon {
 								width: 20px;
 								height: 20px;

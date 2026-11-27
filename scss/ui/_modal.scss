@@ -4918,6 +4918,12 @@
 		}
 		.conversation-type-selector{
 			gap: 8px;
+			// Téléphone : les deux options de Talk sont une grille de deux colonnes minmax
+			// (200 px), trop larges pour un conteneur de 390 px ; l'écart de 8 px du thème
+			// les faisait en plus déborder de 32 à 35 px — une seule colonne suffit.
+			@media (max-width: $bp-640) {
+				grid-template-columns: 1fr;
+			}
 			&__option{
 				padding: 12px;
 				gap: 6px;

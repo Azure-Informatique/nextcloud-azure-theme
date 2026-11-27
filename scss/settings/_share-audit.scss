@@ -14,6 +14,12 @@
 $sad: ':is(#share-audit-dashboard, #share-audit-personal)';
 
 @mixin share-audit {
+	// Carte « Total » : l'icône en bleu des boutons sur le fond bleu clair de la carte passait
+	// à 2,7:1 en sombre ; couleur du texte posé sur ce fond (8:1 en sombre, 7:1 en clair).
+	.sad-card.sad-card--total .sad-card__icon {
+		color: var(--color-primary-element-light-text);
+	}
+
 	// Tableau de bord et tableau à neuf colonnes : la colonne de lecture s'élargit (comme le
 	// lecteur de logs), sinon les onglets passent sur deux lignes et le tableau défile.
 	.app-settings #{$contenu-reglages}:has(> #share-audit-dashboard, > #share-audit-personal) {

@@ -44,6 +44,10 @@
 				.vs__search{
 					padding-inline-start: 10px;
 					.input-field__main-wrapper{
+						// La hauteur auto prévue pour le champ texte de la fenêtre (cf. _dashboard.scss)
+						// gênait aussi ce conteneur du NcSelect : l'entrée retombait à 18 px de haut
+						// (cible tactile < 24 px, mesurée 34 px sans le thème). Hauteur standard.
+						height: var(--default-clickable-area);
 						input{
 							height: 34px;
 							padding-block: 0;

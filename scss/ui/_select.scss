@@ -39,7 +39,9 @@
 			flex: 0 1 auto;
 			min-width: 0;
 		}
-		.vs__search {
+		// Seulement à côté d'une valeur : liste vide, le champ garde sa largeur pour afficher
+		// l'indication (« Sélectionner un statut » dans Tâches, 0 px sinon).
+		.vs__selected ~ .vs__search {
 			flex: 1 1 0;
 			width: 0 !important;
 			min-width: 0;
@@ -257,6 +259,7 @@
 	.v-select.nc-select.vs--single .vs__selected-options {
 		overflow: visible !important;
 	}
+
 
 	// Téléphone : dans une liste ouverte, un choix long n'est plus abrégé au milieu (« Afficher
 	// uniquement aux co… connectés ») ; il passe entier sur deux lignes.

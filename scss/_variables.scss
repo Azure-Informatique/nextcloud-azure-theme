@@ -201,6 +201,11 @@ $contenu-reglages: ':is(.settings-content, #{css-module('settingsContent')})';
 	}
 }
 
+// Le menu déroulant ci-dessous ne dépend pas du contexte d'appel (éclaté à la racine
+// par @at-root) : toutes ses émissions sont strictement identiques. Ne l'émettre
+// qu'une fois par feuille compilée pour ne pas dupliquer ses règles.
+$select-field-menu-emis: false !default;
+
 @mixin select-field($dropdown: true) {
 	display: flex;
 	flex-direction: column;
@@ -258,7 +263,7 @@ $contenu-reglages: ':is(.settings-content, #{css-module('settingsContent')})';
 			}
 		}
 	}
-	@if $dropdown {
+	@if $dropdown and not $select-field-menu-emis {
 		@at-root body:has(.modal-container) .vs__dropdown-menu{
 			border: 1px solid $theme-divider !important;
 			box-shadow: none !important;
@@ -308,6 +313,7 @@ $contenu-reglages: ':is(.settings-content, #{css-module('settingsContent')})';
 				}
 			}
 		}
+		$select-field-menu-emis: true !global;
 	}
 }
 

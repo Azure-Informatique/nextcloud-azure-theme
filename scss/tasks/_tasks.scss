@@ -367,11 +367,21 @@
 					@include single-select($dropdown: false);
 					@include tasks-select-desactive;
 					width: 100%;
-					&:not(.nc-select) {
+					// Liste vide (Statut, Visibilité) : le champ garde sa largeur pour
+					// montrer l'indication « Sélectionner un statut », que le mixin
+					// single-select sinon réduit à 0 px (NC35-001) ; le miroir
+					// :not(.nc-select.vs--single) donne à cette règle la spécificité
+					// du mixin, et l'exclusion :not(.vs__selected ~ …) la limite
+					// aux listes sans valeur affichée.
+					&:not(.nc-select):not(.nc-select.vs--single) {
 						.vs__selected-options {
-							input.vs__search {
+							input.vs__search:not(.vs__selected ~ input.vs__search) {
 								width: 100% !important;
 							}
+						}
+					}
+					&:not(.nc-select) {
+						.vs__selected-options {
 							.placeholder__icon {
 								+ input.vs__search {
 									padding-inline-start: 40px;

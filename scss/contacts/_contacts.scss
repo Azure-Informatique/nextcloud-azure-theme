@@ -445,6 +445,19 @@
 							fill: $colour-forground-1;
 						}
 					}
+					// Correction cible tactile (WCAG 2.5.8) : l'icône de 18 px ci-dessus réduisait
+					// aussi la croix et le chevron des NcSelect des propriétés à 18 px ; au
+					// téléphone la cible remonte à 24 px, la marge négative garde la place de 18 px.
+					@media (max-width: $bp-640) {
+						.v-select .vs__actions :is(button, .vs__clear) {
+							width: 24px;
+							height: 24px;
+							min-width: unset;
+							min-height: unset;
+							margin: -3px;
+							padding: 0;
+						}
+					}
 					// Contacts estompe le libellé (opacité 0,7) : sur le muted de la charte, 3,6:1 seulement.
 					> span {
 						opacity: 1;
