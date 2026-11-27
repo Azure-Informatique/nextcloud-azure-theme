@@ -5,7 +5,7 @@
 -->
 <div align="center">
 
-<img src="img/favicon.svg" width="84" height="84" alt="Logo du Thème Azure">
+<img src="docs/images/logo.png" width="84" height="84" alt="Logo du Thème Azure">
 
 # Thème Azure pour Nextcloud
 
