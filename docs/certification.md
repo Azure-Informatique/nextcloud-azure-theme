@@ -4,7 +4,7 @@
 -->
 # Certification du Thème Azure 1.1.4
 
-Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.4, et celles des versions 1.1.3 à 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles) ; la 1.1.3, certifiée de la même façon, a ensuite été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
+Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.4, et celles des versions 1.1.3 à 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles) ; la 1.1.4, certifiée de la même façon que les versions précédentes, a ensuite été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
 
 | Élément | Valeur |
 |---|---|
@@ -35,7 +35,7 @@ La 1.1.4 corrige neuf points d'affichage et d'accessibilité tactile, sans autre
 | Parcours complet 1.1.3 / 1.1.4 au pixel, Nextcloud 34 et 35 | 4802 paires d'écrans (2408 sur 34, 2394 sur 35 : toutes les applications du parcours d'audit, comptes utilisateur et administrateur, ordinateur, tablette et téléphone tactile, clair et sombre) : 234 écarts, tous cantonnés aux zones corrigées (C-01 : 53, C-02 : 96, C-04 : 5, C-05 : 13, icône « Total » : 31, champ Statut : 28, chevrons : 8, les autres correctifs sans changement visuel mesurable) ; 2659 écarts prouvés comme bruit capture par capture (calibration : deux passages de la même 1.1.3 font bouger 43 à 44 % des captures), 55 non-captures déterministes documentées, 1854 paires identiques : **aucune régression** |
 | Performances (passes alternées 1.1.3 / 1.1.4, banc Nextcloud 34 épinglé) | 12 passes (6 × 1.1.3, 5 × 1.1.4 après écart d'une passe pour charge), 264 mesures, 0 échec, 110 combinaisons écran × vue × métrique (11 écrans, ordinateur et téléphone) : aucune plage de mesures disjointe en défaveur de la 1.1.4 ; 4 plages disjointes en sa faveur (fichiers au téléphone : tâche complète 4585 → 4341 ms, −5,3 % ; fiche de tâche au téléphone : recalcul de style 208 → 193 ms, −7,2 %, tâche complète 361 → 327 ms, −9,5 %, élément utile 296 → 267 ms, −9,9 %) |
 | Tests | PHPUnit 113 tests et 217 assertions, `php -l` sur les 31 fichiers, style de code (php-cs-fixer) sans écart, Psalm sans erreur, ESLint sans erreur, Stylelint : 69 signalements préexistants inchangés, REUSE 3.3 conforme (284 fichiers), `info.xml` bien formé, gitleaks sans fuite : tout passe |
-| Production (Nextcloud 34.0.6) | version préparée le 27 novembre 2026 ; publication et vérification en production à venir |
+| Production (Nextcloud 34.0.6) | déployée et vérifiée le 27 novembre 2026 |
 
 ## Version 1.1.3 : correctifs, sécurité et non-régression
 
