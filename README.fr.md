@@ -14,6 +14,7 @@
 Clair, sombre et rapide : tout change, rien ne ralentit.
 
 [![Version](https://img.shields.io/github/v/release/Azure-Informatique/nextcloud-azure-theme?label=version&color=0078D4)](https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/latest)
+[![App Store Nextcloud](https://img.shields.io/badge/App%20Store-Azure%20Theme-0082C9?logo=nextcloud&logoColor=white)](https://apps.nextcloud.com/apps/azure_theme)
 [![Nextcloud 34 · 35 · 36](https://img.shields.io/badge/Nextcloud-34%20%C2%B7%2035%20%C2%B7%2036-0082C9?logo=nextcloud&logoColor=white)](#compatibilité)
 [![PHP 8.2–8.5](https://img.shields.io/badge/PHP-8.2%E2%80%938.5-777BB4?logo=php&logoColor=white)](#compatibilité)
 [![Licence : AGPL-3.0-or-later](https://img.shields.io/badge/licence-AGPL--3.0--or--later-0B1A30)](LICENSE)
@@ -33,7 +34,7 @@ Clair, sombre et rapide : tout change, rien ne ralentit.
 - **Clair, sombre ou système** : *Azure clair*, *Azure sombre* et *Thème du système*, qui suit l'appareil et ses changements. Chacun choisit sa variante dans *Paramètres personnels → Apparence et accessibilité* ; le changement est instantané, sans recharger la page. Un administrateur peut imposer une variante à tous avec le réglage `enforce_theme` de Nextcloud.
 - **Toute l'interface** : en-tête, menu des applications, navigation, fenêtres, barres latérales, recherche unifiée, notifications, pages de paramètres et de profil, magasin d'applications, connexion et double authentification, partages publics, dépôt de fichiers, formulaires et rendez-vous publics, pages invité de Talk.
 - **Rapide** : aussi rapide que Nextcloud sans thème, souvent plus (voir [Performances](#performances)). Chaque page ne charge que les styles utiles ; aucun sélecteur coûteux, aucune animation au chargement.
-- **Pensé pour le téléphone** : chaque écran vérifié de 1440 à 360 px — aucun débordement, aucun mot coupé, cibles tactiles de 44 px.
+- **Pensé pour le téléphone** : chaque écran vérifié de 1440 à 360 px, en tactile au téléphone — aucun débordement, aucun mot coupé, aucune cible tactile sous 24 px.
 - **Accessible** : contrastes WCAG AA et focus clavier visible ; les thèmes à contraste élevé de Nextcloud et la police OpenDyslexic restent actifs.
 - **Sûr** : API publiques de Nextcloud uniquement, aucun script en ligne, rien de chargé hors de votre serveur ; vos réglages d'apparence Nextcloud ne sont jamais modifiés, et désactiver l'app conserve tous les réglages.
 - **Options d'administration** : page de connexion Azure ou standard ; entrée « Thème Azure » du menu des applications affichée ou masquée.
@@ -75,7 +76,7 @@ Vraies captures de Nextcloud 34 avec le thème, en français, sur une instance d
 
 | | Pris en charge |
 |---|---|
-| Nextcloud | 34, 35, 36 (certifié en totalité sur 34.0.6 ; écrans clés vérifiés sur 35.0.3 et sur la préversion 36.0.0) |
+| Nextcloud | 34, 35, 36 (vérifié en totalité sur 34.0.6 et 35.0.3 ; écrans clés contrôlés sur la préversion 36.0.0) |
 | PHP | 8.2 à 8.5 |
 | Navigateurs | Navigateurs récents basés sur Chromium et Firefox ; Safari non testé |
 
@@ -83,17 +84,25 @@ Vraies captures de Nextcloud 34 avec le thème, en français, sur une instance d
 
 ## Installation
 
-**Depuis la version publiée** (recommandé) :
+**Depuis l'App Store de Nextcloud** (recommandé) : dans *Applications → Personnalisation*, cherchez **Azure Theme** et choisissez *Télécharger et activer*, ou lancez :
+
+```bash
+sudo -u www-data php occ app:install azure_theme
+```
+
+Les mises à jour apparaissent ensuite dans la page *Applications* de Nextcloud, comme pour toute autre app.
+
+**Depuis la version publiée sur GitHub :**
 
 ```bash
 cd /chemin/vers/nextcloud/apps     # ou custom_apps
-curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/latest/download/azure_theme-1.1.3.tar.gz
-tar xzf azure_theme-1.1.3.tar.gz && rm azure_theme-1.1.3.tar.gz
+curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/download/v1.1.4/azure_theme-1.1.4.tar.gz
+tar xzf azure_theme-1.1.4.tar.gz && rm azure_theme-1.1.4.tar.gz
 chown -R www-data:www-data azure_theme
 sudo -u www-data php ../occ app:enable azure_theme
 ```
 
-Le thème est alors actif pour tout le monde et suit le réglage clair ou sombre de chaque appareil. Pour mettre à jour, remplacez le dossier `azure_theme` par la nouvelle version, puis lancez `occ upgrade`.
+Le thème est alors actif pour tout le monde et suit le réglage clair ou sombre de chaque appareil. Pour mettre à jour une installation manuelle, remplacez le dossier `azure_theme` par la nouvelle version, puis lancez `occ upgrade`.
 
 **Commandes utiles :**
 
@@ -108,9 +117,9 @@ occ azure_theme:purge-settings --force                # effacer tous les réglag
 
 ## Performances
 
-Médiane de trois passes alternées (sans thème / 1.0.0 / 1.1.0) sur Nextcloud 34.0.6 avec 300 fichiers, sur des cœurs de processeur dédiés ; chaque version suivante est mesurée face à la précédente, sans aucun ralentissement :
+Mesures de référence de la version 1.1.0 face à Nextcloud sans thème : médiane de trois passes alternées sur Nextcloud 34.0.6 avec 300 fichiers, sur des cœurs de processeur dédiés.
 
-| | Sans thème | **Thème Azure 1.1** |
+| | Sans thème | **Thème Azure 1.1.0** |
 |---|---|---|
 | Fichiers utilisable (cache chaud) | 6,1 s | **4,6 s** |
 | Talk utilisable (cache chaud) | 3,4 s | **3,0 s** |
@@ -118,6 +127,8 @@ Médiane de trois passes alternées (sans thème / 1.0.0 / 1.1.0) sur Nextcloud 
 | Ouverture de la barre latérale (INP) | 288 ms | **192 ms** |
 | Menu des applications (INP) | 216 ms | **24 ms** |
 | Saisie dans la recherche (INP) | 208 ms | **72 ms** |
+
+Chaque version suivante est mesurée face à la précédente en passes alternées, et aucune n'a été plus lente. Pour la 1.1.4 : 12 passes alternées face à la 1.1.3 (264 mesures sur 11 écrans, ordinateur et téléphone), aucun ralentissement et quatre gains mesurables, jusqu'à 9,9 % plus vite vers le contenu utile au téléphone ; ses feuilles de style sont aussi plus légères de 158 Ko.
 
 Comment : la compilation résout chaque sélecteur `:has()` sur un ancêtre (qui fait recalculer à Chromium le style de pages entières à chaque modification), chaque section des paramètres a sa propre petite feuille de style, et les transitions se limitent aux couleurs, à l'opacité et aux transformations. Détails : [docs/certification.md](docs/certification.md).
 

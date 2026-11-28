@@ -14,6 +14,7 @@
 Light, dark and fast — a whole new look, zero slowdown.
 
 [![Release](https://img.shields.io/github/v/release/Azure-Informatique/nextcloud-azure-theme?label=release&color=0078D4)](https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/latest)
+[![Nextcloud App Store](https://img.shields.io/badge/App%20Store-Azure%20Theme-0082C9?logo=nextcloud&logoColor=white)](https://apps.nextcloud.com/apps/azure_theme)
 [![Nextcloud 34 · 35 · 36](https://img.shields.io/badge/Nextcloud-34%20%C2%B7%2035%20%C2%B7%2036-0082C9?logo=nextcloud&logoColor=white)](#compatibility)
 [![PHP 8.2–8.5](https://img.shields.io/badge/PHP-8.2%E2%80%938.5-777BB4?logo=php&logoColor=white)](#compatibility)
 [![License: AGPL-3.0-or-later](https://img.shields.io/badge/license-AGPL--3.0--or--later-0B1A30)](LICENSE)
@@ -33,7 +34,7 @@ Light, dark and fast — a whole new look, zero slowdown.
 - **Light, dark or system** — *Azure Light*, *Azure Dark* and *System default*, which follows the device and its changes. Each user picks a variant in *Personal settings → Appearance and accessibility*; switching is instant, without reloading the page. Admins can impose one variant to everyone with Nextcloud's own `enforce_theme` setting.
 - **The whole interface** — header, app menu, navigation, dialogs, sidebars, unified search, notifications, settings and profile pages, app store, login and two-factor pages, public shares, file drop, public forms and appointments, Talk guest pages.
 - **Fast** — as fast as Nextcloud without any theme, and often faster (see [Performance](#performance)). Each page only loads the styles it needs; no costly selectors, no load animations.
-- **Mobile-ready** — every screen checked from 1440 to 360 px: no horizontal overflow, no cut words, 44 px touch targets.
+- **Mobile-ready** — every screen checked from 1440 to 360 px, with touch emulation on phones: no horizontal overflow, no cut words, no touch target under 24 px.
 - **Accessible** — WCAG AA contrasts and visible keyboard focus; Nextcloud's high-contrast themes and the OpenDyslexic font keep working.
 - **Safe** — public Nextcloud APIs only, no inline script, nothing loaded from outside your server; your own Nextcloud appearance settings are never changed, and disabling the app keeps every setting.
 - **Admin options** — keep or remove the Azure login page; show or hide the *Azure Theme* entry in the app menu.
@@ -69,7 +70,7 @@ More screenshots (dashboard, Talk, Calendar, settings, login page, mobile) are i
 
 | | Supported |
 |---|---|
-| Nextcloud | 34, 35, 36 (fully certified on 34.0.6; key screens checked on 35.0.3 and 36.0.0 pre-release) |
+| Nextcloud | 34, 35, 36 (fully verified on 34.0.6 and 35.0.3; key screens checked on the 36.0.0 pre-release) |
 | PHP | 8.2 to 8.5 |
 | Browsers | Current Chromium-based browsers and Firefox; Safari not tested |
 
@@ -77,17 +78,25 @@ More screenshots (dashboard, Talk, Calendar, settings, login page, mobile) are i
 
 ## Installation
 
-**From the release** (recommended):
+**From the Nextcloud App Store** (recommended): in *Apps → Customization*, find **Azure Theme** and choose *Download and enable*, or run:
+
+```bash
+sudo -u www-data php occ app:install azure_theme
+```
+
+Updates then appear in Nextcloud's *Apps* page like any other app.
+
+**From the GitHub release:**
 
 ```bash
 cd /path/to/nextcloud/apps        # or custom_apps
-curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/latest/download/azure_theme-1.1.3.tar.gz
-tar xzf azure_theme-1.1.3.tar.gz && rm azure_theme-1.1.3.tar.gz
+curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/download/v1.1.4/azure_theme-1.1.4.tar.gz
+tar xzf azure_theme-1.1.4.tar.gz && rm azure_theme-1.1.4.tar.gz
 chown -R www-data:www-data azure_theme
 sudo -u www-data php ../occ app:enable azure_theme
 ```
 
-The theme is then active for everyone, following each device's light or dark setting. To update, replace the `azure_theme` folder with the new release and run `occ upgrade`.
+The theme is then active for everyone, following each device's light or dark setting. To update a manual installation, replace the `azure_theme` folder with the new release and run `occ upgrade`.
 
 **Useful commands:**
 
@@ -102,9 +111,9 @@ occ azure_theme:purge-settings --force                # erase all theme settings
 
 ## Performance
 
-Median of three alternating runs (no theme / 1.0.0 / 1.1.0) on Nextcloud 34.0.6 with 300 files, isolated CPU cores; every later release is measured against the previous one with no slowdown:
+Reference measurements of version 1.1.0 against Nextcloud without any theme: median of three alternating runs on Nextcloud 34.0.6 with 300 files, on isolated CPU cores.
 
-| | No theme | **Azure Theme 1.1** |
+| | No theme | **Azure Theme 1.1.0** |
 |---|---|---|
 | Files usable (warm cache) | 6.1 s | **4.6 s** |
 | Talk usable (warm cache) | 3.4 s | **3.0 s** |
@@ -112,6 +121,8 @@ Median of three alternating runs (no theme / 1.0.0 / 1.1.0) on Nextcloud 34.0.6 
 | Opening the sidebar (INP) | 288 ms | **192 ms** |
 | App menu (INP) | 216 ms | **24 ms** |
 | Typing in search (INP) | 208 ms | **72 ms** |
+
+Every later release is measured against the previous one with alternating runs, and none has been slower. For 1.1.4: 12 alternating runs against 1.1.3 (264 measurements on 11 desktop and phone screens), no slowdown and four measurable gains, up to 9.9 % faster to the main content on phones; its stylesheets are also 158 KB lighter.
 
 How: the build resolves every ancestor `:has()` selector (which makes Chromium restyle whole pages on each DOM change), each settings section gets its own small stylesheet, and transitions are limited to colour, opacity and transform. Details: [docs/certification.md](docs/certification.md).
 
