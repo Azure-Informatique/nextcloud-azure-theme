@@ -4,7 +4,7 @@
 -->
 # Certification du Thème Azure 1.1.5
 
-Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.5, et celles des versions 1.1.4 à 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles).
+Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.5, et celles des versions 1.1.4 à 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles) ; la 1.1.5 a ensuite été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
 
 | Élément | Valeur |
 |---|---|
@@ -36,6 +36,8 @@ La 1.1.5 corrige neuf défauts d'affichage signalés en production, sans autre c
 | Moteur de conditions | Tests `jetons.mjs` et `variantes.mjs` sur Nextcloud 34 et 35 : tous les contrôles passent (le moteur `azure-has.js` donne les mêmes résultats que `:has()` natif) ; la nouvelle condition est posée à l'ouverture des deux fenêtres visées et sur aucune autre |
 | Performances (passes alternées 1.1.4 / 1.1.5, Nextcloud 34 et 35) | 104 mesures sur cinq écrans (tableau de bord au téléphone, Disponibilités, Flux, Contacts, Fichiers) : toutes les plages de mesures se chevauchent ou sont en faveur de la 1.1.5 (Contacts sur 34 : recalcul de style 321 → 305 ms) ; tableau de bord au téléphone sur 10 passes : médiane 1259 → 1254 ms (34) et 1220 → 1198 ms (35) |
 | Tests | PHPUnit 113 tests et 217 assertions, Psalm sans erreur, ESLint sans erreur, Stylelint : 69 signalements préexistants inchangés, REUSE 3.3 conforme, gitleaks sans fuite : tout passe |
+| Mise à jour depuis la 1.1.4 | paquet de l'étiquette installé sur les deux bancs puis `occ upgrade` : réussie, aucune erreur ni avertissement du thème au journal ; parcours des écrans corrigés (88 pages, 34 et 35, ordinateur et téléphone, clair et sombre) sans erreur JavaScript, sans requête du thème en échec, sans débordement horizontal |
+| Production (Nextcloud 34.0.6) | déployée et vérifiée le 28 novembre 2026 : `occ upgrade` réussi, connexion et `status.php` en 200, feuilles servies identiques au paquet, aucun avertissement ni erreur au journal |
 
 ## Version 1.1.4 : correctifs, sécurité et non-régression
 
