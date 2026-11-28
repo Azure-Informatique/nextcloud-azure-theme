@@ -68,6 +68,7 @@ Le thème fonctionne entièrement dans votre Nextcloud et ne charge rien depuis 
     <website>https://github.com/Azure-Informatique/nextcloud-azure-theme</website>
     <bugs>https://github.com/Azure-Informatique/nextcloud-azure-theme/issues</bugs>
     <repository type="git">https://github.com/Azure-Informatique/nextcloud-azure-theme.git</repository>
+    <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.4/docs/images/social-preview.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.4/docs/images/store/apercu-en-clair.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.4/docs/images/store/apercu-en-sombre.png</screenshot>
     <screenshot>https://raw.githubusercontent.com/Azure-Informatique/nextcloud-azure-theme/v1.1.4/docs/images/store/fichiers.png</screenshot>
