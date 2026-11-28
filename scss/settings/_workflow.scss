@@ -19,14 +19,21 @@
 				margin-bottom: 16px;
 				// Contenu calé en haut et bouton en bas de fiche : des fiches de même hauteur
 				// centraient leurs icônes à des hauteurs différentes.
+				// Marges de fiche équilibrées : l'icône était à 13 px du haut mais à 32 px de son
+				// titre (marge haute des titres de réglages), d'où une icône « collée en haut ».
 				.actions__item{
 					max-width: none;
 					margin: 0;
+					padding: 20px 16px 16px;
+					gap: 12px;
 					justify-content: flex-start;
 					.actions__item__description{
 						flex: 1 1 auto;
 						display: flex;
 						flex-direction: column;
+						h3{
+							margin-top: 0;
+						}
 						> .button-vue{
 							margin-top: auto;
 						}
@@ -34,11 +41,11 @@
 				}
 				a{
 					margin: 0;
-					padding: 12px;
+					padding: 20px 16px 16px;
 					border: 1px solid $theme-divider;
 					background-color: transparent;
 					border-radius: $rounded-6;
-					gap: 8px;
+					gap: 12px;
 					transition: transition-douce();
 					.icon-vue{
 						margin: 0;

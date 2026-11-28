@@ -300,6 +300,12 @@
 				}
 				.contact-header__quick-actions {
 					margin-top: 4px;
+					// Sans aucune action (fiche en édition, ou contact sans e-mail ni téléphone) : sa marge et
+					// son remplissage ajoutaient 26 px sous les champs Nom / Fonction / Société (ou sous le
+					// nom), décalés de 13 px vers le haut par rapport à l'avatar.
+					&:not(:has(.quick-action)) {
+						display: none;
+					}
 				}
 				.contact-header-avatar__menu {
 					.action-item__menutoggle {

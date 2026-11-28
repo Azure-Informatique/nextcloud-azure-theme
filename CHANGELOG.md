@@ -7,6 +7,25 @@
 
 Les changements notables de ce projet sont consignés dans ce fichier.
 
+## 1.1.5
+
+### Corrections
+- **Sites externes, fenêtre « Configurer le site »** et **Stockages externes, fenêtre « Ajouter un stockage »** : les champs étaient collés au bord gauche de la fenêtre alors que le titre et les boutons avaient une marge. Contenu et boutons sont désormais alignés sur le titre, à 16 px de chaque bord. Dans « Ajouter un stockage », le libellé du premier champ ne chevauche plus le filet sous le titre. Ordinateur et téléphone.
+- **Tableau de bord au téléphone** : le statut et la météo étaient sur une même ligne, et une météo au libellé long débordait de l'écran à droite. Ils sont de nouveau l'un sous l'autre, centrés ; un libellé très long se termine par « … ». Rien ne change sur ordinateur.
+- **Sélecteur de fichiers en thème sombre** (Assistant, Fichiers › Déplacer ou copier…) : le « + » du bouton « Nouveau » était noir sur le bleu du bouton ; il est blanc, comme le texte, dans les deux thèmes.
+- **Agenda, éditeur complet d'un événement (« Plus de détails »)** sur ordinateur : la croix de fermeture touchait presque le coin arrondi de la fenêtre, ce qui se voyait surtout au survol. Elle est placée comme dans les autres fenêtres (10 px du haut, 16 px de la droite). Rien ne change au téléphone, où l'éditeur est en plein écran.
+- **Contacts, en-tête de la fiche** : en modification, le bloc Nom / Fonction / Société était 13 px plus haut que le centre de l'avatar, à cause d'une zone d'actions vide sous les champs. Cette zone est masquée quand elle ne contient aucune action : le bloc est centré sur l'avatar, en modification comme pour un contact sans e-mail ni téléphone. Ordinateur et téléphone.
+- **Fichiers, onglet Partage en thème sombre** : dans les pastilles bleues « Lien interne » et « Créer un lien de partage public » (puis « Lien de partage »), le dessin de l'icône était noir. Il est blanc, comme en thème clair, grâce à la variante d'origine fournie par Nextcloud. La pastille grise « Autres utilisateurs ayant accès » ne change pas.
+- **LibreSign, listes de révocation des certificats** : les avatars de la première colonne étaient coupés à droite. La cellule retrouve la marge prévue par LibreSign (défaut de l'app, présent sans le thème) et l'avatar y est centré.
+- **Réglages d'administration, Flux** : dans les cartes des flux disponibles, l'icône était collée en haut de la carte (13 px) mais à 32 px de son titre. Les marges sont équilibrées (20 px au-dessus, 12 px jusqu'au titre, 16 px sur les côtés et en bas), identiques pour toutes les cartes, y compris « Plus de flux » ; même chose dans les réglages personnels.
+- **Réglages personnels, Disponibilités** : chaque créneau empilait l'heure de début, « à », l'heure de fin et la corbeille sur quatre lignes. Un créneau tient maintenant sur une ligne : le jour à gauche, puis « [début] à [fin] [corbeille] », et le « + » à droite (hauteur d'un jour : 157 → 60 px sur ordinateur, 241 → 121 px au téléphone). Au téléphone, les deux champs se partagent la largeur, sans débordement à 360 px, et la corbeille garde sa cible tactile de 44 px. Le bloc **Absence** occupe toute la largeur de la carte (600 px auparavant).
+
+### Non-régression, sécurité et performances
+- **Sécurité** : seules des feuilles de style changent ; aucun code PHP, JavaScript ou gabarit modifié, aucune dépendance ajoutée, aucune ressource externe. Le script d'accompagnement du thème est régénéré par la compilation avec une seule condition de plus (la fenêtre des Sites et Stockages externes). Psalm (y compris l'analyse des flux de données) et gitleaks : aucun signalement.
+- **CSS compilé** comparé au paquet 1.1.4 règle par règle : seules les règles des corrections ci-dessus changent, dans les feuilles des écrans concernés.
+- **Non-régression au pixel sur Nextcloud 34 et 35** (ordinateur et téléphone tactile, clair et sombre), 1.1.4 et 1.1.5 comparées dans les mêmes conditions : les écrans corrigés ne changent que dans les zones visées, et les écrans voisins (autres fenêtres, pages sans fenêtre, tableau de bord sur ordinateur, autres vues de LibreSign, flux configurés, fiche de contact en lecture, onglet Partage en clair) sont identiques.
+- **Performances** mesurées en passes alternées 1.1.4 / 1.1.5 sur Nextcloud 34 et 35 (tableau de bord au téléphone, Disponibilités, Flux, Contacts, Fichiers) : aucune mesure en défaveur de la 1.1.5.
+
 ## 1.1.4
 
 ### Corrections

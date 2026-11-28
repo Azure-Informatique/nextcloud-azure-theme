@@ -11,6 +11,9 @@
 	&#{reglage(availability)}{
 		.week-day-container{
 			margin-bottom: 0;
+			@media (min-width: $bp-512 + 1) {
+				max-width: 640px;
+			}
 			@media (max-width: $bp-512) {
 				width: 100%;
 				max-width: 100%;
@@ -159,6 +162,55 @@
 						}
 					}
 				}
+				// Un créneau tient sur une ligne : « [début] à [fin] [corbeille] ». Nextcloud donne à
+				// chaque champ toute la largeur du créneau et le laisse passer à la ligne : début, « à »,
+				// fin et corbeille s'empilaient (157 px par jour sur ordinateur, 241 au téléphone).
+				.availability-slot{
+					flex-wrap: nowrap;
+					> .input-field{
+						width: auto;
+						min-width: 0;
+					}
+				}
+				.availability-slot-group{
+					gap: 8px;
+					// Peut rétrécir sous la largeur de son créneau (à 360 px, la corbeille dépassait de 4 px).
+					min-width: 0;
+					&:empty{
+						display: none;
+					}
+				}
+				// Ordinateur : grille jour | créneaux | « + », chaque champ de 150 px au plus.
+				@media (min-width: $bp-512 + 1) {
+					display: grid;
+					grid-template-columns: 120px minmax(0, 1fr) auto;
+					align-items: start;
+					column-gap: 16px;
+					max-width: none;
+					.label-weekday{
+						width: auto;
+						min-width: 0;
+						min-height: 34px;
+						display: flex;
+						align-items: center;
+					}
+					.availability-slots{
+						max-width: none;
+						width: auto;
+						min-width: 0;
+					}
+					.availability-slot > .input-field{
+						flex: 0 1 150px;
+					}
+					.empty-content{
+						min-height: 34px;
+						display: flex;
+						align-items: center;
+					}
+					> button.add-another{
+						margin-top: 2px;
+					}
+				}
 				// Téléphone : grille à deux colonnes (jour | bouton « + »), créneaux sur toute la
 				// largeur en dessous. Placement par la structure (classes), jamais par le libellé
 				// traduit des boutons : rien ne peut se poser sur le texte, quelle que soit la langue.
@@ -179,6 +231,20 @@
 						grid-row: 2;
 						min-width: 0;
 						width: 100%;
+						max-width: none;
+					}
+					// Les deux champs se partagent la largeur, la corbeille garde ses 44 px.
+					.availability-slot{
+						> .input-field{
+							flex: 1 1 0;
+						}
+						.start-date input,
+						.end-date input{
+							padding-inline: 8px;
+						}
+						> button{
+							flex: none;
+						}
 					}
 					> button.add-another{
 						grid-column: 2;
@@ -227,9 +293,10 @@
 				@include primary-button;
 			}
 		}
+		// Absence : toute la largeur de la carte, comme les autres réglages (600 px avant).
 		#{css-module('absenceForm')}{
 			gap: 0px;
-			max-width: 600px;
+			max-width: none;
 			label{
 				font-size: $text-13;
 				line-height: $leading-20;

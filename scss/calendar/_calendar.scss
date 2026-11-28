@@ -1264,6 +1264,13 @@
 			.app-full {
 				margin-top: 24px;
 			}
+			// Croix : l'Agenda la place à 4 px du coin, prévu pour le plein écran ; dans la fenêtre
+			// arrondie, son rond de survol touchait presque le bord. Même retrait que la croix des
+			// autres fenêtres (10 px du haut, 16 px de la droite).
+			.modal-container.modal-container .calendar-edit-full__default-close {
+				top: 10px;
+				inset-inline-end: 16px;
+			}
 		}
 		// Téléphone : le bouton de fermeture passe dans l'en-tête de l'éditeur ; les 64 px réservés
 		// au-dessus pour l'ancien bouton restaient vides.

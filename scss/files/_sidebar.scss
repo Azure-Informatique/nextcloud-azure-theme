@@ -73,6 +73,13 @@
 					background-color: $colour-brand;
 					color: $colour-white;
 				}
+				// Thème sombre : Nextcloud fait passer ses icônes « -white » en noir. Sur le bleu fixe de ces
+				// pastilles, on reprend la variante blanche d'origine (variables d'icônes de Nextcloud).
+				.avatar-link-share,
+				.avatar-external {
+					--icon-public-white: var(--original-icon-public-white);
+					--icon-external-white: var(--original-icon-external-white);
+				}
 				.sharing-entry__actions .button-vue--icon-only,
 				.action-item__menutoggle.button-vue--icon-only {
 					border: 0;

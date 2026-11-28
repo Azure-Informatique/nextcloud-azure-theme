@@ -2,17 +2,40 @@
   - SPDX-FileCopyrightText: 2026 Azure Informatique
   - SPDX-License-Identifier: AGPL-3.0-or-later
 -->
-# Certification du Thème Azure 1.1.4
+# Certification du Thème Azure 1.1.5
 
-Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.4, et celles des versions 1.1.3 à 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles) ; la 1.1.4, certifiée de la même façon que les versions précédentes, a ensuite été déployée et vérifiée sur une instance de production Nextcloud 34.0.6.
+Ce document rassemble les vérifications menées avant la publication du Thème Azure 1.1.5, et celles des versions 1.1.4 à 1.1.0 qu'elle prolonge. Elles ont été faites sur des instances de test dédiées (jamais sur des données réelles).
 
 | Élément | Valeur |
 |---|---|
-| Version certifiée | 1.1.4 — étiquette `v1.1.4` (correctifs des versions 1.1.0 à 1.1.3, certifiées en totalité ci-dessous) |
-| Nextcloud | **34.0.6 et 35.0.3 : vérification complète de la 1.1.4** ; 36.0.0 (préversion du 24 novembre 2026) : contrôle des écrans clés (1.1.3) |
+| Version certifiée | 1.1.5 — étiquette `v1.1.5` (correctifs des versions 1.1.0 à 1.1.4, certifiées en totalité ci-dessous) |
+| Nextcloud | **34.0.6 et 35.0.3 : vérification ciblée de la 1.1.5, complète de la 1.1.4** ; 36.0.0 (préversion du 24 novembre 2026) : contrôle des écrans clés (1.1.3) |
 | Navigateur | Chromium 156 (ordinateur 1440 × 900, tablette 1024 et 768, téléphone 390 et 360 par émulation) |
 | Outils | Playwright, axe-core 4.14, PHPUnit 13, Psalm 6 (avec `--taint-analysis`), REUSE 3.3, gitleaks 8 |
-| Date | 27 novembre 2026 |
+| Date | 28 novembre 2026 |
+
+## Version 1.1.5 : correctifs, sécurité et non-régression
+
+La 1.1.5 corrige neuf défauts d'affichage signalés en production, sans autre changement. Chacun a d'abord été reproduit et mesuré sur les deux bancs (Nextcloud 34.0.6 et 35.0.3, ordinateur 1440 px et téléphone tactile 390 px, clair et sombre), puis corrigé et mesuré de nouveau :
+
+1. **Sites externes « Configurer le site » et Stockages externes « Ajouter un stockage »** : champs à 1 px du bord gauche de la fenêtre (13 px à droite, titre à 17 px) → 17 px de chaque côté, comme le titre et les boutons ; libellé du premier champ de « Ajouter un stockage » : chevauchement de 4 px sur le filet du titre → 8 px d'écart. 8 combinaisons sur 8.
+2. **Tableau de bord au téléphone** : ligne Statut + Météo de 398 px dans un écran de 390 px avec la météo réelle (456 px avec un libellé long, 572 px très long) → l'un sous l'autre, 390 px, libellé très long terminé par « … ». Ordinateur : 0 pixel de différence.
+3. **Sélecteur de fichiers en sombre** : « + » du bouton « Nouveau » rgb(11,15,28) sur le bleu → blanc ; clair et survol : 0 pixel de différence.
+4. **Agenda, éditeur complet sur ordinateur** : croix à 5 px du haut et de la droite de la fenêtre arrondie → 11 et 17 px, comme les autres fenêtres ; aucun chevauchement à 1440 et 1100 px ; popup et téléphone : 0 pixel de différence.
+5. **Contacts, en-tête de la fiche** : bloc Nom / Fonction / Société 13 px au-dessus du centre de l'avatar en modification → 0 px (8 combinaisons) ; contact sans e-mail ni téléphone en lecture : 11 → 2 px ; fiche en lecture d'un contact complet : identique.
+6. **Fichiers, onglet Partage en sombre** : dessin noir dans les pastilles bleues « Lien interne » et lien public → blanc (variables d'icônes d'origine de Nextcloud, aucune image embarquée) ; pastille grise inchangée ; thème clair et page publique d'un lien : 0 pixel de différence.
+7. **LibreSign, listes de révocation** : avatar de 32 px à 12 px du bord gauche et 0 px du bord droit de sa colonne de 44 px (défaut de l'app, présent sans le thème) → 6 px de chaque côté ; autres vues de LibreSign : 0 pixel de différence.
+8. **Réglages, Flux** : icône à 13 px du haut de la carte et 32 px de son titre → 21 et 12 px, côtés et bas à 17 px, identiques pour les cartes à bouton et « Plus de flux » ; flux configurés : identiques (bruit d'anticrénelage seulement).
+9. **Réglages, Disponibilités** : créneau sur quatre lignes (jour de 157 px sur ordinateur, 241 px au téléphone) → une ligne (60 et 121 px) ; deux créneaux d'un même jour espacés de 8 px ; aucun débordement à 1440, 1024, 390 et 360 px ; corbeille à 44 px au téléphone ; bloc Absence 600 → 862 px (pleine largeur de la carte).
+
+| Contrôle | Résultat |
+|---|---|
+| Sécurité | Seuls changent huit fichiers SCSS, la documentation et `info.xml` (version) : aucun fichier PHP, JavaScript source ou gabarit modifié, aucune dépendance ajoutée, aucune ressource externe ; surface d'attaque inchangée. `azure-has.js` est régénéré par la compilation avec une condition de plus (fenêtres des Sites et Stockages externes). Psalm (y compris `--taint-analysis`) sans erreur, gitleaks sans fuite |
+| CSS compilé, comparé au paquet 1.1.4 publié | 10 feuilles sur 145 changent, uniquement par les règles des corrections (vérifié règle par règle) ; taille compressée : +6 à +271 octets par feuille modifiée |
+| Non-régression au pixel, Nextcloud 34 et 35 | 1.1.4 et 1.1.5 comparées dans les mêmes conditions (même navigateur, mêmes données ; la CSS de la 1.1.4 servie à la page par interception réseau) sur les écrans corrigés et leurs voisins, ordinateur et téléphone, clair et sombre : différences uniquement dans les zones visées ; écrans voisins identiques ; « + » du sélecteur, croix de l'Agenda et pastilles du Partage : seul l'élément corrigé change |
+| Moteur de conditions | Tests `jetons.mjs` et `variantes.mjs` sur Nextcloud 34 et 35 : tous les contrôles passent (le moteur `azure-has.js` donne les mêmes résultats que `:has()` natif) ; la nouvelle condition est posée à l'ouverture des deux fenêtres visées et sur aucune autre |
+| Performances (passes alternées 1.1.4 / 1.1.5, Nextcloud 34 et 35) | 104 mesures sur cinq écrans (tableau de bord au téléphone, Disponibilités, Flux, Contacts, Fichiers) : toutes les plages de mesures se chevauchent ou sont en faveur de la 1.1.5 (Contacts sur 34 : recalcul de style 321 → 305 ms) ; tableau de bord au téléphone sur 10 passes : médiane 1259 → 1254 ms (34) et 1220 → 1198 ms (35) |
+| Tests | PHPUnit 113 tests et 217 assertions, Psalm sans erreur, ESLint sans erreur, Stylelint : 69 signalements préexistants inchangés, REUSE 3.3 conforme, gitleaks sans fuite : tout passe |
 
 ## Version 1.1.4 : correctifs, sécurité et non-régression
 
@@ -100,7 +123,7 @@ La 1.1.1 corrige cinq points d'affichage, sans autre changement :
 
 Agenda 6 ouvre les événements dans une fenêtre sans onglets : il n'est pas concerné par le point 1. Dans l'en-tête, le nom de l'app et le bouton du menu sont centrés sur la même ligne (28 px) ; l'encre des points du bouton est 1,5 px plus bas que celle du texte, ce qui tient au dessin de l'icône : rien n'a été modifié. Les sections suivantes restent celles de la certification complète de la 1.1.0, toujours valables pour la 1.1.1.
 
-**Conclusion : le Thème Azure 1.1.4 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
+**Conclusion : le Thème Azure 1.1.5 est certifié.** Aucune faille de sécurité connue, aucune fuite de données, aucune régression fonctionnelle, aucun défaut d'affichage dû au thème sur les écrans vérifiés, et des performances au moins équivalentes à celles de Nextcloud sans le thème.
 
 ## 1. Sécurité
 

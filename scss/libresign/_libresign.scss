@@ -11,4 +11,10 @@
 	#content-vue.app-libresign main.app-content:first-child {
 		border-inline-start: 0 !important;
 	}
+	// Listes de révocation : l'avatar de 32 px de la colonne de 44 px était coupé à droite. La marge
+	// de 6 px prévue par LibreSign pour cette cellule perd contre celle de 12 px des cellules
+	// (défaut de l'app, présent sans le thème) : on la rétablit.
+	#content-vue.app-libresign .crl-table tbody td.crl-table__cell--spacer {
+		padding: 6px;
+	}
 }

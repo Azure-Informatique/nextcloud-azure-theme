@@ -83,12 +83,15 @@
 				min-width: 0;
 				max-width: 100%;
 			}
-			// Téléphone : statut et météo sur une seule ligne ; chaque pilule rétrécit au besoin et
-			// son texte se termine par « … ».
+			// Téléphone : statut puis météo, l'un sous l'autre et centrés (sur une ligne, une météo
+			// longue débordait à droite). Le menu de la météo (NcActions, inline-block) suit la
+			// largeur de sa pilule pour que le texte se termine par « … » au lieu de déborder.
 			@media (max-width: $bp-640) {
-				flex-wrap: nowrap;
-				> li {
-					flex: 0 1 auto;
+				flex-direction: column;
+				align-items: center;
+				.action-item {
+					display: block;
+					max-width: 100%;
 				}
 			}
 			li button,

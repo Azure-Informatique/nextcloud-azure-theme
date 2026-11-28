@@ -90,8 +90,8 @@ Updates then appear in Nextcloud's *Apps* page like any other app.
 
 ```bash
 cd /path/to/nextcloud/apps        # or custom_apps
-curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/download/v1.1.4/azure_theme-1.1.4.tar.gz
-tar xzf azure_theme-1.1.4.tar.gz && rm azure_theme-1.1.4.tar.gz
+curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/download/v1.1.5/azure_theme-1.1.5.tar.gz
+tar xzf azure_theme-1.1.5.tar.gz && rm azure_theme-1.1.5.tar.gz
 chown -R www-data:www-data azure_theme
 sudo -u www-data php ../occ app:enable azure_theme
 ```
@@ -122,7 +122,7 @@ Reference measurements of version 1.1.0 against Nextcloud without any theme: med
 | App menu (INP) | 216 ms | **24 ms** |
 | Typing in search (INP) | 208 ms | **72 ms** |
 
-Every later release is measured against the previous one with alternating runs, and none has been slower. For 1.1.4: 12 alternating runs against 1.1.3 (264 measurements on 11 desktop and phone screens), no slowdown and four measurable gains, up to 9.9 % faster to the main content on phones; its stylesheets are also 158 KB lighter.
+Every later release is measured against the previous one with alternating runs, and none has been slower. For 1.1.4: 12 alternating runs against 1.1.3 (264 measurements on 11 desktop and phone screens), no slowdown and four measurable gains, up to 9.9 % faster to the main content on phones; its stylesheets are also 158 KB lighter. For 1.1.5: alternating runs against 1.1.4 on Nextcloud 34 and 35 (104 measurements on the five corrected screens, desktop and phone), no slowdown.
 
 How: the build resolves every ancestor `:has()` selector (which makes Chromium restyle whole pages on each DOM change), each settings section gets its own small stylesheet, and transitions are limited to colour, opacity and transform. Details: [docs/certification.md](docs/certification.md).
 

@@ -96,8 +96,8 @@ Les mises à jour apparaissent ensuite dans la page *Applications* de Nextcloud,
 
 ```bash
 cd /chemin/vers/nextcloud/apps     # ou custom_apps
-curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/download/v1.1.4/azure_theme-1.1.4.tar.gz
-tar xzf azure_theme-1.1.4.tar.gz && rm azure_theme-1.1.4.tar.gz
+curl -LO https://github.com/Azure-Informatique/nextcloud-azure-theme/releases/download/v1.1.5/azure_theme-1.1.5.tar.gz
+tar xzf azure_theme-1.1.5.tar.gz && rm azure_theme-1.1.5.tar.gz
 chown -R www-data:www-data azure_theme
 sudo -u www-data php ../occ app:enable azure_theme
 ```
@@ -128,7 +128,7 @@ Mesures de référence de la version 1.1.0 face à Nextcloud sans thème : médi
 | Menu des applications (INP) | 216 ms | **24 ms** |
 | Saisie dans la recherche (INP) | 208 ms | **72 ms** |
 
-Chaque version suivante est mesurée face à la précédente en passes alternées, et aucune n'a été plus lente. Pour la 1.1.4 : 12 passes alternées face à la 1.1.3 (264 mesures sur 11 écrans, ordinateur et téléphone), aucun ralentissement et quatre gains mesurables, jusqu'à 9,9 % plus vite vers le contenu utile au téléphone ; ses feuilles de style sont aussi plus légères de 158 Ko.
+Chaque version suivante est mesurée face à la précédente en passes alternées, et aucune n'a été plus lente. Pour la 1.1.4 : 12 passes alternées face à la 1.1.3 (264 mesures sur 11 écrans, ordinateur et téléphone), aucun ralentissement et quatre gains mesurables, jusqu'à 9,9 % plus vite vers le contenu utile au téléphone ; ses feuilles de style sont aussi plus légères de 158 Ko. Pour la 1.1.5 : passes alternées face à la 1.1.4 sur Nextcloud 34 et 35 (104 mesures sur les cinq écrans corrigés, ordinateur et téléphone), aucun ralentissement.
 
 Comment : la compilation résout chaque sélecteur `:has()` sur un ancêtre (qui fait recalculer à Chromium le style de pages entières à chaque modification), chaque section des paramètres a sa propre petite feuille de style, et les transitions se limitent aux couleurs, à l'opacité et aux transformations. Détails : [docs/certification.md](docs/certification.md).
 

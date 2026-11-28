@@ -1321,7 +1321,9 @@
 											min-height: unset;
 											height: 100%;
 											flex-shrink: 0;
-											fill: $colour-background;
+											// Blanc fixe sur le bleu de marque, comme le texte (le fond de
+											// page devenait noir en thème sombre).
+											fill: $colour-forground-white;
 										}
 									}
 
@@ -5038,6 +5040,20 @@
 		}
 		.dialog__actions{
 			padding: 12px 16px;
+		}
+	}
+
+	// Sites externes › « Configurer le site » (contenu .dialog-content de l'app external) et
+	// Stockages externes › « Ajouter un stockage » (module externalStorageDialog) : champs collés au
+	// bord gauche (même cause que ci-dessus). Contenu et boutons alignés sur le titre (16 px).
+	.modal-container#{$fenetre}:has(.dialog__content > .dialog-content, .dialog__content#{css-module('externalStorageDialog')}){
+		.dialog__content,
+		.dialog__actions{
+			padding-inline: 16px;
+		}
+		// « Ajouter un stockage » : le libellé flottant du premier champ chevauchait le filet du titre.
+		.dialog__content#{css-module('externalStorageDialog')}{
+			padding-top: 12px;
 		}
 	}
 
